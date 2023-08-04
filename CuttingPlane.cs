@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace LPR381_Project
 {
-    internal class Linear
+    internal class CuttingPlane
     {
         private double[,] text;
-        public Linear(double[,] text)
+        public CuttingPlane(double[,] text)
         {
             this.Text = text;
         }
@@ -17,7 +17,7 @@ namespace LPR381_Project
         public double[,] Text { get => text; set => text = value; }
 
         // Algorithm to pivot on a given table.
-        private double[,] PivotTable(double[,] initialTableArray, int pivotColumnIndex, int pivotRowIndex)
+        double[,] PivotTable(double[,] initialTableArray, int pivotColumnIndex, int pivotRowIndex)
         {
             double[,] outTableArray = new double[initialTableArray.GetLength(0), initialTableArray.GetLength(1)];
             for (int i = 0; i < initialTableArray.GetLength(0); i++)
@@ -45,12 +45,12 @@ namespace LPR381_Project
                     outTableArray[pivotRowIndex, j] = value;
                 }
             }
+
             return outTableArray;
         }
 
-
         // DUAL SIMPLEX ALGORITHM
-        public List<double[,]> DualSimplex(double[,] LP, string ProblemType)
+        List<double[,]> DualSimplex(double[,] LP, string ProblemType)
         {
             List<double[,]> SimplexTables = new List<double[,]>();
             SimplexTables.Add(LP);
@@ -187,17 +187,25 @@ namespace LPR381_Project
                     SimplexTables.Add(PivotTable(table, pivotColIndex, pivotRowIndex));
                 }
             }
+
             return SimplexTables;
         }
 
         // CUTTING PLANE ALGORITHM
-        public List<List<double[,]>> CuttingPlane(double[,] LP, string ProblemType)
+        public List<List<double[,]>> CuttingPlaneSolve(double[,] LP, string ProblemType, string[] signRestrictions)
         {
             List<List<double[,]>> final = new List<List<double[,]>>();
 
             List<double[,]> iteration = DualSimplex(LP, ProblemType);
             final.Add(iteration);
             LP = iteration[iteration.Count - 1];
+
+            // Some variables are not restricted to integer, so we skip them.
+            List<bool> skipIndex = new List<bool>();
+            for (int i = 0; i < LP.GetLength(0); i++)
+            {
+                skipIndex.Add(false);
+            }
 
             bool keepIterating = true;
             while (keepIterating)
@@ -209,31 +217,35 @@ namespace LPR381_Project
                 // Get the row to cut by.
                 for (int i = 1; i < LP.GetLength(0); i++)
                 {
-                    double value = LP[i, LP.GetLength(1) - 1];
-                    double decimalValue = Math.Round(LP[i, LP.GetLength(1) - 1] % 1 * 10, 0);
+                    // Checks if the index should be skipped.
+                    if (!(skipIndex.ToArray()[i]))
+                    {
+                        double value = LP[i, LP.GetLength(1) - 1];
+                        double decimalValue = Math.Round(LP[i, LP.GetLength(1) - 1] % 1 * 10, 0);
 
-                    if (decimalValue >= 5)
-                    {
-                        decimalValue -= 5;
-                    }
-                    else
-                    {
-                        decimalValue = 5 - decimalValue;
-                    }
+                        if (decimalValue >= 5)
+                        {
+                            decimalValue -= 5;
+                        }
+                        else
+                        {
+                            decimalValue = 5 - decimalValue;
+                        }
 
-                    if (decimalValue < bestDecimal)
-                    {
-                        bestIndex = i;
-                        bestDecimal = decimalValue;
-                        temporaryValue = value;
-                    }
-                    else if (decimalValue == bestDecimal)
-                    {
-                        if (value > temporaryValue)
+                        if (decimalValue < bestDecimal)
                         {
                             bestIndex = i;
                             bestDecimal = decimalValue;
                             temporaryValue = value;
+                        }
+                        else if (decimalValue == bestDecimal)
+                        {
+                            if (value > temporaryValue)
+                            {
+                                bestIndex = i;
+                                bestDecimal = decimalValue;
+                                temporaryValue = value;
+                            }
                         }
                     }
                 }
@@ -242,6 +254,40 @@ namespace LPR381_Project
                 {
                     keepIterating = false;
                     break;
+                }
+                // Check if the best index is on a variable that is not restricted to int.
+                for (int j = 0; j < LP.GetLength(1); j++)
+                {
+                    if (LP[bestIndex, j] == 1)
+                    {
+                        if (j < signRestrictions.Length)
+                        {
+                            if (signRestrictions[j] != "int")
+                            {
+                                double sum = 0;
+                                for (int k = 0; k < LP.GetLength(0); k++)
+                                {
+                                    sum = sum + LP[k, j];
+                                }
+                                if (sum == 1)
+                                {
+                                    bool[] tempArr = skipIndex.ToArray();
+                                    tempArr[bestIndex] = true;
+                                    skipIndex.Clear();
+                                    for (int k = 0; k < tempArr.Length; k++)
+                                    {
+                                        skipIndex.Add(tempArr[k]);
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (skipIndex.ToArray()[bestIndex])
+                {
+                    continue;
                 }
 
                 // Calculate the cut row.
@@ -305,7 +351,28 @@ namespace LPR381_Project
 
                 List<double[,]> Tables = DualSimplex(newLP, ProblemType);
                 LP = Tables[Tables.Count - 1];
+                skipIndex.Add(false);
                 final.Add(Tables);
+
+                // Check if mixed solutions are satisfied.
+                bool satisfied = true;
+                for (int i = 1; i < LP.GetLength(0); i++)
+                {
+                    if ((LP[i, LP.GetLength(1) - 1] % 1 != 0) && (skipIndex.ToArray()[i] == false))
+                    {
+                        for (int j = 0; j < signRestrictions.Length; j++)
+                        {
+                            if (LP[i, j] == 1)
+                            {
+                                satisfied = false;
+                            }
+                        }
+                    }
+                }
+                if (satisfied)
+                {
+                    keepIterating = false;
+                }
             }
             return final;
         }
@@ -330,6 +397,7 @@ namespace LPR381_Project
                         }
                         output = output + line + "\n";
                     }
+                    output = output + "\n";
                 }
             }
 
