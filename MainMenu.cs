@@ -1,28 +1,56 @@
 ﻿using MetroSet_UI.Forms;
+using System.Text.Json.Serialization;
+
 namespace LPR381_Project
 {
     public partial class MainMenu : MetroSetForm
     {
         public MainMenu()
         {
-            InitializeComponent(); 
+            InitializeComponent();
         }
 
-        private void MainMenu_Load(object sender, EventArgs e)
+        private void mbtnSelectFile_Click(object sender, EventArgs e)
         {
+            string filePath = string.Empty;
+            string[] lines = Array.Empty<string>();
 
-        }
+            using (OpenFileDialog ofd = new OpenFileDialog())
+            {
+                ofd.Filter = "Text Files (*.txt)|*.txt";
 
-        private void btnCutting_click(object sender, EventArgs e)
-        {
-            // Cutting plane example.
-            double[,] values = { { -13, -8, 0, 0, 0 }, { 1, 2, 1, 0, 10 }, { 5, 2, 0, 1, 20 } };
-            string[] signs = { "<=", "<=" };
-            string problemType = "max";
-            string[] restrictions = { "int", "int" };
-            CuttingPlane new_cutting = new CuttingPlane(values);
-            List<List<double[,]>> result = new_cutting.CuttingPlaneSolve(values, problemType, restrictions); ;
-            rtbResults.Text = new_cutting.PrintResults(result);
+                if (ofd.ShowDialog() == DialogResult.OK)
+                {
+                    filePath = ofd.FileName;
+
+                    lines = File.ReadAllLines(filePath);
+                }
+            }
+
+            LinearModel lp = new LinearModel(lines);
+            rtbOutput.Text += "SIMPLEX CANONICAL FORM:\n";
+            rtbOutput.Text += (lp.CanonObjFunctionToString());
+            rtbOutput.Text += ("\nsubject to:\n");
+            rtbOutput.Text += (lp.CanonSimplexConstraintsToString());
+            rtbOutput.Text += "\n\n";
+
+            double[,] table = lp.SimplexTables[lp.SimplexTables.Count - 1];
+
+            for (int i = 0; i < table.GetLength(0); i++)
+            {
+                string res = "";
+                for (int j = 0; j < table.GetLength(1); j++)
+                {
+                    res += $"{table[i, j]}\t";
+                }
+                rtbOutput.Text += $"{res}\n";
+            }
+
+            CuttingPlane cp = new CuttingPlane(lp.SimplexInitial);
+            List < List<double[,]>> results = cp.CuttingPlaneSolve(lp.SimplexInitial, lp.ProblemType, lp.SignRestrictions.ToArray());
+
+            rtbOutput.Text += "\n\n";
+            rtbOutput.Text += cp.PrintResults(results);
         }
     }
 }

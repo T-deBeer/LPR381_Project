@@ -28,52 +28,81 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.btnCutting = new System.Windows.Forms.Button();
-            this.rtbResults = new System.Windows.Forms.RichTextBox();
-            this.SuspendLayout();
+            mbtnSelectFile = new MetroSet_UI.Controls.MetroSetButton();
+            rtbOutput = new MetroSet_UI.Controls.MetroSetRichTextBox();
+            SuspendLayout();
             // 
-            // btnCutting
+            // mbtnSelectFile
             // 
-            this.btnCutting.ForeColor = System.Drawing.Color.Black;
-            this.btnCutting.Location = new System.Drawing.Point(28, 123);
-            this.btnCutting.Name = "btnCutting";
-            this.btnCutting.Size = new System.Drawing.Size(95, 42);
-            this.btnCutting.TabIndex = 0;
-            this.btnCutting.Text = "Cutting Plane";
-            this.btnCutting.UseVisualStyleBackColor = true;
-            this.btnCutting.Click += new System.EventHandler(this.btnCutting_click);
+            mbtnSelectFile.DisabledBackColor = Color.FromArgb(120, 65, 177, 225);
+            mbtnSelectFile.DisabledBorderColor = Color.FromArgb(120, 65, 177, 225);
+            mbtnSelectFile.DisabledForeColor = Color.Gray;
+            mbtnSelectFile.Font = new Font("Microsoft Sans Serif", 10F, FontStyle.Regular, GraphicsUnit.Point);
+            mbtnSelectFile.HoverBorderColor = Color.FromArgb(95, 207, 255);
+            mbtnSelectFile.HoverColor = Color.FromArgb(95, 207, 255);
+            mbtnSelectFile.HoverTextColor = Color.White;
+            mbtnSelectFile.IsDerivedStyle = true;
+            mbtnSelectFile.Location = new Point(15, 126);
+            mbtnSelectFile.Name = "mbtnSelectFile";
+            mbtnSelectFile.NormalBorderColor = Color.FromArgb(65, 177, 225);
+            mbtnSelectFile.NormalColor = Color.FromArgb(65, 177, 225);
+            mbtnSelectFile.NormalTextColor = Color.White;
+            mbtnSelectFile.PressBorderColor = Color.FromArgb(35, 147, 195);
+            mbtnSelectFile.PressColor = Color.FromArgb(35, 147, 195);
+            mbtnSelectFile.PressTextColor = Color.White;
+            mbtnSelectFile.Size = new Size(184, 43);
+            mbtnSelectFile.Style = MetroSet_UI.Enums.Style.Light;
+            mbtnSelectFile.StyleManager = null;
+            mbtnSelectFile.TabIndex = 0;
+            mbtnSelectFile.Text = "Select Text File";
+            mbtnSelectFile.ThemeAuthor = "Narwin";
+            mbtnSelectFile.ThemeName = "MetroLite";
+            mbtnSelectFile.Click += mbtnSelectFile_Click;
             // 
-            // rtbResults
+            // rtbOutput
             // 
-            this.rtbResults.Location = new System.Drawing.Point(225, 123);
-            this.rtbResults.Name = "rtbResults";
-            this.rtbResults.Size = new System.Drawing.Size(827, 355);
-            this.rtbResults.TabIndex = 1;
-            this.rtbResults.Text = "\n";
+            rtbOutput.AutoWordSelection = false;
+            rtbOutput.BorderColor = Color.FromArgb(155, 155, 155);
+            rtbOutput.DisabledBackColor = Color.FromArgb(204, 204, 204);
+            rtbOutput.DisabledBorderColor = Color.FromArgb(155, 155, 155);
+            rtbOutput.DisabledForeColor = Color.FromArgb(136, 136, 136);
+            rtbOutput.Font = new Font("Microsoft Sans Serif", 10F, FontStyle.Regular, GraphicsUnit.Point);
+            rtbOutput.HoverColor = Color.FromArgb(102, 102, 102);
+            rtbOutput.IsDerivedStyle = true;
+            rtbOutput.Lines = null;
+            rtbOutput.Location = new Point(309, 126);
+            rtbOutput.MaxLength = 32767;
+            rtbOutput.Name = "rtbOutput";
+            rtbOutput.ReadOnly = false;
+            rtbOutput.Size = new Size(856, 426);
+            rtbOutput.Style = MetroSet_UI.Enums.Style.Light;
+            rtbOutput.StyleManager = null;
+            rtbOutput.TabIndex = 1;
+            rtbOutput.ThemeAuthor = "Narwin";
+            rtbOutput.ThemeName = "MetroLite";
+            rtbOutput.WordWrap = true;
             // 
             // MainMenu
             // 
-            this.AllowResize = false;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 20F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(30)))));
-            this.ClientSize = new System.Drawing.Size(1180, 632);
-            this.Controls.Add(this.rtbResults);
-            this.Controls.Add(this.btnCutting);
-            this.Name = "MainMenu";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Style = MetroSet_UI.Enums.Style.Dark;
-            this.Text = "Main Menu";
-            this.TextColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(177)))), ((int)(((byte)(225)))));
-            this.ThemeName = "MetroDark";
-            this.Load += new System.EventHandler(this.MainMenu_Load);
-            this.ResumeLayout(false);
-
+            AllowResize = false;
+            AutoScaleDimensions = new SizeF(10F, 20F);
+            AutoScaleMode = AutoScaleMode.Font;
+            BackgroundColor = Color.FromArgb(30, 30, 30);
+            ClientSize = new Size(1180, 632);
+            Controls.Add(rtbOutput);
+            Controls.Add(mbtnSelectFile);
+            Name = "MainMenu";
+            StartPosition = FormStartPosition.CenterScreen;
+            Style = MetroSet_UI.Enums.Style.Dark;
+            Text = "Main Menu";
+            TextColor = Color.FromArgb(65, 177, 225);
+            ThemeName = "MetroDark";
+            ResumeLayout(false);
         }
 
         #endregion
 
-        private Button btnCutting;
-        private RichTextBox rtbResults;
+        private MetroSet_UI.Controls.MetroSetButton mbtnSelectFile;
+        private MetroSet_UI.Controls.MetroSetRichTextBox rtbOutput;
     }
 }
