@@ -46,11 +46,9 @@ namespace LPR381_Project
                 rtbOutput.Text += $"{res}\n";
             }
 
-            CuttingPlane cp = new CuttingPlane(lp.SimplexInitial);
-            List < List<double[,]>> results = cp.CuttingPlaneSolve(lp.SimplexInitial, lp.ProblemType, lp.SignRestrictions.ToArray());
-
+            CuttingPlane cp = new CuttingPlane(lp.SimplexInitial, lp.ProblemType, lp.SignRestrictions.ToArray());
             rtbOutput.Text += "\n\n";
-            rtbOutput.Text += cp.PrintResults(results);
+            rtbOutput.Text += cp.PrintResults();
         }
     }
 }

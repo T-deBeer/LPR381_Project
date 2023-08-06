@@ -8,16 +8,22 @@ namespace LPR381_Project
 {
     internal class CuttingPlane
     {
-        private double[,] text;
-        public CuttingPlane(double[,] text)
+        private double[,] lp;
+        private string problemType;
+        private string[] signRestrictions;
+        public CuttingPlane(double[,] lp, string problemType, string[] signRestrictions)
         {
-            this.Text = text;
+            this.LP = lp;
+            this.ProblemType = problemType;
+            this.SignRestrictions = signRestrictions;
         }
 
-        public double[,] Text { get => text; set => text = value; }
+        public double[,] LP { get => lp; set => lp = value; }
+        public string ProblemType { get => problemType; set => problemType = value; }
+        public string[] SignRestrictions { get => signRestrictions; set => signRestrictions = value; }
 
         // Algorithm to pivot on a given table.
-        double[,] PivotTable(double[,] initialTableArray, int pivotColumnIndex, int pivotRowIndex)
+        private double[,] PivotTable(double[,] initialTableArray, int pivotColumnIndex, int pivotRowIndex)
         {
             double[,] outTableArray = new double[initialTableArray.GetLength(0), initialTableArray.GetLength(1)];
             for (int i = 0; i < initialTableArray.GetLength(0); i++)
@@ -50,7 +56,7 @@ namespace LPR381_Project
         }
 
         // DUAL SIMPLEX ALGORITHM
-        List<double[,]> DualSimplex(double[,] LP, string ProblemType)
+        private List<double[,]> DualSimplex(double[,] LP, string ProblemType)
         {
             List<double[,]> SimplexTables = new List<double[,]>();
             SimplexTables.Add(LP);
@@ -192,7 +198,7 @@ namespace LPR381_Project
         }
 
         // CUTTING PLANE ALGORITHM
-        public List<List<double[,]>> CuttingPlaneSolve(double[,] LP, string ProblemType, string[] signRestrictions)
+        private List<List<double[,]>> CuttingPlaneSolve()
         {
             List<List<double[,]>> final = new List<List<double[,]>>();
 
@@ -260,9 +266,9 @@ namespace LPR381_Project
                 {
                     if (LP[bestIndex, j] == 1)
                     {
-                        if (j < signRestrictions.Length)
+                        if (j < SignRestrictions.Length)
                         {
-                            if (signRestrictions[j] != "int")
+                            if (SignRestrictions[j] != "int")
                             {
                                 double sum = 0;
                                 for (int k = 0; k < LP.GetLength(0); k++)
@@ -360,7 +366,7 @@ namespace LPR381_Project
                 {
                     if ((LP[i, LP.GetLength(1) - 1] % 1 != 0) && (skipIndex.ToArray()[i] == false))
                     {
-                        for (int j = 0; j < signRestrictions.Length; j++)
+                        for (int j = 0; j < SignRestrictions.Length; j++)
                         {
                             if (LP[i, j] == 1)
                             {
@@ -378,8 +384,9 @@ namespace LPR381_Project
         }
 
         // Print the list of items in the form of a string.
-        public string PrintResults(List<List<double[,]>> iterations)
+        public string PrintResults()
         {
+            List<List<double[,]>> iterations = CuttingPlaneSolve();
             int iter = 0;
             string output = "";
             foreach (var iteration in iterations)
