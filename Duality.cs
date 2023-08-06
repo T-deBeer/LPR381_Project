@@ -9,19 +9,20 @@ namespace LPR381_Project
 {
     internal class Duality
     {
-        private string lp;
+        private string[] lp;
 
-        public Duality(string lp)
+        public Duality(string[] lp)
         {
-            this.Lp = lp;
+            this.LP = lp;
         }
 
-        public string Lp { get => Lp; set => Lp = value; }
+        public string[] LP { get => lp; set => lp = value; }
 
-        private string MakeDual(string LP)
+        private string MakeDual()
         {
             // Get all the values needed.
-            string[] rows = LP.Split('\n');
+            //string[] rows = LP.Split('\n');
+            string[] rows = LP;
             string type = "";
             List<string> rhs = new List<string>();
             List<string> signlist = new List<string>();
@@ -284,11 +285,30 @@ namespace LPR381_Project
             //Console.WriteLine(line);
         }
 
-        public void DualSolve(string LP)
+        public string PrintResults()
         {
-            string dualForm = MakeDual(LP);
-            //MAKE CANONICAL FORM
-            //SOLVE WITH DUAL SIMPLEX
+            string dualForm = MakeDual();
+            LinearModel dualModel = new LinearModel(dualForm.Split("\n"));
+
+            List<double[,]> iteration = dualModel.SimplexTables;
+            string line = "";
+
+            foreach (var table in iteration)
+            {
+                for (int i = 0; i < table.GetLength(0); i++)
+                {
+                    string res = "";
+                    for (int j = 0; j < table.GetLength(1); j++)
+                    {
+                        res += $"{table[i, j]}\t";
+                    }
+                    line += $"{res}\n";
+                }
+
+                line += "\n\n";
+            }
+
+            return line;
         }
     }
 }

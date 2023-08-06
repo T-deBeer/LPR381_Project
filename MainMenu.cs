@@ -48,7 +48,13 @@ namespace LPR381_Project
 
             CuttingPlane cp = new CuttingPlane(lp.SimplexInitial, lp.ProblemType, lp.SignRestrictions.ToArray());
             rtbOutput.Text += "\n\n";
+            rtbOutput.Text += "CUTTING PLANE:\n";
             rtbOutput.Text += cp.PrintResults();
+
+            Duality dual = new Duality(lines);
+            rtbOutput.Text += "\n\n";
+            rtbOutput.Text += "DUALITY CHECK:\n";
+            rtbOutput.Text += dual.PrintResults();
         }
     }
 }
