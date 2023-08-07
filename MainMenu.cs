@@ -19,32 +19,6 @@ namespace LPR381_Project
             InitializeComponent();
         }
 
-        private void pnlDragnDrop_DragEnter(object sender, DragEventArgs e)
-        {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop))
-            {
-                e.Effect = DragDropEffects.Copy;
-            }
-        }
-
-        private void pnlDragnDrop_DragDrop(object sender, DragEventArgs e)
-        {
-            if (e.Data.GetDataPresent(DataFormats.FileDrop))
-            {
-                string[] droppedFiles = (string[])e.Data.GetData(DataFormats.FileDrop);
-                string[] lines;
-                rtbFileOutput.Text = "";
-                foreach (string filePath in droppedFiles)
-                {
-                    lines = File.ReadAllLines(filePath);
-                    foreach (var item in lines)
-                    {
-                        rtbFileOutput.AppendText(item + "\n");
-                    }
-                }
-            }
-        }
-
         private void MainMenu_Load(object sender, EventArgs e)
         {
             rtbFileOutput.BackColor = Color.FromArgb(30, 30, 30);
@@ -68,6 +42,35 @@ namespace LPR381_Project
             cboMethod.Enabled = false;
             cboCARangeRow.Enabled = false;
             cboCARangeCol.Enabled = false;
+        }
+
+        private void pnlDragnDrop_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                e.Effect = DragDropEffects.Copy;
+            }
+        }
+
+        private void pnlDragnDrop_DragDrop(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                string[] droppedFiles = (string[])e.Data.GetData(DataFormats.FileDrop);
+                string[] lines;
+                rtbFileOutput.Text = "";
+                foreach (string filePath in droppedFiles)
+                {
+                    lines = File.ReadAllLines(filePath);
+                    foreach (var item in lines)
+                    {
+                        rtbFileOutput.AppendText(item + "\n");
+                    }
+                }
+                btnSolve.Enabled = true;
+                cboMethod.Enabled = true;
+                cboMethod.SelectedIndex = 0;
+            }
         }
 
         private void btnFile_Click(object sender, EventArgs e)
@@ -105,6 +108,9 @@ namespace LPR381_Project
                 }
                 rtbFileOutput.Text += $"{res}\n";
             }
+            btnSolve.Enabled = true;
+            cboMethod.Enabled = true;
+            cboMethod.SelectedIndex = 0;
         }
     }
 }

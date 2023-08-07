@@ -547,6 +547,12 @@
             this.cboMethod.FormattingEnabled = true;
             this.cboMethod.IsDerivedStyle = true;
             this.cboMethod.ItemHeight = 20;
+            this.cboMethod.Items.AddRange(new object[] {
+            "Primal Simplex",
+            "Two-Phase Simplex",
+            "Dual Simplex",
+            "Branch and Bound",
+            "Cutting Plane"});
             this.cboMethod.Location = new System.Drawing.Point(77, 36);
             this.cboMethod.Margin = new System.Windows.Forms.Padding(4);
             this.cboMethod.Name = "cboMethod";
