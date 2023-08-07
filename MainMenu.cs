@@ -44,30 +44,5 @@ namespace LPR381_Project
                 }
             }
         }
-
-        private void MainMenu_Load(object sender, EventArgs e)
-        {
-            rtbFileOutput.BackColor = Color.FromArgb(30, 30, 30);
-            rtbFileOutput.BorderColor = Color.FromArgb(30, 30, 30);
-
-            rtbOutput.BackColor = Color.FromArgb(30, 30, 30);
-            rtbOutput.BorderColor = Color.FromArgb(30, 30, 30);
-
-            lblCAChanges.ForeColor = Color.FromArgb(28, 131, 174);
-            lblCADual.ForeColor = Color.FromArgb(28, 131, 174);
-            lblCARanges.ForeColor = Color.FromArgb(28, 131, 174);
-            lblCASolution.ForeColor = Color.FromArgb(28, 131, 174);
-            lblImport.ForeColor = Color.FromArgb(28, 131, 174);
-            lblFileOutput.ForeColor = Color.FromArgb(28, 131, 174);
-            lblSolution.ForeColor = Color.FromArgb(28, 131, 174);
-            lblSolve.ForeColor = Color.FromArgb(28, 131, 174);
-
-            btnDuality.Enabled = false;
-            btnCARanges.Enabled = false;
-            btnSolve.Enabled = false;
-            cboMethod.Enabled = false;
-            cboCARangeRow.Enabled = false;
-            cboCARangeCol.Enabled = false;
-        }
     }
 }
