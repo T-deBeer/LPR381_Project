@@ -32,34 +32,34 @@
             this.btnCARanges = new MetroSet_UI.Controls.MetroSetButton();
             this.metroSetLabel2 = new MetroSet_UI.Controls.MetroSetLabel();
             this.metroSetLabel1 = new MetroSet_UI.Controls.MetroSetLabel();
-            this.cboRangeCol = new MetroSet_UI.Controls.MetroSetComboBox();
-            this.lblCATitle = new MetroSet_UI.Controls.MetroSetLabel();
+            this.cboCARangeCol = new MetroSet_UI.Controls.MetroSetComboBox();
+            this.lblCARanges = new MetroSet_UI.Controls.MetroSetLabel();
             this.cboCARangeRow = new MetroSet_UI.Controls.MetroSetComboBox();
             this.metroSetPanel1 = new MetroSet_UI.Controls.MetroSetPanel();
-            this.metroSetLabel3 = new MetroSet_UI.Controls.MetroSetLabel();
+            this.lblImport = new MetroSet_UI.Controls.MetroSetLabel();
             this.btnFile = new MetroSet_UI.Controls.MetroSetButton();
             this.pnlDragnDrop = new MetroSet_UI.Controls.MetroSetPanel();
             this.lblDrop = new MetroSet_UI.Controls.MetroSetLabel();
             this.metroSetPanel4 = new MetroSet_UI.Controls.MetroSetPanel();
-            this.metroSetLabel4 = new MetroSet_UI.Controls.MetroSetLabel();
+            this.metroSetLabel6 = new MetroSet_UI.Controls.MetroSetLabel();
+            this.lblCASolution = new MetroSet_UI.Controls.MetroSetLabel();
             this.rtbOutput = new MetroSet_UI.Controls.MetroSetRichTextBox();
             this.metroSetPanel3 = new MetroSet_UI.Controls.MetroSetPanel();
             this.lblSolutionEmpty = new MetroSet_UI.Controls.MetroSetLabel();
-            this.metroSetLabel5 = new MetroSet_UI.Controls.MetroSetLabel();
+            this.lblSolution = new MetroSet_UI.Controls.MetroSetLabel();
             this.metroSetPanel5 = new MetroSet_UI.Controls.MetroSetPanel();
             this.rtbFileOutput = new MetroSet_UI.Controls.MetroSetRichTextBox();
-            this.metroSetLabel7 = new MetroSet_UI.Controls.MetroSetLabel();
+            this.lblFileOutput = new MetroSet_UI.Controls.MetroSetLabel();
             this.metroSetPanel6 = new MetroSet_UI.Controls.MetroSetPanel();
             this.btnSolve = new MetroSet_UI.Controls.MetroSetButton();
             this.cboMethod = new MetroSet_UI.Controls.MetroSetComboBox();
             this.metroSetLabel9 = new MetroSet_UI.Controls.MetroSetLabel();
-            this.metroSetLabel8 = new MetroSet_UI.Controls.MetroSetLabel();
+            this.lblSolve = new MetroSet_UI.Controls.MetroSetLabel();
             this.metroSetPanel7 = new MetroSet_UI.Controls.MetroSetPanel();
-            this.metroSetLabel12 = new MetroSet_UI.Controls.MetroSetLabel();
+            this.lblCAChanges = new MetroSet_UI.Controls.MetroSetLabel();
             this.metroSetPanel8 = new MetroSet_UI.Controls.MetroSetPanel();
             this.btnDuality = new MetroSet_UI.Controls.MetroSetButton();
-            this.metroSetLabel10 = new MetroSet_UI.Controls.MetroSetLabel();
-            this.metroSetLabel6 = new MetroSet_UI.Controls.MetroSetLabel();
+            this.lblCADual = new MetroSet_UI.Controls.MetroSetLabel();
             this.metroSetPanel2.SuspendLayout();
             this.metroSetPanel1.SuspendLayout();
             this.pnlDragnDrop.SuspendLayout();
@@ -79,8 +79,8 @@
             this.metroSetPanel2.Controls.Add(this.btnCARanges);
             this.metroSetPanel2.Controls.Add(this.metroSetLabel2);
             this.metroSetPanel2.Controls.Add(this.metroSetLabel1);
-            this.metroSetPanel2.Controls.Add(this.cboRangeCol);
-            this.metroSetPanel2.Controls.Add(this.lblCATitle);
+            this.metroSetPanel2.Controls.Add(this.cboCARangeCol);
+            this.metroSetPanel2.Controls.Add(this.lblCARanges);
             this.metroSetPanel2.Controls.Add(this.cboCARangeRow);
             this.metroSetPanel2.IsDerivedStyle = true;
             this.metroSetPanel2.Location = new System.Drawing.Point(285, 347);
@@ -149,49 +149,49 @@
             this.metroSetLabel1.ThemeAuthor = "Narwin";
             this.metroSetLabel1.ThemeName = "MetroDark";
             // 
-            // cboRangeCol
+            // cboCARangeCol
             // 
-            this.cboRangeCol.AllowDrop = true;
-            this.cboRangeCol.ArrowColor = System.Drawing.Color.FromArgb(((int)(((byte)(110)))), ((int)(((byte)(110)))), ((int)(((byte)(110)))));
-            this.cboRangeCol.BackColor = System.Drawing.Color.Transparent;
-            this.cboRangeCol.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(34)))), ((int)(((byte)(34)))), ((int)(((byte)(34)))));
-            this.cboRangeCol.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(110)))), ((int)(((byte)(110)))), ((int)(((byte)(110)))));
-            this.cboRangeCol.CausesValidation = false;
-            this.cboRangeCol.DisabledBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(80)))), ((int)(((byte)(80)))), ((int)(((byte)(80)))));
-            this.cboRangeCol.DisabledBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
-            this.cboRangeCol.DisabledForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
-            this.cboRangeCol.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
-            this.cboRangeCol.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cboRangeCol.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.cboRangeCol.FormattingEnabled = true;
-            this.cboRangeCol.IsDerivedStyle = true;
-            this.cboRangeCol.ItemHeight = 20;
-            this.cboRangeCol.Location = new System.Drawing.Point(76, 76);
-            this.cboRangeCol.Margin = new System.Windows.Forms.Padding(4);
-            this.cboRangeCol.Name = "cboRangeCol";
-            this.cboRangeCol.SelectedItemBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(177)))), ((int)(((byte)(225)))));
-            this.cboRangeCol.SelectedItemForeColor = System.Drawing.Color.White;
-            this.cboRangeCol.Size = new System.Drawing.Size(186, 26);
-            this.cboRangeCol.Style = MetroSet_UI.Enums.Style.Dark;
-            this.cboRangeCol.StyleManager = null;
-            this.cboRangeCol.TabIndex = 4;
-            this.cboRangeCol.ThemeAuthor = "Narwin";
-            this.cboRangeCol.ThemeName = "MetroDark";
+            this.cboCARangeCol.AllowDrop = true;
+            this.cboCARangeCol.ArrowColor = System.Drawing.Color.FromArgb(((int)(((byte)(110)))), ((int)(((byte)(110)))), ((int)(((byte)(110)))));
+            this.cboCARangeCol.BackColor = System.Drawing.Color.Transparent;
+            this.cboCARangeCol.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(34)))), ((int)(((byte)(34)))), ((int)(((byte)(34)))));
+            this.cboCARangeCol.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(110)))), ((int)(((byte)(110)))), ((int)(((byte)(110)))));
+            this.cboCARangeCol.CausesValidation = false;
+            this.cboCARangeCol.DisabledBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(80)))), ((int)(((byte)(80)))), ((int)(((byte)(80)))));
+            this.cboCARangeCol.DisabledBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
+            this.cboCARangeCol.DisabledForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
+            this.cboCARangeCol.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.cboCARangeCol.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cboCARangeCol.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.cboCARangeCol.FormattingEnabled = true;
+            this.cboCARangeCol.IsDerivedStyle = true;
+            this.cboCARangeCol.ItemHeight = 20;
+            this.cboCARangeCol.Location = new System.Drawing.Point(76, 76);
+            this.cboCARangeCol.Margin = new System.Windows.Forms.Padding(4);
+            this.cboCARangeCol.Name = "cboCARangeCol";
+            this.cboCARangeCol.SelectedItemBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(177)))), ((int)(((byte)(225)))));
+            this.cboCARangeCol.SelectedItemForeColor = System.Drawing.Color.White;
+            this.cboCARangeCol.Size = new System.Drawing.Size(186, 26);
+            this.cboCARangeCol.Style = MetroSet_UI.Enums.Style.Dark;
+            this.cboCARangeCol.StyleManager = null;
+            this.cboCARangeCol.TabIndex = 4;
+            this.cboCARangeCol.ThemeAuthor = "Narwin";
+            this.cboCARangeCol.ThemeName = "MetroDark";
             // 
-            // lblCATitle
+            // lblCARanges
             // 
-            this.lblCATitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.lblCATitle.IsDerivedStyle = true;
-            this.lblCATitle.Location = new System.Drawing.Point(4, 0);
-            this.lblCATitle.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.lblCATitle.Name = "lblCATitle";
-            this.lblCATitle.Size = new System.Drawing.Size(220, 22);
-            this.lblCATitle.Style = MetroSet_UI.Enums.Style.Dark;
-            this.lblCATitle.StyleManager = null;
-            this.lblCATitle.TabIndex = 3;
-            this.lblCATitle.Text = "Critical Analysis: Ranges";
-            this.lblCATitle.ThemeAuthor = "Narwin";
-            this.lblCATitle.ThemeName = "MetroDark";
+            this.lblCARanges.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.lblCARanges.IsDerivedStyle = true;
+            this.lblCARanges.Location = new System.Drawing.Point(4, 0);
+            this.lblCARanges.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblCARanges.Name = "lblCARanges";
+            this.lblCARanges.Size = new System.Drawing.Size(220, 22);
+            this.lblCARanges.Style = MetroSet_UI.Enums.Style.Dark;
+            this.lblCARanges.StyleManager = null;
+            this.lblCARanges.TabIndex = 3;
+            this.lblCARanges.Text = "Critical Analysis: Ranges";
+            this.lblCARanges.ThemeAuthor = "Narwin";
+            this.lblCARanges.ThemeName = "MetroDark";
             // 
             // cboCARangeRow
             // 
@@ -227,7 +227,7 @@
             this.metroSetPanel1.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(30)))));
             this.metroSetPanel1.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(110)))), ((int)(((byte)(110)))), ((int)(((byte)(110)))));
             this.metroSetPanel1.BorderThickness = 1;
-            this.metroSetPanel1.Controls.Add(this.metroSetLabel3);
+            this.metroSetPanel1.Controls.Add(this.lblImport);
             this.metroSetPanel1.Controls.Add(this.btnFile);
             this.metroSetPanel1.Controls.Add(this.pnlDragnDrop);
             this.metroSetPanel1.IsDerivedStyle = true;
@@ -240,20 +240,20 @@
             this.metroSetPanel1.ThemeAuthor = "Narwin";
             this.metroSetPanel1.ThemeName = "MetroDark";
             // 
-            // metroSetLabel3
+            // lblImport
             // 
-            this.metroSetLabel3.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.metroSetLabel3.IsDerivedStyle = true;
-            this.metroSetLabel3.Location = new System.Drawing.Point(7, 0);
-            this.metroSetLabel3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.metroSetLabel3.Name = "metroSetLabel3";
-            this.metroSetLabel3.Size = new System.Drawing.Size(263, 22);
-            this.metroSetLabel3.Style = MetroSet_UI.Enums.Style.Dark;
-            this.metroSetLabel3.StyleManager = null;
-            this.metroSetLabel3.TabIndex = 8;
-            this.metroSetLabel3.Text = "Import File:";
-            this.metroSetLabel3.ThemeAuthor = "Narwin";
-            this.metroSetLabel3.ThemeName = "MetroDark";
+            this.lblImport.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.lblImport.IsDerivedStyle = true;
+            this.lblImport.Location = new System.Drawing.Point(7, 0);
+            this.lblImport.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblImport.Name = "lblImport";
+            this.lblImport.Size = new System.Drawing.Size(263, 22);
+            this.lblImport.Style = MetroSet_UI.Enums.Style.Dark;
+            this.lblImport.StyleManager = null;
+            this.lblImport.TabIndex = 8;
+            this.lblImport.Text = "Import File:";
+            this.lblImport.ThemeAuthor = "Narwin";
+            this.lblImport.ThemeName = "MetroDark";
             // 
             // btnFile
             // 
@@ -280,6 +280,7 @@
             this.btnFile.Text = "Browse for File";
             this.btnFile.ThemeAuthor = "Narwin";
             this.btnFile.ThemeName = "MetroLite";
+            this.btnFile.Click += new System.EventHandler(this.btnFile_Click);
             // 
             // pnlDragnDrop
             // 
@@ -320,7 +321,7 @@
             this.metroSetPanel4.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(110)))), ((int)(((byte)(110)))), ((int)(((byte)(110)))));
             this.metroSetPanel4.BorderThickness = 1;
             this.metroSetPanel4.Controls.Add(this.metroSetLabel6);
-            this.metroSetPanel4.Controls.Add(this.metroSetLabel4);
+            this.metroSetPanel4.Controls.Add(this.lblCASolution);
             this.metroSetPanel4.Controls.Add(this.rtbOutput);
             this.metroSetPanel4.IsDerivedStyle = true;
             this.metroSetPanel4.Location = new System.Drawing.Point(556, 343);
@@ -332,19 +333,33 @@
             this.metroSetPanel4.ThemeAuthor = "Narwin";
             this.metroSetPanel4.ThemeName = "MetroDark";
             // 
-            // metroSetLabel4
+            // metroSetLabel6
             // 
-            this.metroSetLabel4.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.metroSetLabel4.IsDerivedStyle = true;
-            this.metroSetLabel4.Location = new System.Drawing.Point(3, 4);
-            this.metroSetLabel4.Name = "metroSetLabel4";
-            this.metroSetLabel4.Size = new System.Drawing.Size(640, 23);
-            this.metroSetLabel4.Style = MetroSet_UI.Enums.Style.Dark;
-            this.metroSetLabel4.StyleManager = null;
-            this.metroSetLabel4.TabIndex = 7;
-            this.metroSetLabel4.Text = "Critical Analysis Output:";
-            this.metroSetLabel4.ThemeAuthor = "Narwin";
-            this.metroSetLabel4.ThemeName = "MetroDark";
+            this.metroSetLabel6.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.metroSetLabel6.IsDerivedStyle = true;
+            this.metroSetLabel6.Location = new System.Drawing.Point(271, 80);
+            this.metroSetLabel6.Name = "metroSetLabel6";
+            this.metroSetLabel6.Size = new System.Drawing.Size(154, 33);
+            this.metroSetLabel6.Style = MetroSet_UI.Enums.Style.Dark;
+            this.metroSetLabel6.StyleManager = null;
+            this.metroSetLabel6.TabIndex = 10;
+            this.metroSetLabel6.Text = "Such Empty...";
+            this.metroSetLabel6.ThemeAuthor = "Narwin";
+            this.metroSetLabel6.ThemeName = "MetroDark";
+            // 
+            // lblCASolution
+            // 
+            this.lblCASolution.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.lblCASolution.IsDerivedStyle = true;
+            this.lblCASolution.Location = new System.Drawing.Point(3, 4);
+            this.lblCASolution.Name = "lblCASolution";
+            this.lblCASolution.Size = new System.Drawing.Size(640, 23);
+            this.lblCASolution.Style = MetroSet_UI.Enums.Style.Dark;
+            this.lblCASolution.StyleManager = null;
+            this.lblCASolution.TabIndex = 7;
+            this.lblCASolution.Text = "Critical Analysis Output:";
+            this.lblCASolution.ThemeAuthor = "Narwin";
+            this.lblCASolution.ThemeName = "MetroDark";
             // 
             // rtbOutput
             // 
@@ -375,7 +390,7 @@
             this.metroSetPanel3.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(110)))), ((int)(((byte)(110)))), ((int)(((byte)(110)))));
             this.metroSetPanel3.BorderThickness = 1;
             this.metroSetPanel3.Controls.Add(this.lblSolutionEmpty);
-            this.metroSetPanel3.Controls.Add(this.metroSetLabel5);
+            this.metroSetPanel3.Controls.Add(this.lblSolution);
             this.metroSetPanel3.IsDerivedStyle = true;
             this.metroSetPanel3.Location = new System.Drawing.Point(556, 50);
             this.metroSetPanel3.Name = "metroSetPanel3";
@@ -400,19 +415,19 @@
             this.lblSolutionEmpty.ThemeAuthor = "Narwin";
             this.lblSolutionEmpty.ThemeName = "MetroDark";
             // 
-            // metroSetLabel5
+            // lblSolution
             // 
-            this.metroSetLabel5.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.metroSetLabel5.IsDerivedStyle = true;
-            this.metroSetLabel5.Location = new System.Drawing.Point(3, 4);
-            this.metroSetLabel5.Name = "metroSetLabel5";
-            this.metroSetLabel5.Size = new System.Drawing.Size(640, 23);
-            this.metroSetLabel5.Style = MetroSet_UI.Enums.Style.Dark;
-            this.metroSetLabel5.StyleManager = null;
-            this.metroSetLabel5.TabIndex = 7;
-            this.metroSetLabel5.Text = "Solution Output:";
-            this.metroSetLabel5.ThemeAuthor = "Narwin";
-            this.metroSetLabel5.ThemeName = "MetroDark";
+            this.lblSolution.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.lblSolution.IsDerivedStyle = true;
+            this.lblSolution.Location = new System.Drawing.Point(3, 4);
+            this.lblSolution.Name = "lblSolution";
+            this.lblSolution.Size = new System.Drawing.Size(640, 23);
+            this.lblSolution.Style = MetroSet_UI.Enums.Style.Dark;
+            this.lblSolution.StyleManager = null;
+            this.lblSolution.TabIndex = 7;
+            this.lblSolution.Text = "Solution Output:";
+            this.lblSolution.ThemeAuthor = "Narwin";
+            this.lblSolution.ThemeName = "MetroDark";
             // 
             // metroSetPanel5
             // 
@@ -420,7 +435,7 @@
             this.metroSetPanel5.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(110)))), ((int)(((byte)(110)))), ((int)(((byte)(110)))));
             this.metroSetPanel5.BorderThickness = 1;
             this.metroSetPanel5.Controls.Add(this.rtbFileOutput);
-            this.metroSetPanel5.Controls.Add(this.metroSetLabel7);
+            this.metroSetPanel5.Controls.Add(this.lblFileOutput);
             this.metroSetPanel5.IsDerivedStyle = true;
             this.metroSetPanel5.Location = new System.Drawing.Point(286, 49);
             this.metroSetPanel5.Name = "metroSetPanel5";
@@ -455,20 +470,20 @@
             this.rtbFileOutput.ThemeName = "MetroDark";
             this.rtbFileOutput.WordWrap = true;
             // 
-            // metroSetLabel7
+            // lblFileOutput
             // 
-            this.metroSetLabel7.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.metroSetLabel7.IsDerivedStyle = true;
-            this.metroSetLabel7.Location = new System.Drawing.Point(7, 0);
-            this.metroSetLabel7.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.metroSetLabel7.Name = "metroSetLabel7";
-            this.metroSetLabel7.Size = new System.Drawing.Size(184, 22);
-            this.metroSetLabel7.Style = MetroSet_UI.Enums.Style.Dark;
-            this.metroSetLabel7.StyleManager = null;
-            this.metroSetLabel7.TabIndex = 8;
-            this.metroSetLabel7.Text = "Your file:";
-            this.metroSetLabel7.ThemeAuthor = "Narwin";
-            this.metroSetLabel7.ThemeName = "MetroDark";
+            this.lblFileOutput.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.lblFileOutput.IsDerivedStyle = true;
+            this.lblFileOutput.Location = new System.Drawing.Point(7, 0);
+            this.lblFileOutput.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblFileOutput.Name = "lblFileOutput";
+            this.lblFileOutput.Size = new System.Drawing.Size(184, 22);
+            this.lblFileOutput.Style = MetroSet_UI.Enums.Style.Dark;
+            this.lblFileOutput.StyleManager = null;
+            this.lblFileOutput.TabIndex = 8;
+            this.lblFileOutput.Text = "Your file:";
+            this.lblFileOutput.ThemeAuthor = "Narwin";
+            this.lblFileOutput.ThemeName = "MetroDark";
             // 
             // metroSetPanel6
             // 
@@ -478,7 +493,7 @@
             this.metroSetPanel6.Controls.Add(this.btnSolve);
             this.metroSetPanel6.Controls.Add(this.cboMethod);
             this.metroSetPanel6.Controls.Add(this.metroSetLabel9);
-            this.metroSetPanel6.Controls.Add(this.metroSetLabel8);
+            this.metroSetPanel6.Controls.Add(this.lblSolve);
             this.metroSetPanel6.IsDerivedStyle = true;
             this.metroSetPanel6.Location = new System.Drawing.Point(15, 229);
             this.metroSetPanel6.Name = "metroSetPanel6";
@@ -559,27 +574,27 @@
             this.metroSetLabel9.ThemeAuthor = "Narwin";
             this.metroSetLabel9.ThemeName = "MetroDark";
             // 
-            // metroSetLabel8
+            // lblSolve
             // 
-            this.metroSetLabel8.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.metroSetLabel8.IsDerivedStyle = true;
-            this.metroSetLabel8.Location = new System.Drawing.Point(7, 0);
-            this.metroSetLabel8.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.metroSetLabel8.Name = "metroSetLabel8";
-            this.metroSetLabel8.Size = new System.Drawing.Size(184, 22);
-            this.metroSetLabel8.Style = MetroSet_UI.Enums.Style.Dark;
-            this.metroSetLabel8.StyleManager = null;
-            this.metroSetLabel8.TabIndex = 8;
-            this.metroSetLabel8.Text = "Solver:";
-            this.metroSetLabel8.ThemeAuthor = "Narwin";
-            this.metroSetLabel8.ThemeName = "MetroDark";
+            this.lblSolve.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.lblSolve.IsDerivedStyle = true;
+            this.lblSolve.Location = new System.Drawing.Point(7, 0);
+            this.lblSolve.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblSolve.Name = "lblSolve";
+            this.lblSolve.Size = new System.Drawing.Size(184, 22);
+            this.lblSolve.Style = MetroSet_UI.Enums.Style.Dark;
+            this.lblSolve.StyleManager = null;
+            this.lblSolve.TabIndex = 8;
+            this.lblSolve.Text = "Solver:";
+            this.lblSolve.ThemeAuthor = "Narwin";
+            this.lblSolve.ThemeName = "MetroDark";
             // 
             // metroSetPanel7
             // 
             this.metroSetPanel7.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(30)))));
             this.metroSetPanel7.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(110)))), ((int)(((byte)(110)))), ((int)(((byte)(110)))));
             this.metroSetPanel7.BorderThickness = 1;
-            this.metroSetPanel7.Controls.Add(this.metroSetLabel12);
+            this.metroSetPanel7.Controls.Add(this.lblCAChanges);
             this.metroSetPanel7.IsDerivedStyle = true;
             this.metroSetPanel7.Location = new System.Drawing.Point(15, 347);
             this.metroSetPanel7.Margin = new System.Windows.Forms.Padding(4);
@@ -591,20 +606,20 @@
             this.metroSetPanel7.ThemeAuthor = "Narwin";
             this.metroSetPanel7.ThemeName = "MetroDark";
             // 
-            // metroSetLabel12
+            // lblCAChanges
             // 
-            this.metroSetLabel12.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.metroSetLabel12.IsDerivedStyle = true;
-            this.metroSetLabel12.Location = new System.Drawing.Point(4, 0);
-            this.metroSetLabel12.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.metroSetLabel12.Name = "metroSetLabel12";
-            this.metroSetLabel12.Size = new System.Drawing.Size(220, 22);
-            this.metroSetLabel12.Style = MetroSet_UI.Enums.Style.Dark;
-            this.metroSetLabel12.StyleManager = null;
-            this.metroSetLabel12.TabIndex = 3;
-            this.metroSetLabel12.Text = "Critical Analysis: Changes";
-            this.metroSetLabel12.ThemeAuthor = "Narwin";
-            this.metroSetLabel12.ThemeName = "MetroDark";
+            this.lblCAChanges.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.lblCAChanges.IsDerivedStyle = true;
+            this.lblCAChanges.Location = new System.Drawing.Point(4, 0);
+            this.lblCAChanges.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblCAChanges.Name = "lblCAChanges";
+            this.lblCAChanges.Size = new System.Drawing.Size(220, 22);
+            this.lblCAChanges.Style = MetroSet_UI.Enums.Style.Dark;
+            this.lblCAChanges.StyleManager = null;
+            this.lblCAChanges.TabIndex = 3;
+            this.lblCAChanges.Text = "Critical Analysis: Changes";
+            this.lblCAChanges.ThemeAuthor = "Narwin";
+            this.lblCAChanges.ThemeName = "MetroDark";
             // 
             // metroSetPanel8
             // 
@@ -612,7 +627,7 @@
             this.metroSetPanel8.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(110)))), ((int)(((byte)(110)))), ((int)(((byte)(110)))));
             this.metroSetPanel8.BorderThickness = 1;
             this.metroSetPanel8.Controls.Add(this.btnDuality);
-            this.metroSetPanel8.Controls.Add(this.metroSetLabel10);
+            this.metroSetPanel8.Controls.Add(this.lblCADual);
             this.metroSetPanel8.IsDerivedStyle = true;
             this.metroSetPanel8.Location = new System.Drawing.Point(286, 229);
             this.metroSetPanel8.Margin = new System.Windows.Forms.Padding(4);
@@ -650,34 +665,20 @@
             this.btnDuality.ThemeAuthor = "Narwin";
             this.btnDuality.ThemeName = "MetroLite";
             // 
-            // metroSetLabel10
+            // lblCADual
             // 
-            this.metroSetLabel10.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.metroSetLabel10.IsDerivedStyle = true;
-            this.metroSetLabel10.Location = new System.Drawing.Point(4, 0);
-            this.metroSetLabel10.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.metroSetLabel10.Name = "metroSetLabel10";
-            this.metroSetLabel10.Size = new System.Drawing.Size(220, 22);
-            this.metroSetLabel10.Style = MetroSet_UI.Enums.Style.Dark;
-            this.metroSetLabel10.StyleManager = null;
-            this.metroSetLabel10.TabIndex = 3;
-            this.metroSetLabel10.Text = "Critical Analysis: Duality";
-            this.metroSetLabel10.ThemeAuthor = "Narwin";
-            this.metroSetLabel10.ThemeName = "MetroDark";
-            // 
-            // metroSetLabel6
-            // 
-            this.metroSetLabel6.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.metroSetLabel6.IsDerivedStyle = true;
-            this.metroSetLabel6.Location = new System.Drawing.Point(271, 80);
-            this.metroSetLabel6.Name = "metroSetLabel6";
-            this.metroSetLabel6.Size = new System.Drawing.Size(154, 33);
-            this.metroSetLabel6.Style = MetroSet_UI.Enums.Style.Dark;
-            this.metroSetLabel6.StyleManager = null;
-            this.metroSetLabel6.TabIndex = 10;
-            this.metroSetLabel6.Text = "Such Empty...";
-            this.metroSetLabel6.ThemeAuthor = "Narwin";
-            this.metroSetLabel6.ThemeName = "MetroDark";
+            this.lblCADual.Font = new System.Drawing.Font("Microsoft Sans Serif", 13F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.lblCADual.IsDerivedStyle = true;
+            this.lblCADual.Location = new System.Drawing.Point(4, 0);
+            this.lblCADual.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblCADual.Name = "lblCADual";
+            this.lblCADual.Size = new System.Drawing.Size(220, 22);
+            this.lblCADual.Style = MetroSet_UI.Enums.Style.Dark;
+            this.lblCADual.StyleManager = null;
+            this.lblCADual.TabIndex = 3;
+            this.lblCADual.Text = "Critical Analysis: Duality";
+            this.lblCADual.ThemeAuthor = "Narwin";
+            this.lblCADual.ThemeName = "MetroDark";
             // 
             // MainMenu
             // 
@@ -704,6 +705,7 @@
             this.Text = "Lineagramming Solutions";
             this.TextColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(177)))), ((int)(((byte)(225)))));
             this.ThemeName = "MetroDark";
+            this.Load += new System.EventHandler(this.MainMenu_Load);
             this.metroSetPanel2.ResumeLayout(false);
             this.metroSetPanel1.ResumeLayout(false);
             this.pnlDragnDrop.ResumeLayout(false);
@@ -722,33 +724,33 @@
         private MetroSet_UI.Controls.MetroSetButton btnCARanges;
         private MetroSet_UI.Controls.MetroSetLabel metroSetLabel2;
         private MetroSet_UI.Controls.MetroSetLabel metroSetLabel1;
-        private MetroSet_UI.Controls.MetroSetComboBox cboRangeCol;
-        private MetroSet_UI.Controls.MetroSetLabel lblCATitle;
+        private MetroSet_UI.Controls.MetroSetComboBox cboCARangeCol;
+        private MetroSet_UI.Controls.MetroSetLabel lblCARanges;
         private MetroSet_UI.Controls.MetroSetComboBox cboCARangeRow;
         private MetroSet_UI.Controls.MetroSetPanel metroSetPanel1;
-        private MetroSet_UI.Controls.MetroSetLabel metroSetLabel3;
+        private MetroSet_UI.Controls.MetroSetLabel lblImport;
         private MetroSet_UI.Controls.MetroSetButton btnFile;
         private MetroSet_UI.Controls.MetroSetPanel pnlDragnDrop;
         private MetroSet_UI.Controls.MetroSetLabel lblDrop;
         private MetroSet_UI.Controls.MetroSetPanel metroSetPanel4;
-        private MetroSet_UI.Controls.MetroSetLabel metroSetLabel4;
+        private MetroSet_UI.Controls.MetroSetLabel lblCASolution;
         private MetroSet_UI.Controls.MetroSetRichTextBox rtbOutput;
         private MetroSet_UI.Controls.MetroSetPanel metroSetPanel3;
-        private MetroSet_UI.Controls.MetroSetLabel metroSetLabel5;
+        private MetroSet_UI.Controls.MetroSetLabel lblSolution;
         private MetroSet_UI.Controls.MetroSetLabel lblSolutionEmpty;
         private MetroSet_UI.Controls.MetroSetPanel metroSetPanel5;
         private MetroSet_UI.Controls.MetroSetRichTextBox rtbFileOutput;
-        private MetroSet_UI.Controls.MetroSetLabel metroSetLabel7;
+        private MetroSet_UI.Controls.MetroSetLabel lblFileOutput;
         private MetroSet_UI.Controls.MetroSetPanel metroSetPanel6;
         private MetroSet_UI.Controls.MetroSetButton btnSolve;
         private MetroSet_UI.Controls.MetroSetComboBox cboMethod;
         private MetroSet_UI.Controls.MetroSetLabel metroSetLabel9;
-        private MetroSet_UI.Controls.MetroSetLabel metroSetLabel8;
+        private MetroSet_UI.Controls.MetroSetLabel lblSolve;
         private MetroSet_UI.Controls.MetroSetPanel metroSetPanel7;
-        private MetroSet_UI.Controls.MetroSetLabel metroSetLabel12;
+        private MetroSet_UI.Controls.MetroSetLabel lblCAChanges;
         private MetroSet_UI.Controls.MetroSetPanel metroSetPanel8;
         private MetroSet_UI.Controls.MetroSetButton btnDuality;
-        private MetroSet_UI.Controls.MetroSetLabel metroSetLabel10;
+        private MetroSet_UI.Controls.MetroSetLabel lblCADual;
         private MetroSet_UI.Controls.MetroSetLabel metroSetLabel6;
     }
 }

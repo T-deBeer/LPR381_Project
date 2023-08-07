@@ -57,6 +57,7 @@
             this.mbtnSelectFile.Text = "Select Text File";
             this.mbtnSelectFile.ThemeAuthor = "Narwin";
             this.mbtnSelectFile.ThemeName = "MetroLite";
+            this.mbtnSelectFile.Click += new System.EventHandler(this.mbtnSelectFile_Click);
             // 
             // rtbOutput
             // 
@@ -81,7 +82,7 @@
             this.rtbOutput.ThemeName = "MetroLite";
             this.rtbOutput.WordWrap = true;
             // 
-            // MainMenu
+            // TestForm
             // 
             this.AllowResize = false;
             this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 20F);
@@ -90,7 +91,7 @@
             this.ClientSize = new System.Drawing.Size(1180, 632);
             this.Controls.Add(this.rtbOutput);
             this.Controls.Add(this.mbtnSelectFile);
-            this.Name = "MainMenu";
+            this.Name = "TestForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Style = MetroSet_UI.Enums.Style.Dark;
             this.Text = "Main Menu";
