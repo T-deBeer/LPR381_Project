@@ -20,7 +20,6 @@ namespace LPR381_Project
         public List<double[,]> TwoPhaseTables { get; set; }
         public List<Dictionary<int, int>> TwoPhaseTablesPivots { get; set; }
 
-        public List<string> SignRestrictions { get; set; }
 
         public double[,] SimplexInitial { get; set; }
         public double[,] TwoPhaseInitial { get; set; }
@@ -31,7 +30,6 @@ namespace LPR381_Project
             this.WFunction = new Dictionary<string, double>();
             this.ConstraintsSimplex = new List<Dictionary<string, string>>();
             this.ConstraintsTwoPhase = new List<Dictionary<string, string>>();
-            this.SignRestrictions = new List<string>();
             this.TwoPhaseArtificialColumns = new List<int>();
 
 
@@ -62,8 +60,6 @@ namespace LPR381_Project
 
             //Get the Sign restrictions and then remove it from the model
             List<string> signRes = new List<string>(model[model.Count - 1].Split(" "));
-            this.SignRestrictions = signRes;
-
             model.RemoveAt(model.Count - 1);
 
             //Set the base constraints
@@ -249,7 +245,15 @@ namespace LPR381_Project
             //Create simplex initial Tableau
             int count = 0;
             this.SimplexInitial = new double[this.ConstraintsSimplex.Count + 1, decVars + this.ConstraintsSimplex.Count + 1];
-            this.TwoPhaseInitial = new double[this.ConstraintsTwoPhase.Count + 2, decVars + this.ConstraintsTwoPhase.Count + numGreaterThan];
+            if (numGreaterThan >= 1)
+            {
+                this.TwoPhaseInitial = new double[this.ConstraintsTwoPhase.Count + 2, decVars + this.ConstraintsTwoPhase.Count + numGreaterThan];
+            }
+            else
+            {
+                this.TwoPhaseInitial = new double[this.ConstraintsTwoPhase.Count + 2, decVars + this.ConstraintsTwoPhase.Count + numGreaterThan + 1];
+            }
+
 
             //Objective function table initialization
             foreach (var kvp in this.ObjectiveFunction)
@@ -284,7 +288,7 @@ namespace LPR381_Project
                 {
                     if (this.ConstraintsTwoPhase[i].ContainsKey("A"))
                     {
-                        this.TwoPhaseArtificialColumns.Add(this.ConstraintsTwoPhase.Count + numGreaterThan + i);
+                        this.TwoPhaseArtificialColumns.Add(decVars + numGreaterThan - 1 + i);
                     }
                 }
                 this.TwoPhaseInitial[0, this.TwoPhaseInitial.GetLength(1) - 1] = this.WFunction["rhs"];
@@ -327,29 +331,18 @@ namespace LPR381_Project
                 //Adds slack variables
                 if (con.ContainsKey("S"))
                 {
-                    //if (constraintNumber < count)
-                    //{
-                    //    this.TwoPhaseInitial[row, row+constraintNumber] = double.Parse(con["S"]);
-                    //    count++;
-                    //}
-                    //else
-                    //{
-                    //    this.TwoPhaseInitial[row, count + row - 1] = double.Parse(con["S"]);
-                    //    count++;
-                    //}
-
-                    this.TwoPhaseInitial[row, count + constraintNumber] = double.Parse(con["S"]);
-                    count++;
-
-                    //if (count + row - 1 != this.ConstraintsTwoPhase.Count + 2)
-                    //{
-                    //    //Console.WriteLine($"S{row},{count + row}");
-                    //    this.TwoPhaseInitial[row, count + row - 1] = double.Parse(con["S"]);
-                    //}
-                    //else
-                    //{
-                    //    this.TwoPhaseInitial[row, count + row - 2] = double.Parse(con["S"]);
-                    //}
+                    if (constraintNumber == 1 && numGreaterThan >= 1)
+                    {
+                        this.TwoPhaseInitial[row, count - 1 + constraintNumber] = double.Parse(con["S"]);
+                    }
+                    else if (numGreaterThan <= 0)
+                    {
+                        this.TwoPhaseInitial[row, count + row - 2] = double.Parse(con["S"]);
+                    }
+                    else
+                    {
+                        this.TwoPhaseInitial[row, count + constraintNumber] = double.Parse(con["S"]);
+                    }
 
                 }
                 //Adds excess and artificial
@@ -357,35 +350,24 @@ namespace LPR381_Project
                 {
                     if (con.ContainsKey("A"))
                     {
-                        if (count + row - 1 != this.ConstraintsTwoPhase.Count + 2)
-                        {
-                            this.TwoPhaseInitial[row, count + row - 2] = double.Parse(con["E"]);
-                            count++;
-                            this.TwoPhaseInitial[row, count + row - 2] = double.Parse(con["A"]);
-                        }
-                        else
-                        {
-                            this.TwoPhaseInitial[row, count + row - 1] = double.Parse(con["E"]);
-                            count++;
-                            this.TwoPhaseInitial[row, count + row - 1] = double.Parse(con["A"]);
-                        }
+                        this.TwoPhaseInitial[row, count - 1 + constraintNumber] = double.Parse(con["E"]);
+                        count++;
+                        this.TwoPhaseInitial[row, count - 1 + constraintNumber] = double.Parse(con["A"]);
+
                     }
                 }
-
                 //Adds only artificial
                 if (con.ContainsKey("A"))
                 {
                     if (!con.ContainsKey("E"))
                     {
-                        if (count + row - 1 != this.ConstraintsTwoPhase.Count + 2)
+                        if (constraintNumber == row - 2)
                         {
-                            this.TwoPhaseInitial[row, count + row - 1] = double.Parse(con["A"]);
-                            count++;
+                            this.TwoPhaseInitial[row, count - 1 + constraintNumber] = double.Parse(con["A"]);
                         }
                         else
                         {
-                            this.TwoPhaseInitial[row, count + row - 2] = double.Parse(con["A"]);
-                            count++;
+                            this.TwoPhaseInitial[row, count + constraintNumber] = double.Parse(con["A"]);
                         }
                     }
 
@@ -537,119 +519,105 @@ namespace LPR381_Project
             this.TwoPhaseTables.Add(this.TwoPhaseInitial);
             bool twoPhaseOptimal = false;
 
-            for (int i = 0; i < this.TwoPhaseInitial.GetLength(0); i++)
+
+            while (!twoPhaseOptimal)
             {
-                for (int j = 0; j < this.TwoPhaseInitial.GetLength(1); j++)
+                bool valid = false;
+                int pivotRowIndex = -1;
+                int pivotColIndex = -1;
+
+
+                double[,] table = TwoPhaseTables[TwoPhaseTables.Count - 1];
+
+                for (int i = 0; i < table.GetLength(1); i++)
                 {
-                    Console.Write($" {this.TwoPhaseInitial[i, j]} ");
+                    if (table[0, i] > 0)
+                    {
+                        valid = true;
+                    }
                 }
-                Console.WriteLine();
+
+                if (valid)
+                {
+                    //Select pivot column using W
+                    double maxValue = 0;
+                    for (int i = 0; i < table.GetLength(1) - 1; i++)
+                    {
+                        double currentValue = table[0, i];
+
+                        if (currentValue > maxValue && !double.IsNegative(currentValue))
+                        {
+                            maxValue = currentValue;
+                            pivotColIndex = i;
+                        }
+                    }
+                }
+                else
+                {
+                    //Select pivot col using Z
+                    double maxValue = 0;
+                    for (int i = 0; i < table.GetLength(1) - 1; i++)
+                    {
+                        foreach (var item in this.TwoPhaseArtificialColumns)
+                        {
+                            Console.WriteLine(item);
+                        }
+                        if (!this.TwoPhaseArtificialColumns.Contains(i))
+                        {
+                            double currentValue = table[1, i];
+
+                            if (this.ProblemType == "max")
+                            {
+                                if (currentValue < maxValue && double.IsNegative(currentValue))
+                                {
+                                    maxValue = currentValue;
+                                    pivotColIndex = i;
+                                }
+                            }
+                            else
+                            {
+                                if (currentValue > maxValue && !double.IsNegative(currentValue))
+                                {
+                                    maxValue = currentValue;
+                                    pivotColIndex = i;
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (pivotColIndex == -1)
+                {
+                    twoPhaseOptimal = true;
+                    break;
+                }
+
+                double minValue = 100000;
+                for (int i = 2; i < table.GetLength(0); i++)
+                {
+                    double currentValue = table[i, table.GetLength(1) - 1] / table[i, pivotColIndex];
+                    if (currentValue < minValue && !double.IsNegative(currentValue) && !double.IsNaN(currentValue))
+                    {
+                        pivotRowIndex = i;
+                        minValue = currentValue;
+                    }
+                }
+
+                if (pivotRowIndex == -1)
+                {
+                    twoPhaseOptimal = true;
+                    break;
+                }
+
+
+                //Add pivot information
+                Dictionary<int, int> pivots = new Dictionary<int, int>();
+                pivots.Add(pivotColIndex, pivotRowIndex);
+                this.TwoPhaseTablesPivots.Add(pivots);
+
+                //Adds table to solution
+                this.TwoPhaseTables.Add(PivotTable(table, pivotColIndex, pivotRowIndex));
             }
-
-            //while (!twoPhaseOptimal)
-            //{
-            //    bool valid = false;
-            //    int pivotRowIndex = -1;
-            //    int pivotColIndex = -1;
-
-
-            //    double[,] table = TwoPhaseTables[TwoPhaseTables.Count - 1];
-
-            //    for (int i = 0; i < table.GetLength(1); i++)
-            //    {
-            //        if (table[0, i] > 0)
-            //        {
-            //            valid = true;
-            //        }
-            //    }
-
-            //    if (valid)
-            //    {
-            //        //Select pivot column using W
-            //        double maxValue = 0;
-            //        for (int i = 0; i < table.GetLength(1) - 1; i++)
-            //        {
-            //            double currentValue = table[0, i];
-
-            //            if (currentValue > maxValue && !double.IsNegative(currentValue))
-            //            {
-            //                maxValue = currentValue;
-            //                pivotColIndex = i;
-            //            }
-            //        }
-
-            //        //Console.WriteLine(maxValue);
-            //    }
-            //    else
-            //    {
-            //        //Select pivot col using Z
-            //        double maxValue = 0;
-            //        for (int i = 0; i < table.GetLength(1) - 1; i++)
-            //        {
-            //            //foreach (var item in this.TwoPhaseArtificialColumns)
-            //            //{
-            //            //    Console.WriteLine(item);
-            //            //}
-            //            if (!this.TwoPhaseArtificialColumns.Contains(i))
-            //            {
-            //                double currentValue = table[1, i];
-
-            //                if (this.ProblemType == "max")
-            //                {
-            //                    if (currentValue < maxValue && double.IsNegative(currentValue))
-            //                    {
-            //                        maxValue = currentValue;
-            //                        pivotColIndex = i;
-            //                    }
-            //                }
-            //                else
-            //                {
-            //                    if (currentValue > maxValue && !double.IsNegative(currentValue))
-            //                    {
-            //                        maxValue = currentValue;
-            //                        pivotColIndex = i;
-            //                    }
-            //                }
-            //            }
-            //        }
-
-            //        //Console.WriteLine(maxValue);
-            //    }
-
-            //    if (pivotColIndex == -1)
-            //    {
-            //        twoPhaseOptimal = true;
-            //        break;
-            //    }
-
-            //    double minValue = 100000;
-            //    for (int i = 2; i < table.GetLength(0); i++)
-            //    {
-            //        double currentValue = table[i, table.GetLength(1) - 1] / table[i, pivotColIndex];
-            //        if (currentValue < minValue && !double.IsNegative(currentValue) && !double.IsNaN(currentValue))
-            //        {
-            //            pivotRowIndex = i;
-            //            minValue = currentValue;
-            //        }
-            //    }
-
-            //    if (pivotRowIndex == -1)
-            //    {
-            //        twoPhaseOptimal = true;
-            //        break;
-            //    }
-
-
-            //    //Add pivot information
-            //    Dictionary<int, int> pivots = new Dictionary<int, int>();
-            //    pivots.Add(pivotColIndex, pivotRowIndex);
-            //    this.TwoPhaseTablesPivots.Add(pivots);
-
-            //    //Console.WriteLine(minValue);
-
-            //    //Adds table to solution
-            //    this.TwoPhaseTables.Add(PivotTable(table, pivotColIndex, pivotRowIndex));
-            //}
         }
 
         //Code for pivotying a table
@@ -736,7 +704,7 @@ namespace LPR381_Project
             }
 
             //Return objective function string
-            return $"Z" + string.Join("", objectiveTerms) + " = 0";
+            return $"{this.ProblemType.ToUpper()} Z" + string.Join("", objectiveTerms) + " = 0";
         }
 
         //Display W funciton
