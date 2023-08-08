@@ -6,28 +6,36 @@ using System.Threading.Tasks;
 
 namespace LPR381_Project
 {
-    public class LinearModel
+    class LinearModel
     {
         public string ProblemType { get; set; }
+        public string DualProblemType { get; set; }
+        public List<string> SignRes { get; set; }
+        public List<string> DualSignRes { get; set; }
         public Dictionary<string, double> ObjectiveFunction { get; set; }
         public Dictionary<string, double> WFunction { get; set; }
+        public Dictionary<string, double> DualityFunction { get; set; }
+        public List<Dictionary<string, string>> DualityConstraints { get; set; }
         public List<Dictionary<string, string>> ConstraintsSimplex { get; set; }
         public List<Dictionary<string, string>> ConstraintsTwoPhase { get; set; }
         public List<int> TwoPhaseArtificialColumns { get; set; }
         public List<double[,]> SimplexTables { get; set; }
         public List<Dictionary<int, int>> SimplexTablesPivots { get; set; }
-
         public List<double[,]> TwoPhaseTables { get; set; }
         public List<Dictionary<int, int>> TwoPhaseTablesPivots { get; set; }
 
 
         public double[,] SimplexInitial { get; set; }
         public double[,] TwoPhaseInitial { get; set; }
+        public double[,] DualityInitial { get; set; }
 
         public LinearModel(string[] lines)
         {
             this.ObjectiveFunction = new Dictionary<string, double>();
             this.WFunction = new Dictionary<string, double>();
+            this.DualityFunction = new Dictionary<string, double>();
+
+            this.DualityConstraints = new List<Dictionary<string, string>>();
             this.ConstraintsSimplex = new List<Dictionary<string, string>>();
             this.ConstraintsTwoPhase = new List<Dictionary<string, string>>();
             this.TwoPhaseArtificialColumns = new List<int>();
@@ -39,6 +47,10 @@ namespace LPR381_Project
             this.TwoPhaseTables = new List<double[,]>();
             this.TwoPhaseTablesPivots = new List<Dictionary<int, int>>();
 
+
+            this.SignRes = new List<string>();
+            this.DualSignRes = new List<string>();
+
             List<string> model = new List<string>(lines);
 
             //Get Objective Function from Problem
@@ -49,20 +61,68 @@ namespace LPR381_Project
             this.ProblemType = objFunc[0];//Get type [min/max]
             objFunc.RemoveAt(0);//remove type [min/max]
 
+            this.DualProblemType = this.ProblemType == "max" ? "min" : "max";
+
 
             //Generate the objective function dictionary
             for (int i = 1; i <= objFunc.Count; i++)
             {
                 this.ObjectiveFunction.Add($"X{i}", double.Parse(objFunc[i - 1]));
+
+                Dictionary<string, string> newEntry = new Dictionary<string, string>
+                {
+                    { "rhs", objFunc[i - 1] }
+                };
+                this.DualityConstraints.Add(newEntry);
             }
 
             int decVars = this.ObjectiveFunction.Count;
 
             //Get the Sign restrictions and then remove it from the model
             List<string> signRes = new List<string>(model[model.Count - 1].Split(" "));
+            this.SignRes = signRes;
             model.RemoveAt(model.Count - 1);
 
+            //Duality Constraints rhs and signs
+            for (int i = 0; i < signRes.Count; i++)
+            {
+                switch (signRes[i])
+                {
+                    case "+":
+                        {
+                            if (this.ProblemType == "max")
+                            {
+                                this.DualityConstraints[i].Add("sign", ">=");
+                            }
+                            else
+                            {
+                                this.DualityConstraints[i].Add("sign", "<=");
+                            }
+                        }
+                        break;
+                    case "-":
+                        {
+                            if (this.ProblemType == "max")
+                            {
+                                this.DualityConstraints[i].Add("sign", ">=");
+                            }
+                            else
+                            {
+                                this.DualityConstraints[i].Add("sign", "<=");
+                            }
+                        }
+                        break;
+                    case "urs":
+                        {
+                            this.DualityConstraints[i].Add("sign", "=");
+                        }
+
+                        break;
+                }
+            }
+
             //Set the base constraints
+            int coeffCounter = 1;
             foreach (var constraint in model)
             {
                 Dictionary<string, string> conRow = new Dictionary<string, string>();
@@ -72,10 +132,48 @@ namespace LPR381_Project
                 for (int i = 1; i <= objFunc.Count; i++)
                 {
                     conRow.Add($"X{i}", con[i - 1]);
+                    this.DualityConstraints[i - 1].Add($"Y{this.DualityConstraints[i - 1].Count - 1}", con[i - 1]);
                 }
 
                 conRow.Add("sign", con[con.Count - 2]);
+
+                //Duality sign restrictions
+                switch (con[con.Count - 2])
+                {
+                    case ">=":
+                        {
+                            if (this.ProblemType == "max")
+                            {
+                                this.DualSignRes.Add("-");
+                            }
+                            else
+                            {
+                                this.DualSignRes.Add("+");
+                            }
+                        }
+                        break;
+                    case "<=":
+                        {
+                            if (this.ProblemType == "max")
+                            {
+                                this.DualSignRes.Add("+");
+                            }
+                            else
+                            {
+                                this.DualSignRes.Add("-");
+                            }
+                        }
+                        break;
+                    case "=":
+                        {
+                            this.DualSignRes.Add("urs");
+                        }
+                        break;
+                }
+
                 conRow.Add("rhs", con[con.Count - 1]);
+                this.DualityFunction.Add($"Y{coeffCounter}", double.Parse(con[con.Count - 1]));
+                coeffCounter++;
 
                 this.ConstraintsSimplex.Add(new Dictionary<string, string>(conRow));
                 this.ConstraintsTwoPhase.Add(new Dictionary<string, string>(conRow));
@@ -124,6 +222,36 @@ namespace LPR381_Project
                 }
             }
 
+            //Enforce sign restircition changes for the duality model
+            for (int i = 0; i < this.DualSignRes.Count; i++)
+            {
+                string xKey = $"X{i + 1}";
+                string yKey = $"Y{i + 1}";
+                switch (this.DualSignRes[i])
+                {
+                    case "-":
+                        {
+                            foreach (var con in this.DualityConstraints)
+                            {
+                                con[yKey] = (double.Parse(con[yKey]) * -1).ToString();
+                            }
+                        }
+                        break;
+                    case "urs":
+                        {
+                            this.DualityFunction.Add($"{yKey}-", this.DualityFunction[yKey] * -1);
+
+                            foreach (var con in this.DualityConstraints)
+                            {
+                                con.Add($"{yKey}-", (double.Parse(con[yKey]) * -1).ToString());
+                            }
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+
             //Add slacks and excess simplex
             List<Dictionary<string, string>> tempConstraints = new List<Dictionary<string, string>>();
 
@@ -164,11 +292,54 @@ namespace LPR381_Project
                         break;
                 }
             }
-
             // Add temporary constraints to ConstraintsSimplex
             foreach (var tempConstraint in tempConstraints)
             {
                 this.ConstraintsSimplex.Add(tempConstraint);
+            }
+            //Duality Constraints setup
+            tempConstraints.Clear();
+            foreach (var constraint in this.DualityConstraints)
+            {
+                switch (constraint["sign"])
+                {
+                    case "<=":
+                        {
+                            constraint.Add("S", "+1");
+                        }
+                        break;
+
+                    case ">=":
+                        {
+                            constraint.Add("E", "+1");
+                            foreach (var kvp in constraint.Where(x => x.Key.Contains('Y') || x.Key.Contains("rhs")))
+                            {
+                                constraint[kvp.Key] = (double.Parse(constraint[kvp.Key]) * -1).ToString();
+                            }
+                        }
+                        break;
+
+                    case "=":
+                        {
+                            Dictionary<string, string> temp = new Dictionary<string, string>(constraint);
+                            constraint.Add("S", "+1");
+
+                            foreach (var kvp in temp.Where(x => x.Key.Contains('Y') || x.Key.Contains("rhs")))
+                            {
+                                temp[kvp.Key] = (double.Parse(temp[kvp.Key]) * -1).ToString();
+                            }
+
+                            temp.Add("E", "+1");
+
+                            tempConstraints.Add(temp);
+                        }
+                        break;
+                }
+            }
+            //Add temp constriants
+            foreach (var tempConstraint in tempConstraints)
+            {
+                this.DualityConstraints.Add(tempConstraint);
             }
 
             //Add slacks and excess two phase
@@ -240,6 +411,16 @@ namespace LPR381_Project
                     }
                 }
 
+            }
+
+
+            //Duality initial tableau
+            int dualCount = 0;
+            this.DualityInitial = new double[this.DualityConstraints.Count + 1, decVars + this.DualityConstraints.Count + 1];
+            foreach (var kvp in this.DualityFunction)
+            {
+                this.DualityInitial[0, dualCount] = kvp.Value * -1;
+                dualCount++;
             }
 
             //Create simplex initial Tableau
@@ -316,6 +497,27 @@ namespace LPR381_Project
                 row++;
             }
 
+            //Constraints duality table
+            row = 1;
+            foreach (var con in this.DualityConstraints)
+            {
+                count = 0;
+                foreach (var kvp in con.Where(x => x.Key.Contains('Y')))
+                {
+                    this.DualityInitial[row, count] = double.Parse(kvp.Value);
+                    count++;
+                }
+                if (con.ContainsKey("S"))
+                {
+                    this.DualityInitial[row, count + row - 1] = double.Parse(con["S"]);
+                }
+                else if (con.ContainsKey("E"))
+                {
+                    this.DualityInitial[row, count + row - 1] = double.Parse(con["E"]);
+                }
+                this.DualityInitial[row, this.DualityInitial.GetLength(1) - 1] = double.Parse(con["rhs"]);
+                row++;
+            }
 
             //Constraints two phase table initilization
             row = 2;
@@ -331,6 +533,16 @@ namespace LPR381_Project
                 //Adds slack variables
                 if (con.ContainsKey("S"))
                 {
+                    //if(constraintNumber < count)
+                    //{
+                    //    this.TwoPhaseInitial[row, count + row - 2] = double.Parse(con["S"]);
+                    //    count++;
+                    //}
+                    //else
+                    //{
+                    //    this.TwoPhaseInitial[row, count + row -1 ] = double.Parse(con["S"]);
+                    //    count++;
+                    //}
                     if (constraintNumber == 1 && numGreaterThan >= 1)
                     {
                         this.TwoPhaseInitial[row, count - 1 + constraintNumber] = double.Parse(con["S"]);
@@ -344,6 +556,16 @@ namespace LPR381_Project
                         this.TwoPhaseInitial[row, count + constraintNumber] = double.Parse(con["S"]);
                     }
 
+                    //if (count + row - 1 != this.ConstraintsTwoPhase.Count + 2)
+                    //{
+                    //    //Console.WriteLine($"S{row},{count + row}");
+                    //    this.TwoPhaseInitial[row, count + row - 1] = double.Parse(con["S"]);
+                    //}
+                    //else
+                    //{
+                    //    this.TwoPhaseInitial[row, count + row - 2] = double.Parse(con["S"]);
+                    //}
+
                 }
                 //Adds excess and artificial
                 if (con.ContainsKey("E"))
@@ -354,6 +576,18 @@ namespace LPR381_Project
                         count++;
                         this.TwoPhaseInitial[row, count - 1 + constraintNumber] = double.Parse(con["A"]);
 
+                        //if (count + row - 1 != this.ConstraintsTwoPhase.Count + 2)
+                        //{
+                        //    this.TwoPhaseInitial[row, count + row - 2] = double.Parse(con["E"]);
+                        //    count++;
+                        //    this.TwoPhaseInitial[row, count + row - 2] = double.Parse(con["A"]);
+                        //}
+                        //else
+                        //{
+                        //    this.TwoPhaseInitial[row, count + row - 1] = double.Parse(con["E"]);
+                        //    count++;
+                        //    this.TwoPhaseInitial[row, count + row - 1] = double.Parse(con["A"]);
+                        //}
                     }
                 }
                 //Adds only artificial
@@ -369,6 +603,17 @@ namespace LPR381_Project
                         {
                             this.TwoPhaseInitial[row, count + constraintNumber] = double.Parse(con["A"]);
                         }
+
+                        //if (count + row - 1 != this.ConstraintsTwoPhase.Count + 2)
+                        //{
+                        //    this.TwoPhaseInitial[row, count + row - 1] = double.Parse(con["A"]);
+                        //    count++;
+                        //}
+                        //else
+                        //{
+                        //    this.TwoPhaseInitial[row, count + row - 2] = double.Parse(con["A"]);
+                        //    count++;
+                        //}
                     }
 
                 }
@@ -514,11 +759,9 @@ namespace LPR381_Project
 
             }
 
-
             //Two Phase Solver
             this.TwoPhaseTables.Add(this.TwoPhaseInitial);
             bool twoPhaseOptimal = false;
-
 
             while (!twoPhaseOptimal)
             {
@@ -551,6 +794,8 @@ namespace LPR381_Project
                             pivotColIndex = i;
                         }
                     }
+
+                    //Console.WriteLine(maxValue);
                 }
                 else
                 {
@@ -584,6 +829,8 @@ namespace LPR381_Project
                             }
                         }
                     }
+
+                    //Console.WriteLine(maxValue);
                 }
 
                 if (pivotColIndex == -1)
@@ -707,6 +954,23 @@ namespace LPR381_Project
             return $"{this.ProblemType.ToUpper()} Z" + string.Join("", objectiveTerms) + " = 0";
         }
 
+        public string CanonDualFunctionToString()
+        {
+            List<string> objectiveTerms = new List<string>();
+
+            // Convert the dictionary to a list of formatted terms
+            foreach (var kvp in this.DualityFunction)
+            {
+                string sign = (kvp.Value * -1 < 0) ? " - " : " + ";
+                double absValue = Math.Abs(kvp.Value);
+                string term = $"{sign}{absValue}{kvp.Key}";
+                objectiveTerms.Add(term);
+            }
+
+            //Return objective function string
+            return $"{this.DualProblemType.ToUpper()} W" + string.Join("", objectiveTerms) + " = 0";
+        }
+
         //Display W funciton
         public string WFunctionToString()
         {
@@ -767,6 +1031,40 @@ namespace LPR381_Project
             return string.Join("\n", objectiveTerms);
         }
 
+        //Display simplex constraints Canonical
+        public string CanonDualConstraintsToString()
+        {
+            List<string> objectiveTerms = new List<string>();
+
+            // Convert the dictionary to a list of formatted terms
+            foreach (var con in this.DualityConstraints)
+            {
+                string term = "";
+                foreach (var kvp in con.Where(x => x.Key.Contains('Y')))
+                {
+                    string sign = (double.Parse(kvp.Value) < 0) ? " - " : " + ";
+                    double absValue = Math.Abs(double.Parse(kvp.Value));
+
+                    term += $"{sign}{absValue}{kvp.Key}";
+
+                }
+
+                foreach (var kvp in con.Where(x => x.Key.Contains('S') || x.Key.Contains('E')))
+                {
+                    string sign = (double.Parse(kvp.Value) < 0) ? " - " : " + ";
+                    double absValue = Math.Abs(double.Parse(kvp.Value));
+
+                    term += $" {sign}{absValue}{kvp.Key}";
+
+                }
+
+                term += $" = {con["rhs"]}";
+                objectiveTerms.Add(term);
+
+            }
+            return string.Join("\n", objectiveTerms);
+        }
+
         public string CanonTwoPhaseConstraintsToString()
         {
             List<string> objectiveTerms = new List<string>();
@@ -801,3 +1099,4 @@ namespace LPR381_Project
         }
     }
 }
+
