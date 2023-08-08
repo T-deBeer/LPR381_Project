@@ -42,6 +42,8 @@ namespace LPR381_Project
             cboMethod.Enabled = false;
             cboCARangeRow.Enabled = false;
             cboCARangeCol.Enabled = false;
+
+            cbForm.Location = new System.Drawing.Point(1164, 4);
         }
 
         private void pnlDragnDrop_DragEnter(object sender, DragEventArgs e)

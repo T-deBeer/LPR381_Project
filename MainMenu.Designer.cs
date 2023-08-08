@@ -59,6 +59,7 @@
             this.metroSetPanel8 = new MetroSet_UI.Controls.MetroSetPanel();
             this.btnDuality = new MetroSet_UI.Controls.MetroSetButton();
             this.lblCADual = new MetroSet_UI.Controls.MetroSetLabel();
+            this.cbForm = new MetroSet_UI.Controls.MetroSetControlBox();
             this.metroSetPanel2.SuspendLayout();
             this.metroSetPanel1.SuspendLayout();
             this.pnlDragnDrop.SuspendLayout();
@@ -291,7 +292,7 @@
             this.pnlDragnDrop.IsDerivedStyle = true;
             this.pnlDragnDrop.Location = new System.Drawing.Point(27, 25);
             this.pnlDragnDrop.Name = "pnlDragnDrop";
-            this.pnlDragnDrop.Size = new System.Drawing.Size(213, 77);
+            this.pnlDragnDrop.Size = new System.Drawing.Size(213, 89);
             this.pnlDragnDrop.Style = MetroSet_UI.Enums.Style.Dark;
             this.pnlDragnDrop.StyleManager = null;
             this.pnlDragnDrop.TabIndex = 8;
@@ -304,13 +305,14 @@
             // 
             this.lblDrop.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.lblDrop.IsDerivedStyle = true;
-            this.lblDrop.Location = new System.Drawing.Point(29, 27);
+            this.lblDrop.Location = new System.Drawing.Point(27, 25);
             this.lblDrop.Name = "lblDrop";
-            this.lblDrop.Size = new System.Drawing.Size(157, 23);
+            this.lblDrop.Size = new System.Drawing.Size(157, 42);
             this.lblDrop.Style = MetroSet_UI.Enums.Style.Dark;
             this.lblDrop.StyleManager = null;
             this.lblDrop.TabIndex = 0;
-            this.lblDrop.Text = "Or drop your file here...";
+            this.lblDrop.Text = "Drop file here\r\nOR";
+            this.lblDrop.TextAlign = System.Drawing.ContentAlignment.TopCenter;
             this.lblDrop.ThemeAuthor = "Narwin";
             this.lblDrop.ThemeName = "MetroDark";
             // 
@@ -322,9 +324,9 @@
             this.metroSetPanel4.Controls.Add(this.lblCASolution);
             this.metroSetPanel4.Controls.Add(this.rtbOutput);
             this.metroSetPanel4.IsDerivedStyle = true;
-            this.metroSetPanel4.Location = new System.Drawing.Point(556, 343);
+            this.metroSetPanel4.Location = new System.Drawing.Point(556, 347);
             this.metroSetPanel4.Name = "metroSetPanel4";
-            this.metroSetPanel4.Size = new System.Drawing.Size(697, 184);
+            this.metroSetPanel4.Size = new System.Drawing.Size(697, 177);
             this.metroSetPanel4.Style = MetroSet_UI.Enums.Style.Dark;
             this.metroSetPanel4.StyleManager = null;
             this.metroSetPanel4.TabIndex = 10;
@@ -364,7 +366,7 @@
             this.rtbOutput.MaxLength = 32767;
             this.rtbOutput.Name = "rtbOutput";
             this.rtbOutput.ReadOnly = false;
-            this.rtbOutput.Size = new System.Drawing.Size(691, 151);
+            this.rtbOutput.Size = new System.Drawing.Size(691, 144);
             this.rtbOutput.Style = MetroSet_UI.Enums.Style.Dark;
             this.rtbOutput.StyleManager = null;
             this.rtbOutput.TabIndex = 6;
@@ -383,7 +385,7 @@
             this.metroSetPanel3.IsDerivedStyle = true;
             this.metroSetPanel3.Location = new System.Drawing.Point(556, 50);
             this.metroSetPanel3.Name = "metroSetPanel3";
-            this.metroSetPanel3.Size = new System.Drawing.Size(697, 286);
+            this.metroSetPanel3.Size = new System.Drawing.Size(697, 293);
             this.metroSetPanel3.Style = MetroSet_UI.Enums.Style.Dark;
             this.metroSetPanel3.StyleManager = null;
             this.metroSetPanel3.TabIndex = 11;
@@ -675,6 +677,32 @@
             this.lblCADual.ThemeAuthor = "Narwin";
             this.lblCADual.ThemeName = "MetroDark";
             // 
+            // cbForm
+            // 
+            this.cbForm.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbForm.CloseHoverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(183)))), ((int)(((byte)(40)))), ((int)(((byte)(40)))));
+            this.cbForm.CloseHoverForeColor = System.Drawing.Color.White;
+            this.cbForm.CloseNormalForeColor = System.Drawing.Color.Gray;
+            this.cbForm.DisabledForeColor = System.Drawing.Color.DimGray;
+            this.cbForm.IsDerivedStyle = true;
+            this.cbForm.Location = new System.Drawing.Point(1164, 4);
+            this.cbForm.MaximizeBox = true;
+            this.cbForm.MaximizeHoverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(238)))), ((int)(((byte)(238)))), ((int)(((byte)(238)))));
+            this.cbForm.MaximizeHoverForeColor = System.Drawing.Color.Gray;
+            this.cbForm.MaximizeNormalForeColor = System.Drawing.Color.Gray;
+            this.cbForm.MinimizeBox = true;
+            this.cbForm.MinimizeHoverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(238)))), ((int)(((byte)(238)))), ((int)(((byte)(238)))));
+            this.cbForm.MinimizeHoverForeColor = System.Drawing.Color.Gray;
+            this.cbForm.MinimizeNormalForeColor = System.Drawing.Color.Gray;
+            this.cbForm.Name = "cbForm";
+            this.cbForm.Size = new System.Drawing.Size(100, 25);
+            this.cbForm.Style = MetroSet_UI.Enums.Style.Light;
+            this.cbForm.StyleManager = null;
+            this.cbForm.TabIndex = 16;
+            this.cbForm.Text = "metroSetControlBox1";
+            this.cbForm.ThemeAuthor = "Narwin";
+            this.cbForm.ThemeName = "MetroLite";
+            // 
             // MainMenu
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(14F, 29F);
@@ -683,6 +711,7 @@
             this.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(30)))));
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.ClientSize = new System.Drawing.Size(1268, 538);
+            this.Controls.Add(this.cbForm);
             this.Controls.Add(this.metroSetPanel8);
             this.Controls.Add(this.metroSetPanel7);
             this.Controls.Add(this.metroSetPanel6);
@@ -696,8 +725,9 @@
             this.Name = "MainMenu";
             this.Padding = new System.Windows.Forms.Padding(12, 90, 12, 12);
             this.ShowLeftRect = false;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Style = MetroSet_UI.Enums.Style.Dark;
-            this.Text = "Lineagramming Solutions";
+            this.Text = "LINEAGRAMMING SOLUTIONS";
             this.TextColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(177)))), ((int)(((byte)(225)))));
             this.ThemeName = "MetroDark";
             this.Load += new System.EventHandler(this.MainMenu_Load);
@@ -746,5 +776,6 @@
         private MetroSet_UI.Controls.MetroSetPanel metroSetPanel8;
         private MetroSet_UI.Controls.MetroSetButton btnDuality;
         private MetroSet_UI.Controls.MetroSetLabel lblCADual;
+        private MetroSet_UI.Controls.MetroSetControlBox cbForm;
     }
 }
