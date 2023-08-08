@@ -28,7 +28,7 @@ namespace LPR381_Project
             List<List<double[,]>> final = new List<List<double[,]>>();
 
             DualSimplex initial_ds = new DualSimplex(LP, ProblemType);
-            List<double[,]> iteration = initial_ds.DualSimplexSolve();
+            List<double[,]> iteration = initial_ds.DualSimplexAlgorithm(LP, ProblemType);
             final.Add(iteration);
             LP = iteration[iteration.Count - 1];
 
@@ -182,7 +182,7 @@ namespace LPR381_Project
                 }
 
                 DualSimplex iteration_ds = new DualSimplex(newLP, ProblemType);
-                List<double[,]> Tables = iteration_ds.DualSimplexSolve();
+                List<double[,]> Tables = iteration_ds.DualSimplexAlgorithm(LP, ProblemType);
                 LP = Tables[Tables.Count - 1];
                 skipIndex.Add(false);
                 final.Add(Tables);
