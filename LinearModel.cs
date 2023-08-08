@@ -118,6 +118,18 @@ namespace LPR381_Project
                         }
 
                         break;
+                    default:
+                        {
+                            if (this.ProblemType == "max")
+                            {
+                                this.DualityConstraints[i].Add("sign", ">=");
+                            }
+                            else
+                            {
+                                this.DualityConstraints[i].Add("sign", "<=");
+                            }
+                        }
+                        break;
                 }
             }
 
@@ -334,6 +346,7 @@ namespace LPR381_Project
                             tempConstraints.Add(temp);
                         }
                         break;
+
                 }
             }
             //Add temp constriants
