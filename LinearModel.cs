@@ -636,248 +636,248 @@ namespace LPR381_Project
             }
 
 
-            //Creating Solution for Simplex
-            this.SimplexTables.Add(this.SimplexInitial);
-            bool simplexOptimal = false;
+            ////Creating Solution for Simplex
+            //this.SimplexTables.Add(this.SimplexInitial);
+            //bool simplexOptimal = false;
 
-            //Simples solver
-            while (!simplexOptimal)
-            {
-                double[,] table = this.SimplexTables[this.SimplexTables.Count - 1];
+            ////Simples solver
+            //while (!simplexOptimal)
+            //{
+            //    double[,] table = this.SimplexTables[this.SimplexTables.Count - 1];
 
-                int rows = table.GetLength(0);
-                int columns = table.GetLength(1);
+            //    int rows = table.GetLength(0);
+            //    int columns = table.GetLength(1);
 
-                int pivotRowIndex = -1;
+            //    int pivotRowIndex = -1;
 
-                double pivotCol = 1000000;
-                int pivotColIndex = -1;
+            //    double pivotCol = 1000000;
+            //    int pivotColIndex = -1;
 
-                // Find the minimum value in the last column
-                double minValue = 0;
-                for (int i = 1; i < rows; i++)
-                {
-                    double currentValue = table[i, columns - 1];
+            //    // Find the minimum value in the last column
+            //    double minValue = 0;
+            //    for (int i = 1; i < rows; i++)
+            //    {
+            //        double currentValue = table[i, columns - 1];
 
-                    if (double.IsNegative(currentValue) && currentValue < minValue)
-                    {
-                        pivotRowIndex = i;
-                        minValue = currentValue;
-                    }
-                }
+            //        if (double.IsNegative(currentValue) && currentValue < minValue)
+            //        {
+            //            pivotRowIndex = i;
+            //            minValue = currentValue;
+            //        }
+            //    }
 
-                //No negative was found in the rhs
-                if (minValue >= 0)
-                {
-                    //Pivot selection for MAX problem
-                    if (this.ProblemType == "max")
-                    {
-                        minValue = 0;
-                        for (int i = 0; i < table.GetLength(1) - 1; i++)
-                        {
-                            double currentValue = table[0, i];
-                            if (double.IsNegative(currentValue) && currentValue < minValue)
-                            {
-                                pivotColIndex = i;
-                                minValue = currentValue;
-                            }
-                        }
+            //    //No negative was found in the rhs
+            //    if (minValue >= 0)
+            //    {
+            //        //Pivot selection for MAX problem
+            //        if (this.ProblemType == "max")
+            //        {
+            //            minValue = 0;
+            //            for (int i = 0; i < table.GetLength(1) - 1; i++)
+            //            {
+            //                double currentValue = table[0, i];
+            //                if (double.IsNegative(currentValue) && currentValue < minValue)
+            //                {
+            //                    pivotColIndex = i;
+            //                    minValue = currentValue;
+            //                }
+            //            }
 
-                    }
-                    //Pivot selection for MIN problem
-                    else
-                    {
-                        minValue = 0;
-                        for (int i = 0; i < table.GetLength(1) - 1; i++)
-                        {
-                            double currentValue = table[0, i];
-                            if (!double.IsNegative(currentValue) && currentValue > minValue)
-                            {
-                                pivotColIndex = i;
-                                minValue = currentValue;
-                            }
-                        }
-                    }
+            //        }
+            //        //Pivot selection for MIN problem
+            //        else
+            //        {
+            //            minValue = 0;
+            //            for (int i = 0; i < table.GetLength(1) - 1; i++)
+            //            {
+            //                double currentValue = table[0, i];
+            //                if (!double.IsNegative(currentValue) && currentValue > minValue)
+            //                {
+            //                    pivotColIndex = i;
+            //                    minValue = currentValue;
+            //                }
+            //            }
+            //        }
 
-                    if (pivotColIndex == -1)
-                    {
-                        simplexOptimal = true;
-                        break;
-                    }
+            //        if (pivotColIndex == -1)
+            //        {
+            //            simplexOptimal = true;
+            //            break;
+            //        }
 
-                    //pivot row selection
-                    minValue = 100000;
-                    for (int i = 1; i < table.GetLength(0); i++)
-                    {
-                        double currentValue = table[i, table.GetLength(1) - 1] / table[i, pivotColIndex];
+            //        //pivot row selection
+            //        minValue = 100000;
+            //        for (int i = 1; i < table.GetLength(0); i++)
+            //        {
+            //            double currentValue = table[i, table.GetLength(1) - 1] / table[i, pivotColIndex];
 
-                        if (currentValue < minValue && !double.IsNegative(currentValue) && !double.IsNaN(currentValue))
-                        {
-                            pivotRowIndex = i;
-                            minValue = currentValue;
-                        }
-                    }
+            //            if (currentValue < minValue && !double.IsNegative(currentValue) && !double.IsNaN(currentValue))
+            //            {
+            //                pivotRowIndex = i;
+            //                minValue = currentValue;
+            //            }
+            //        }
 
-                    if (pivotRowIndex == -1)
-                    {
-                        simplexOptimal = true;
-                        break;
-                    }
+            //        if (pivotRowIndex == -1)
+            //        {
+            //            simplexOptimal = true;
+            //            break;
+            //        }
 
-                    //Add pivot information
-                    Dictionary<int, int> pivots = new Dictionary<int, int>();
-                    pivots.Add(pivotColIndex, pivotRowIndex);
-                    this.SimplexTablesPivots.Add(pivots);
+            //        //Add pivot information
+            //        Dictionary<int, int> pivots = new Dictionary<int, int>();
+            //        pivots.Add(pivotColIndex, pivotRowIndex);
+            //        this.SimplexTablesPivots.Add(pivots);
 
-                    //Adds table to solution
-                    this.SimplexTables.Add(PivotTable(table, pivotColIndex, pivotRowIndex));
-                }
-                //Negative was found in the rhs following dual
-                else
-                {
+            //        //Adds table to solution
+            //        this.SimplexTables.Add(PivotTable(table, pivotColIndex, pivotRowIndex));
+            //    }
+            //    //Negative was found in the rhs following dual
+            //    else
+            //    {
 
-                    if (pivotRowIndex == -1)
-                    {
-                        simplexOptimal = true;
-                        break;
-                    }
+            //        if (pivotRowIndex == -1)
+            //        {
+            //            simplexOptimal = true;
+            //            break;
+            //        }
 
-                    //Dual pivot col selection
-                    for (int j = 0; j < table.GetLength(1) - 1; j++)
-                    {
-                        double currentValue = Math.Abs(table[0, j] / table[pivotRowIndex, j]);
-                        //Console.WriteLine(currentValue);
+            //        //Dual pivot col selection
+            //        for (int j = 0; j < table.GetLength(1) - 1; j++)
+            //        {
+            //            double currentValue = Math.Abs(table[0, j] / table[pivotRowIndex, j]);
+            //            //Console.WriteLine(currentValue);
 
-                        if (table[pivotRowIndex, j] <= 0 && currentValue < pivotCol)
-                        {
-                            pivotCol = currentValue;
-                            pivotColIndex = j;
-                        }
-                    }
+            //            if (table[pivotRowIndex, j] <= 0 && currentValue < pivotCol)
+            //            {
+            //                pivotCol = currentValue;
+            //                pivotColIndex = j;
+            //            }
+            //        }
 
-                    if (pivotColIndex == -1)
-                    {
-                        simplexOptimal = true;
-                        break;
-                    }
+            //        if (pivotColIndex == -1)
+            //        {
+            //            simplexOptimal = true;
+            //            break;
+            //        }
 
-                    //Adds pivot column and row info
-                    Dictionary<int, int> pivots = new Dictionary<int, int>();
-                    pivots.Add(pivotColIndex, pivotRowIndex);
-                    this.SimplexTablesPivots.Add(pivots);
+            //        //Adds pivot column and row info
+            //        Dictionary<int, int> pivots = new Dictionary<int, int>();
+            //        pivots.Add(pivotColIndex, pivotRowIndex);
+            //        this.SimplexTablesPivots.Add(pivots);
 
-                    //Adds table to solution
-                    this.SimplexTables.Add(PivotTable(table, pivotColIndex, pivotRowIndex));
-                }
+            //        //Adds table to solution
+            //        this.SimplexTables.Add(PivotTable(table, pivotColIndex, pivotRowIndex));
+            //    }
 
-            }
+            //}
 
-            //Two Phase Solver
-            this.TwoPhaseTables.Add(this.TwoPhaseInitial);
-            bool twoPhaseOptimal = false;
+            ////Two Phase Solver
+            //this.TwoPhaseTables.Add(this.TwoPhaseInitial);
+            //bool twoPhaseOptimal = false;
 
-            while (!twoPhaseOptimal)
-            {
-                bool valid = false;
-                int pivotRowIndex = -1;
-                int pivotColIndex = -1;
-
-
-                double[,] table = TwoPhaseTables[TwoPhaseTables.Count - 1];
-
-                for (int i = 0; i < table.GetLength(1); i++)
-                {
-                    if (table[0, i] > 0)
-                    {
-                        valid = true;
-                    }
-                }
-
-                if (valid)
-                {
-                    //Select pivot column using W
-                    double maxValue = 0;
-                    for (int i = 0; i < table.GetLength(1) - 1; i++)
-                    {
-                        double currentValue = table[0, i];
-
-                        if (currentValue > maxValue && !double.IsNegative(currentValue))
-                        {
-                            maxValue = currentValue;
-                            pivotColIndex = i;
-                        }
-                    }
-
-                    //Console.WriteLine(maxValue);
-                }
-                else
-                {
-                    //Select pivot col using Z
-                    double maxValue = 0;
-                    for (int i = 0; i < table.GetLength(1) - 1; i++)
-                    {
-                        foreach (var item in this.TwoPhaseArtificialColumns)
-                        {
-                            Console.WriteLine(item);
-                        }
-                        if (!this.TwoPhaseArtificialColumns.Contains(i))
-                        {
-                            double currentValue = table[1, i];
-
-                            if (this.ProblemType == "max")
-                            {
-                                if (currentValue < maxValue && double.IsNegative(currentValue))
-                                {
-                                    maxValue = currentValue;
-                                    pivotColIndex = i;
-                                }
-                            }
-                            else
-                            {
-                                if (currentValue > maxValue && !double.IsNegative(currentValue))
-                                {
-                                    maxValue = currentValue;
-                                    pivotColIndex = i;
-                                }
-                            }
-                        }
-                    }
-
-                    //Console.WriteLine(maxValue);
-                }
-
-                if (pivotColIndex == -1)
-                {
-                    twoPhaseOptimal = true;
-                    break;
-                }
-
-                double minValue = 100000;
-                for (int i = 2; i < table.GetLength(0); i++)
-                {
-                    double currentValue = table[i, table.GetLength(1) - 1] / table[i, pivotColIndex];
-                    if (currentValue < minValue && !double.IsNegative(currentValue) && !double.IsNaN(currentValue))
-                    {
-                        pivotRowIndex = i;
-                        minValue = currentValue;
-                    }
-                }
-
-                if (pivotRowIndex == -1)
-                {
-                    twoPhaseOptimal = true;
-                    break;
-                }
+            //while (!twoPhaseOptimal)
+            //{
+            //    bool valid = false;
+            //    int pivotRowIndex = -1;
+            //    int pivotColIndex = -1;
 
 
-                //Add pivot information
-                Dictionary<int, int> pivots = new Dictionary<int, int>();
-                pivots.Add(pivotColIndex, pivotRowIndex);
-                this.TwoPhaseTablesPivots.Add(pivots);
+            //    double[,] table = TwoPhaseTables[TwoPhaseTables.Count - 1];
 
-                //Adds table to solution
-                this.TwoPhaseTables.Add(PivotTable(table, pivotColIndex, pivotRowIndex));
-            }
+            //    for (int i = 0; i < table.GetLength(1); i++)
+            //    {
+            //        if (table[0, i] > 0)
+            //        {
+            //            valid = true;
+            //        }
+            //    }
+
+            //    if (valid)
+            //    {
+            //        //Select pivot column using W
+            //        double maxValue = 0;
+            //        for (int i = 0; i < table.GetLength(1) - 1; i++)
+            //        {
+            //            double currentValue = table[0, i];
+
+            //            if (currentValue > maxValue && !double.IsNegative(currentValue))
+            //            {
+            //                maxValue = currentValue;
+            //                pivotColIndex = i;
+            //            }
+            //        }
+
+            //        //Console.WriteLine(maxValue);
+            //    }
+            //    else
+            //    {
+            //        //Select pivot col using Z
+            //        double maxValue = 0;
+            //        for (int i = 0; i < table.GetLength(1) - 1; i++)
+            //        {
+            //            foreach (var item in this.TwoPhaseArtificialColumns)
+            //            {
+            //                Console.WriteLine(item);
+            //            }
+            //            if (!this.TwoPhaseArtificialColumns.Contains(i))
+            //            {
+            //                double currentValue = table[1, i];
+
+            //                if (this.ProblemType == "max")
+            //                {
+            //                    if (currentValue < maxValue && double.IsNegative(currentValue))
+            //                    {
+            //                        maxValue = currentValue;
+            //                        pivotColIndex = i;
+            //                    }
+            //                }
+            //                else
+            //                {
+            //                    if (currentValue > maxValue && !double.IsNegative(currentValue))
+            //                    {
+            //                        maxValue = currentValue;
+            //                        pivotColIndex = i;
+            //                    }
+            //                }
+            //            }
+            //        }
+
+            //        //Console.WriteLine(maxValue);
+            //    }
+
+            //    if (pivotColIndex == -1)
+            //    {
+            //        twoPhaseOptimal = true;
+            //        break;
+            //    }
+
+            //    double minValue = 100000;
+            //    for (int i = 2; i < table.GetLength(0); i++)
+            //    {
+            //        double currentValue = table[i, table.GetLength(1) - 1] / table[i, pivotColIndex];
+            //        if (currentValue < minValue && !double.IsNegative(currentValue) && !double.IsNaN(currentValue))
+            //        {
+            //            pivotRowIndex = i;
+            //            minValue = currentValue;
+            //        }
+            //    }
+
+            //    if (pivotRowIndex == -1)
+            //    {
+            //        twoPhaseOptimal = true;
+            //        break;
+            //    }
+
+
+            //    //Add pivot information
+            //    Dictionary<int, int> pivots = new Dictionary<int, int>();
+            //    pivots.Add(pivotColIndex, pivotRowIndex);
+            //    this.TwoPhaseTablesPivots.Add(pivots);
+
+            //    //Adds table to solution
+            //    this.TwoPhaseTables.Add(PivotTable(table, pivotColIndex, pivotRowIndex));
+            //}
         }
 
         //Code for pivotying a table
