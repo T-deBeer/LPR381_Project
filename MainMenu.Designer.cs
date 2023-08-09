@@ -265,7 +265,7 @@
             this.btnFile.HoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(95)))), ((int)(((byte)(207)))), ((int)(((byte)(255)))));
             this.btnFile.HoverTextColor = System.Drawing.Color.White;
             this.btnFile.IsDerivedStyle = true;
-            this.btnFile.Location = new System.Drawing.Point(77, 120);
+            this.btnFile.Location = new System.Drawing.Point(77, 125);
             this.btnFile.Name = "btnFile";
             this.btnFile.NormalBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(177)))), ((int)(((byte)(225)))));
             this.btnFile.NormalColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(177)))), ((int)(((byte)(225)))));
