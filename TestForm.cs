@@ -55,6 +55,25 @@ namespace LPR381_Project
             //rtbOutput.Text += "DUALITY CHECK:\n";
             //rtbOutput.Text += dual.PrintResults();
 
+            rtbOutput.AppendText(lp.CanonDualFunctionToString() + "\n");
+            rtbOutput.AppendText(lp.CanonDualConstraintsToString() + "\n");
+            Simplex s = new Simplex(lp.DualityInitial, lp.DualProblemType);
+            List<double[,]> results = s.DualSimplexAlgorithm();
+            string line = "";
+            foreach (var item in results)
+            {
+                for (int i = 0; i < item.GetLength(0); i++)
+                {
+                    for (int j = 0; j < item.GetLength(1); j++)
+                    {
+                        line += item[i, j] + "\t";
+                    }
+                    line += "\n";
+                }
+                line += "\n";
+            }
+            rtbOutput.AppendText(line);
+
             //Simplex s = new Simplex(lp.SimplexInitial, lp.ProblemType);
             //List<double[,]> ne = s.PrimalSimplexAlgorithm();
             //string line = "";

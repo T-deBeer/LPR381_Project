@@ -14,6 +14,7 @@ namespace LPR381_Project
 {
     public partial class MainMenu : MetroSetForm
     {
+        List<string> lp = new List<string>();
         public MainMenu()
         {
             InitializeComponent();
@@ -35,6 +36,8 @@ namespace LPR381_Project
             lblFileOutput.ForeColor = Color.FromArgb(28, 131, 174);
             lblSolution.ForeColor = Color.FromArgb(28, 131, 174);
             lblSolve.ForeColor = Color.FromArgb(28, 131, 174);
+            lblCAChangeDesc.ForeColor = Color.FromArgb(255, 255, 255);
+            lblCAChangePos.ForeColor = Color.FromArgb(255, 255, 255);
 
             btnDuality.Enabled = false;
             btnCARanges.Enabled = false;
@@ -42,6 +45,8 @@ namespace LPR381_Project
             cboMethod.Enabled = false;
             cboCARangeRow.Enabled = false;
             cboCARangeCol.Enabled = false;
+            txtCAChangeValue.Enabled = false;
+            btnCAChangeApply.Enabled = false;
 
             cbForm.Location = new System.Drawing.Point(1164, 4);
         }
@@ -61,16 +66,19 @@ namespace LPR381_Project
                 string[] droppedFiles = (string[])e.Data.GetData(DataFormats.FileDrop);
                 string[] lines;
                 rtbFileOutput.Text = "";
+                lp.Clear();
                 foreach (string filePath in droppedFiles)
                 {
                     lines = File.ReadAllLines(filePath);
                     foreach (var item in lines)
                     {
                         rtbFileOutput.AppendText(item + "\n");
+                        lp.Add(item);
                     }
                 }
                 btnSolve.Enabled = true;
                 cboMethod.Enabled = true;
+                btnDuality.Enabled = true;
                 cboMethod.SelectedIndex = 0;
             }
         }
@@ -99,20 +107,79 @@ namespace LPR381_Project
             rtbFileOutput.Text += (lp.CanonSimplexConstraintsToString());
             rtbFileOutput.Text += "\n\n";
 
-            double[,] table = lp.SimplexTables[lp.SimplexTables.Count - 1];
+            //double[,] table = lp.SimplexTables[lp.SimplexTables.Count - 1];
 
-            for (int i = 0; i < table.GetLength(0); i++)
-            {
-                string res = "";
-                for (int j = 0; j < table.GetLength(1); j++)
-                {
-                    res += $"{table[i, j]}\t";
-                }
-                rtbFileOutput.Text += $"{res}\n";
-            }
+            //for (int i = 0; i < table.GetLength(0); i++)
+            //{
+            //    string res = "";
+            //    for (int j = 0; j < table.GetLength(1); j++)
+            //    {
+            //        res += $"{table[i, j]}\t";
+            //    }
+            //    rtbFileOutput.Text += $"{res}\n";
+            //}
             btnSolve.Enabled = true;
             cboMethod.Enabled = true;
             cboMethod.SelectedIndex = 0;
+        }
+
+        private void btnSolve_Click(object sender, EventArgs e)
+        {
+            LinearModel lm = new LinearModel(lp.ToArray());
+            switch (cboMethod.SelectedIndex)
+            {
+                case 0:
+                    if (lm.SignRes.Contains("int") || lm.SignRes.Contains("bin"))
+                    {
+                        MessageBox.Show("Some of the values in this Linear Programming model are either Integer (int) or binary (bin). \n" +
+                            "The Primal Simplex Algorithm will not be able to satisfy these value restrictions but will still continue to solve it as unrestricted.\n" +
+                            "Try using the 'Branch and Bound' or 'Cutting Plane' algorithms for values that have int or bin.", "Sign Restrictions", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                    Simplex sp = new Simplex(lm.SimplexInitial, lm.ProblemType);
+                    rtbOutput.Text = sp.PrintPrimal();
+                    break;
+                case 1:
+                    if (lm.SignRes.Contains("int") || lm.SignRes.Contains("bin"))
+                    {
+                        MessageBox.Show("Some of the values in this Linear Programming model are either Integer (int) or binary (bin). \n" +
+                            "The Two-Phase Simplex alogrithm will not be able to satisfy these value restrictions but will still continue to solve it as unrestricted.\n" +
+                            "Try using the 'Branch and Bound' or 'Cutting Plane' algorithms for values that have int or bin.", "Sign Restrictions", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                    Simplex st = new Simplex(lm.TwoPhaseInitial, lm.ProblemType);
+                    List<double[,]> result = st.TwoPhaseAlgorithm(lm.TwoPhaseArtificialColumns);
+                    rtbOutput.Text = st.PrintTwoPhase(result);
+                    break;
+                case 2:
+                    if (lm.SignRes.Contains("int") || lm.SignRes.Contains("bin"))
+                    {
+                        MessageBox.Show("Some of the values in this Linear Programming model are either Integer (int) or binary (bin). \n" +
+                            "The Dual Simplex alogrithm will not be able to satisfy these value restrictions but will still continue to solve it as unrestricted.\n" +
+                            "Try using the 'Branch and Bound' or 'Cutting Plane' algorithms for values that have int or bin.", "Sign Restrictions", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                    Simplex sd = new Simplex(lm.SimplexInitial, lm.ProblemType);
+                    rtbOutput.Text = sd.PrintDual();
+                    break;
+                case 3:
+                    // Branch and Bound
+                    break;
+                case 4:
+                    CuttingPlane cp = new CuttingPlane(lm.SimplexInitial, lm.ProblemType, lm.SignRes.ToArray());
+                    rtbOutput.Text = cp.PrintResults();
+                    break;
+                default:
+                    MessageBox.Show("Invalid method selected, please try another method.", "Method Selection", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    break;
+            }
+        }
+
+        private void btnDuality_Click(object sender, EventArgs e)
+        {
+            rtbOutput.Text = "";
+            LinearModel lm = new LinearModel(lp.ToArray());
+            rtbOutput.AppendText(lm.CanonDualFunctionToString() + "\n");
+            rtbOutput.AppendText(lm.CanonDualConstraintsToString() + "\n");
+            Simplex s = new Simplex(lm.DualityInitial, lm.DualProblemType);
+            rtbOutput.AppendText("\n" + s.PrintDual() + "\n");
         }
     }
 }

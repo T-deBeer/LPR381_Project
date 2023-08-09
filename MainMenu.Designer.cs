@@ -55,6 +55,12 @@
             this.metroSetLabel9 = new MetroSet_UI.Controls.MetroSetLabel();
             this.lblSolve = new MetroSet_UI.Controls.MetroSetLabel();
             this.metroSetPanel7 = new MetroSet_UI.Controls.MetroSetPanel();
+            this.btnCAChangeApply = new MetroSet_UI.Controls.MetroSetButton();
+            this.lblCAChangePos = new MetroSet_UI.Controls.MetroSetLabel();
+            this.metroSetLabel5 = new MetroSet_UI.Controls.MetroSetLabel();
+            this.lblCAChangeDesc = new MetroSet_UI.Controls.MetroSetLabel();
+            this.metroSetLabel3 = new MetroSet_UI.Controls.MetroSetLabel();
+            this.txtCAChangeValue = new MetroSet_UI.Controls.MetroSetTextBox();
             this.lblCAChanges = new MetroSet_UI.Controls.MetroSetLabel();
             this.metroSetPanel8 = new MetroSet_UI.Controls.MetroSetPanel();
             this.btnDuality = new MetroSet_UI.Controls.MetroSetButton();
@@ -103,7 +109,7 @@
             this.btnCARanges.HoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(95)))), ((int)(((byte)(207)))), ((int)(((byte)(255)))));
             this.btnCARanges.HoverTextColor = System.Drawing.Color.White;
             this.btnCARanges.IsDerivedStyle = true;
-            this.btnCARanges.Location = new System.Drawing.Point(75, 122);
+            this.btnCARanges.Location = new System.Drawing.Point(75, 131);
             this.btnCARanges.Name = "btnCARanges";
             this.btnCARanges.NormalBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(177)))), ((int)(((byte)(225)))));
             this.btnCARanges.NormalColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(177)))), ((int)(((byte)(225)))));
@@ -123,7 +129,7 @@
             // 
             this.metroSetLabel2.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.metroSetLabel2.IsDerivedStyle = true;
-            this.metroSetLabel2.Location = new System.Drawing.Point(6, 76);
+            this.metroSetLabel2.Location = new System.Drawing.Point(4, 86);
             this.metroSetLabel2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.metroSetLabel2.Name = "metroSetLabel2";
             this.metroSetLabel2.Size = new System.Drawing.Size(62, 22);
@@ -138,7 +144,7 @@
             // 
             this.metroSetLabel1.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.metroSetLabel1.IsDerivedStyle = true;
-            this.metroSetLabel1.Location = new System.Drawing.Point(6, 38);
+            this.metroSetLabel1.Location = new System.Drawing.Point(4, 48);
             this.metroSetLabel1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.metroSetLabel1.Name = "metroSetLabel1";
             this.metroSetLabel1.Size = new System.Drawing.Size(47, 22);
@@ -166,7 +172,7 @@
             this.cboCARangeCol.FormattingEnabled = true;
             this.cboCARangeCol.IsDerivedStyle = true;
             this.cboCARangeCol.ItemHeight = 20;
-            this.cboCARangeCol.Location = new System.Drawing.Point(76, 76);
+            this.cboCARangeCol.Location = new System.Drawing.Point(74, 86);
             this.cboCARangeCol.Margin = new System.Windows.Forms.Padding(4);
             this.cboCARangeCol.Name = "cboCARangeCol";
             this.cboCARangeCol.SelectedItemBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(177)))), ((int)(((byte)(225)))));
@@ -210,7 +216,7 @@
             this.cboCARangeRow.FormattingEnabled = true;
             this.cboCARangeRow.IsDerivedStyle = true;
             this.cboCARangeRow.ItemHeight = 20;
-            this.cboCARangeRow.Location = new System.Drawing.Point(76, 35);
+            this.cboCARangeRow.Location = new System.Drawing.Point(74, 45);
             this.cboCARangeRow.Margin = new System.Windows.Forms.Padding(4);
             this.cboCARangeRow.Name = "cboCARangeRow";
             this.cboCARangeRow.SelectedItemBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(177)))), ((int)(((byte)(225)))));
@@ -521,6 +527,7 @@
             this.btnSolve.Text = "Solve";
             this.btnSolve.ThemeAuthor = "Narwin";
             this.btnSolve.ThemeName = "MetroLite";
+            this.btnSolve.Click += new System.EventHandler(this.btnSolve_Click);
             // 
             // cboMethod
             // 
@@ -592,6 +599,12 @@
             this.metroSetPanel7.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(30)))));
             this.metroSetPanel7.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(110)))), ((int)(((byte)(110)))), ((int)(((byte)(110)))));
             this.metroSetPanel7.BorderThickness = 1;
+            this.metroSetPanel7.Controls.Add(this.btnCAChangeApply);
+            this.metroSetPanel7.Controls.Add(this.lblCAChangePos);
+            this.metroSetPanel7.Controls.Add(this.metroSetLabel5);
+            this.metroSetPanel7.Controls.Add(this.lblCAChangeDesc);
+            this.metroSetPanel7.Controls.Add(this.metroSetLabel3);
+            this.metroSetPanel7.Controls.Add(this.txtCAChangeValue);
             this.metroSetPanel7.Controls.Add(this.lblCAChanges);
             this.metroSetPanel7.IsDerivedStyle = true;
             this.metroSetPanel7.Location = new System.Drawing.Point(15, 347);
@@ -603,6 +616,121 @@
             this.metroSetPanel7.TabIndex = 13;
             this.metroSetPanel7.ThemeAuthor = "Narwin";
             this.metroSetPanel7.ThemeName = "MetroDark";
+            // 
+            // btnCAChangeApply
+            // 
+            this.btnCAChangeApply.DisabledBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(120)))), ((int)(((byte)(65)))), ((int)(((byte)(177)))), ((int)(((byte)(225)))));
+            this.btnCAChangeApply.DisabledBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(120)))), ((int)(((byte)(65)))), ((int)(((byte)(177)))), ((int)(((byte)(225)))));
+            this.btnCAChangeApply.DisabledForeColor = System.Drawing.Color.Gray;
+            this.btnCAChangeApply.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.btnCAChangeApply.HoverBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(95)))), ((int)(((byte)(207)))), ((int)(((byte)(255)))));
+            this.btnCAChangeApply.HoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(95)))), ((int)(((byte)(207)))), ((int)(((byte)(255)))));
+            this.btnCAChangeApply.HoverTextColor = System.Drawing.Color.White;
+            this.btnCAChangeApply.IsDerivedStyle = true;
+            this.btnCAChangeApply.Location = new System.Drawing.Point(77, 131);
+            this.btnCAChangeApply.Name = "btnCAChangeApply";
+            this.btnCAChangeApply.NormalBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(177)))), ((int)(((byte)(225)))));
+            this.btnCAChangeApply.NormalColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(177)))), ((int)(((byte)(225)))));
+            this.btnCAChangeApply.NormalTextColor = System.Drawing.Color.White;
+            this.btnCAChangeApply.PressBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(147)))), ((int)(((byte)(195)))));
+            this.btnCAChangeApply.PressColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(147)))), ((int)(((byte)(195)))));
+            this.btnCAChangeApply.PressTextColor = System.Drawing.Color.White;
+            this.btnCAChangeApply.Size = new System.Drawing.Size(117, 34);
+            this.btnCAChangeApply.Style = MetroSet_UI.Enums.Style.Light;
+            this.btnCAChangeApply.StyleManager = null;
+            this.btnCAChangeApply.TabIndex = 8;
+            this.btnCAChangeApply.Text = "Apply";
+            this.btnCAChangeApply.ThemeAuthor = "Narwin";
+            this.btnCAChangeApply.ThemeName = "MetroLite";
+            // 
+            // lblCAChangePos
+            // 
+            this.lblCAChangePos.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.lblCAChangePos.IsDerivedStyle = true;
+            this.lblCAChangePos.Location = new System.Drawing.Point(91, 60);
+            this.lblCAChangePos.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblCAChangePos.Name = "lblCAChangePos";
+            this.lblCAChangePos.Size = new System.Drawing.Size(158, 36);
+            this.lblCAChangePos.Style = MetroSet_UI.Enums.Style.Dark;
+            this.lblCAChangePos.StyleManager = null;
+            this.lblCAChangePos.TabIndex = 11;
+            this.lblCAChangePos.Text = "No position selected...";
+            this.lblCAChangePos.ThemeAuthor = "Narwin";
+            this.lblCAChangePos.ThemeName = "MetroDark";
+            // 
+            // metroSetLabel5
+            // 
+            this.metroSetLabel5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.metroSetLabel5.IsDerivedStyle = true;
+            this.metroSetLabel5.Location = new System.Drawing.Point(17, 60);
+            this.metroSetLabel5.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.metroSetLabel5.Name = "metroSetLabel5";
+            this.metroSetLabel5.Size = new System.Drawing.Size(67, 36);
+            this.metroSetLabel5.Style = MetroSet_UI.Enums.Style.Dark;
+            this.metroSetLabel5.StyleManager = null;
+            this.metroSetLabel5.TabIndex = 10;
+            this.metroSetLabel5.Text = "Position:";
+            this.metroSetLabel5.ThemeAuthor = "Narwin";
+            this.metroSetLabel5.ThemeName = "MetroDark";
+            // 
+            // lblCAChangeDesc
+            // 
+            this.lblCAChangeDesc.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.lblCAChangeDesc.IsDerivedStyle = true;
+            this.lblCAChangeDesc.Location = new System.Drawing.Point(7, 22);
+            this.lblCAChangeDesc.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblCAChangeDesc.Name = "lblCAChangeDesc";
+            this.lblCAChangeDesc.Size = new System.Drawing.Size(255, 38);
+            this.lblCAChangeDesc.Style = MetroSet_UI.Enums.Style.Dark;
+            this.lblCAChangeDesc.StyleManager = null;
+            this.lblCAChangeDesc.TabIndex = 9;
+            this.lblCAChangeDesc.Text = "Select an area in the final table you wish to change";
+            this.lblCAChangeDesc.ThemeAuthor = "Narwin";
+            this.lblCAChangeDesc.ThemeName = "MetroDark";
+            // 
+            // metroSetLabel3
+            // 
+            this.metroSetLabel3.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.metroSetLabel3.IsDerivedStyle = true;
+            this.metroSetLabel3.Location = new System.Drawing.Point(18, 103);
+            this.metroSetLabel3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.metroSetLabel3.Name = "metroSetLabel3";
+            this.metroSetLabel3.Size = new System.Drawing.Size(54, 22);
+            this.metroSetLabel3.Style = MetroSet_UI.Enums.Style.Dark;
+            this.metroSetLabel3.StyleManager = null;
+            this.metroSetLabel3.TabIndex = 8;
+            this.metroSetLabel3.Text = "Value:";
+            this.metroSetLabel3.ThemeAuthor = "Narwin";
+            this.metroSetLabel3.ThemeName = "MetroDark";
+            // 
+            // txtCAChangeValue
+            // 
+            this.txtCAChangeValue.AutoCompleteCustomSource = null;
+            this.txtCAChangeValue.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.None;
+            this.txtCAChangeValue.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.None;
+            this.txtCAChangeValue.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(110)))), ((int)(((byte)(110)))), ((int)(((byte)(110)))));
+            this.txtCAChangeValue.DisabledBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(80)))), ((int)(((byte)(80)))), ((int)(((byte)(80)))));
+            this.txtCAChangeValue.DisabledBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
+            this.txtCAChangeValue.DisabledForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
+            this.txtCAChangeValue.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.txtCAChangeValue.HoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(177)))), ((int)(((byte)(225)))));
+            this.txtCAChangeValue.Image = null;
+            this.txtCAChangeValue.IsDerivedStyle = true;
+            this.txtCAChangeValue.Lines = null;
+            this.txtCAChangeValue.Location = new System.Drawing.Point(91, 99);
+            this.txtCAChangeValue.MaxLength = 32767;
+            this.txtCAChangeValue.Multiline = false;
+            this.txtCAChangeValue.Name = "txtCAChangeValue";
+            this.txtCAChangeValue.ReadOnly = false;
+            this.txtCAChangeValue.Size = new System.Drawing.Size(158, 26);
+            this.txtCAChangeValue.Style = MetroSet_UI.Enums.Style.Dark;
+            this.txtCAChangeValue.StyleManager = null;
+            this.txtCAChangeValue.TabIndex = 4;
+            this.txtCAChangeValue.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
+            this.txtCAChangeValue.ThemeAuthor = "Narwin";
+            this.txtCAChangeValue.ThemeName = "MetroDark";
+            this.txtCAChangeValue.UseSystemPasswordChar = false;
+            this.txtCAChangeValue.WatermarkText = "";
             // 
             // lblCAChanges
             // 
@@ -662,6 +790,7 @@
             this.btnDuality.Text = "Calculate the Dual";
             this.btnDuality.ThemeAuthor = "Narwin";
             this.btnDuality.ThemeName = "MetroLite";
+            this.btnDuality.Click += new System.EventHandler(this.btnDuality_Click);
             // 
             // lblCADual
             // 
@@ -778,5 +907,11 @@
         private MetroSet_UI.Controls.MetroSetButton btnDuality;
         private MetroSet_UI.Controls.MetroSetLabel lblCADual;
         private MetroSet_UI.Controls.MetroSetControlBox cbForm;
+        private MetroSet_UI.Controls.MetroSetLabel lblCAChangePos;
+        private MetroSet_UI.Controls.MetroSetLabel metroSetLabel5;
+        private MetroSet_UI.Controls.MetroSetLabel lblCAChangeDesc;
+        private MetroSet_UI.Controls.MetroSetLabel metroSetLabel3;
+        private MetroSet_UI.Controls.MetroSetTextBox txtCAChangeValue;
+        private MetroSet_UI.Controls.MetroSetButton btnCAChangeApply;
     }
 }
