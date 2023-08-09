@@ -377,6 +377,7 @@
             // 
             // metroSetPanel3
             // 
+            this.metroSetPanel3.AutoScroll = true;
             this.metroSetPanel3.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(30)))));
             this.metroSetPanel3.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(110)))), ((int)(((byte)(110)))), ((int)(((byte)(110)))));
             this.metroSetPanel3.BorderThickness = 1;
