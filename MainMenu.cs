@@ -38,6 +38,8 @@ namespace LPR381_Project
             lblSolve.ForeColor = Color.FromArgb(28, 131, 174);
             lblCAChangeDesc.ForeColor = Color.FromArgb(255, 255, 255);
             lblCAChangePos.ForeColor = Color.FromArgb(255, 255, 255);
+            lblShadowPrices.ForeColor = Color.FromArgb(28, 131, 174);
+            lblConstraint.ForeColor = Color.FromArgb(28, 131, 174);
 
             btnDuality.Enabled = false;
             btnCARanges.Enabled = false;
@@ -45,8 +47,14 @@ namespace LPR381_Project
             cboMethod.Enabled = false;
             cboCARangeRow.Enabled = false;
             cboCARangeCol.Enabled = false;
-            txtCAChangeValue.Enabled = false;
-            btnCAChangeApply.Enabled = false;
+            txtCAChanges.Enabled = false;
+            btnCAChanges.Enabled = false;
+            btnConstraints.Enabled = false;
+            cboConstraintVar.Enabled = false;
+            cboConstraintComp.Enabled = false;
+            txtConstraintVal.Enabled = false;
+            btnShadowPrices.Enabled = false;
+            cboShadowPriceVar.Enabled = false;
 
             cbForm.Location = new System.Drawing.Point(1164, 4);
         }
@@ -180,6 +188,52 @@ namespace LPR381_Project
             rtbOutput.AppendText(lm.CanonDualConstraintsToString() + "\n");
             Simplex s = new Simplex(lm.DualityInitial, lm.DualProblemType);
             rtbOutput.AppendText("\n" + s.PrintDual() + "\n");
+        }
+
+        public bool CheckFeasibility(List<double[,]> result)
+        {
+            double[,] finalTable = result.ElementAt(result.Count - 1);
+            // Infeasible solution.
+            double sum = 0;
+            for (int i = 0; i < finalTable.GetLength(0); i++)
+            {
+                for (int j = 0; j < finalTable.GetLength(1); j++)
+                {
+                    sum += finalTable[i, j];
+                }
+            }
+            if (sum == 0)
+            {
+                MessageBox.Show("The solution is infeasible given the problem and the method used.\n\nTry another method or inspect the Linear programming problem.", "Infeasible solution", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+            // Unbounded solution.
+            for (int i = 0; i < finalTable.GetLength(1); i++)
+            {
+                if (finalTable[0,i] < 0)
+                {
+                    MessageBox.Show("The solution is unbounded given the problem.\n\nTry inspecing the Linear programming problem for any variables that can be unbounded.", "Unbounded solution", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return false;
+                }
+            }
+            // Multiple solutions.
+            for (int i = 0; i < finalTable.GetLength(1); i++)
+            {
+                if (finalTable[0,i] == 0)
+                {
+                    sum = 0;
+                    for (int j = 0; j < finalTable.GetLength(0); j++)
+                    {
+                        sum += finalTable[j, i];
+                    }
+                    if (sum != 1)
+                    {
+                        MessageBox.Show("There are multiple solutions for the given problem.\n\nKeep in mind only one of these possible solutions will be displayed.", "Multiple solutions", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        return true;
+                    }
+                }
+            }
+            return true;
         }
     }
 }
