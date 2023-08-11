@@ -11,6 +11,7 @@ namespace LPR381_Project
     {
         private double[,] initialTable;
         private double[,] finalTable;
+        private int[] basicVariableIndexes;
         private double[] cBV;
         private double[,] B;
         private double[] b;
@@ -20,6 +21,7 @@ namespace LPR381_Project
             this.InitialTable = initialTable;
             this.FinalTable = finalTable;
 
+            basicVariableIndexes = GetBasicVariableIndexes();
             cBV = GetObjectiveFunctionCoefficients();
             B = GetBasicVariableColumns();
             b = GetRHSColumnValues();
@@ -71,7 +73,6 @@ namespace LPR381_Project
         // CBV
         public double[] GetObjectiveFunctionCoefficients()
         {
-            int[] basicVariableIndexes = GetBasicVariableIndexes();
             int numRows = basicVariableIndexes.Length;
             double[] objectiveFunctionCoefficients = new double[numRows];
 
@@ -87,7 +88,6 @@ namespace LPR381_Project
         // B
         public double[,] GetBasicVariableColumns()
         {
-            int[] basicVariableIndexes = GetBasicVariableIndexes();
             int numRows = basicVariableIndexes.Length;
             int numCols = numRows;
             double[,] B = new double[numRows, numCols];
