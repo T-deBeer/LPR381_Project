@@ -54,6 +54,25 @@ namespace LPR381_Project
             cboShadowPriceVar.Enabled = false;
 
             cbForm.Location = new System.Drawing.Point(1816, 4);
+            //Testing here
+            List<BranchTable> branchTables = new List<BranchTable>
+            {
+                new BranchTable("1", new double[,] { { 1, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } }),
+                new BranchTable("11", new double[,] { { 11, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } }),
+                new BranchTable("12", new double[,] { { 12, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } }),
+                new BranchTable("111", new double[,] { { 111, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } }),
+                new BranchTable("112", new double[,] { { 112, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } }),
+                new BranchTable("121", new double[,] { { 121, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } }),
+                new BranchTable("122", new double[,] { { 122, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } }),
+                new BranchTable("2", new double[,] { { 2, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } }),
+                new BranchTable("21", new double[,] { { 21, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } }),
+                new BranchTable("22", new double[,] { { 22, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } }),
+                new BranchTable("211", new double[,] { { 211, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } }),
+                new BranchTable("212", new double[,] { { 212, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } }),
+                new BranchTable("221", new double[,] { { 221, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } }),
+                new BranchTable("222", new double[,] { { 222, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } }),
+            };
+
 
             List<BranchTable> placementQueue = branchTables.OrderBy(x => x.Level.Length).ToList();
 
