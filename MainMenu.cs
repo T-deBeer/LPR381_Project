@@ -322,4 +322,5 @@ namespace LPR381_Project
                 newConstraintRow[finalTable.GetLength(1)] = double.Parse(newConstraint["rhs"]);
             }
         }
+    }
 }
