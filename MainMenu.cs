@@ -56,7 +56,7 @@ namespace LPR381_Project
             btnShadowPrices.Enabled = false;
             cboShadowPriceVar.Enabled = false;
 
-            cbForm.Location = new System.Drawing.Point(1164, 4);
+            cbForm.Location = new System.Drawing.Point(1816, 4);
         }
 
         private void pnlDragnDrop_DragEnter(object sender, DragEventArgs e)

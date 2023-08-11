@@ -269,7 +269,7 @@
             this.lblImport.Location = new System.Drawing.Point(7, 0);
             this.lblImport.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblImport.Name = "lblImport";
-            this.lblImport.Size = new System.Drawing.Size(263, 22);
+            this.lblImport.Size = new System.Drawing.Size(217, 22);
             this.lblImport.Style = MetroSet_UI.Enums.Style.Dark;
             this.lblImport.StyleManager = null;
             this.lblImport.TabIndex = 8;
@@ -346,9 +346,9 @@
             this.metroSetPanel4.Controls.Add(this.lblCASolution);
             this.metroSetPanel4.Controls.Add(this.rtbOutput);
             this.metroSetPanel4.IsDerivedStyle = true;
-            this.metroSetPanel4.Location = new System.Drawing.Point(556, 466);
+            this.metroSetPanel4.Location = new System.Drawing.Point(15, 650);
             this.metroSetPanel4.Name = "metroSetPanel4";
-            this.metroSetPanel4.Size = new System.Drawing.Size(697, 177);
+            this.metroSetPanel4.Size = new System.Drawing.Size(538, 426);
             this.metroSetPanel4.Style = MetroSet_UI.Enums.Style.Dark;
             this.metroSetPanel4.StyleManager = null;
             this.metroSetPanel4.TabIndex = 10;
@@ -361,7 +361,7 @@
             this.lblCASolution.IsDerivedStyle = true;
             this.lblCASolution.Location = new System.Drawing.Point(3, 4);
             this.lblCASolution.Name = "lblCASolution";
-            this.lblCASolution.Size = new System.Drawing.Size(640, 23);
+            this.lblCASolution.Size = new System.Drawing.Size(433, 23);
             this.lblCASolution.Style = MetroSet_UI.Enums.Style.Dark;
             this.lblCASolution.StyleManager = null;
             this.lblCASolution.TabIndex = 7;
@@ -383,16 +383,22 @@
         "",
         "",
         "",
-        "\t\t\t\t\t\tNothing to see here..."};
+        "\t\t\t",
+        "",
+        "",
+        "",
+        "",
+        "",
+        "\t\t\t\tNothing to see here..."};
             this.rtbOutput.Location = new System.Drawing.Point(3, 30);
             this.rtbOutput.MaxLength = 32767;
             this.rtbOutput.Name = "rtbOutput";
             this.rtbOutput.ReadOnly = false;
-            this.rtbOutput.Size = new System.Drawing.Size(691, 144);
+            this.rtbOutput.Size = new System.Drawing.Size(527, 393);
             this.rtbOutput.Style = MetroSet_UI.Enums.Style.Dark;
             this.rtbOutput.StyleManager = null;
             this.rtbOutput.TabIndex = 6;
-            this.rtbOutput.Text = "\n\n\n\t\t\t\t\t\tNothing to see here...";
+            this.rtbOutput.Text = "\n\n\n\t\t\t\n\n\n\n\n\n\t\t\t\tNothing to see here...";
             this.rtbOutput.ThemeAuthor = "Narwin";
             this.rtbOutput.ThemeName = "MetroDark";
             this.rtbOutput.WordWrap = true;
@@ -408,7 +414,7 @@
             this.metroSetPanel3.IsDerivedStyle = true;
             this.metroSetPanel3.Location = new System.Drawing.Point(556, 50);
             this.metroSetPanel3.Name = "metroSetPanel3";
-            this.metroSetPanel3.Size = new System.Drawing.Size(697, 410);
+            this.metroSetPanel3.Size = new System.Drawing.Size(1349, 1026);
             this.metroSetPanel3.Style = MetroSet_UI.Enums.Style.Dark;
             this.metroSetPanel3.StyleManager = null;
             this.metroSetPanel3.TabIndex = 11;
@@ -419,7 +425,7 @@
             // 
             this.lblSolutionEmpty.Font = new System.Drawing.Font("Microsoft Sans Serif", 16F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
             this.lblSolutionEmpty.IsDerivedStyle = true;
-            this.lblSolutionEmpty.Location = new System.Drawing.Point(278, 190);
+            this.lblSolutionEmpty.Location = new System.Drawing.Point(652, 432);
             this.lblSolutionEmpty.Name = "lblSolutionEmpty";
             this.lblSolutionEmpty.Size = new System.Drawing.Size(154, 33);
             this.lblSolutionEmpty.Style = MetroSet_UI.Enums.Style.Dark;
@@ -831,7 +837,7 @@
             this.cbForm.CloseNormalForeColor = System.Drawing.Color.Gray;
             this.cbForm.DisabledForeColor = System.Drawing.Color.DimGray;
             this.cbForm.IsDerivedStyle = true;
-            this.cbForm.Location = new System.Drawing.Point(1164, 4);
+            this.cbForm.Location = new System.Drawing.Point(1816, 4);
             this.cbForm.MaximizeBox = true;
             this.cbForm.MaximizeHoverBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(238)))), ((int)(((byte)(238)))), ((int)(((byte)(238)))));
             this.cbForm.MaximizeHoverForeColor = System.Drawing.Color.Gray;
@@ -1158,7 +1164,7 @@
             this.AutoSize = true;
             this.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(30)))));
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
-            this.ClientSize = new System.Drawing.Size(1268, 653);
+            this.ClientSize = new System.Drawing.Size(1920, 1080);
             this.Controls.Add(this.metroSetPanel10);
             this.Controls.Add(this.metroSetPanel9);
             this.Controls.Add(this.cbForm);
@@ -1180,6 +1186,7 @@
             this.Text = "LINEAGRAMMING SOLUTIONS";
             this.TextColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(177)))), ((int)(((byte)(225)))));
             this.ThemeName = "MetroDark";
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.MainMenu_Load);
             this.metroSetPanel2.ResumeLayout(false);
             this.metroSetPanel1.ResumeLayout(false);
