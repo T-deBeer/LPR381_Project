@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LPR381_Project.Properties
+namespace LPR381_Project
 {
-    internal class BranchBound
+    internal class BranchnBound
     {
         private List<List<double>> initialTable;
         private List<double> xRHS;
@@ -29,7 +29,7 @@ namespace LPR381_Project.Properties
             }
             return listTable;
         }
-        public BranchBound(double[,] initialTable, int xColumnsAmount)
+        public BranchnBound(double[,] initialTable, int xColumnsAmount)
         {
             this.initialTable = ArrayToList(initialTable);
             this.xColumnsAmount = xColumnsAmount;
