@@ -388,5 +388,63 @@ namespace LPR381_Project
 
             return tables;
         }
+
+        public string PrintPrimal()
+        {
+            List<double[,]> result = PrimalSimplexAlgorithm();
+            string line = "";
+            foreach (var item in result)
+            {
+                for (int i = 0; i < item.GetLength(0); i++)
+                {
+                    for (int j = 0; j < item.GetLength(1); j++)
+                    {
+                        line += Math.Round(item[i, j], 4) + "\t";
+                    }
+                    line += "\n";
+                }
+                line += "\n";
+            }
+
+            return line;
+        }
+
+        public string PrintTwoPhase(List<double[,]> result)
+        {
+            string line = "";
+            foreach (var item in result)
+            {
+                for (int i = 0; i < item.GetLength(0); i++)
+                {
+                    for (int j = 0; j < item.GetLength(1); j++)
+                    {
+                        line += Math.Round(item[i, j], 4) + "\t";
+                    }
+                    line += "\n";
+                }
+                line += "\n";
+            }
+
+            return line;
+        }
+        public string PrintDual()
+        {
+            List<double[,]> result = DualSimplexAlgorithm();
+            string line = "";
+            foreach (var item in result)
+            {
+                for (int i = 0; i < item.GetLength(0); i++)
+                {
+                    for (int j = 0; j < item.GetLength(1); j++)
+                    {
+                        line += Math.Round(item[i, j], 4) + "\t";
+                    }
+                    line += "\n";
+                }
+                line += "\n";
+            }
+
+            return line;
+        }
     }
 }
