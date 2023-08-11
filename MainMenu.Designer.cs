@@ -43,7 +43,7 @@
             this.metroSetPanel4 = new MetroSet_UI.Controls.MetroSetPanel();
             this.lblCASolution = new MetroSet_UI.Controls.MetroSetLabel();
             this.rtbOutput = new MetroSet_UI.Controls.MetroSetRichTextBox();
-            this.metroSetPanel3 = new MetroSet_UI.Controls.MetroSetPanel();
+            this.pnlBranches = new MetroSet_UI.Controls.MetroSetPanel();
             this.lblSolutionEmpty = new MetroSet_UI.Controls.MetroSetLabel();
             this.lblSolution = new MetroSet_UI.Controls.MetroSetLabel();
             this.metroSetPanel5 = new MetroSet_UI.Controls.MetroSetPanel();
@@ -80,7 +80,7 @@
             this.metroSetPanel1.SuspendLayout();
             this.pnlDragnDrop.SuspendLayout();
             this.metroSetPanel4.SuspendLayout();
-            this.metroSetPanel3.SuspendLayout();
+            this.pnlBranches.SuspendLayout();
             this.metroSetPanel5.SuspendLayout();
             this.metroSetPanel6.SuspendLayout();
             this.metroSetPanel7.SuspendLayout();
@@ -396,23 +396,23 @@
             this.rtbOutput.ThemeName = "MetroDark";
             this.rtbOutput.WordWrap = true;
             // 
-            // metroSetPanel3
+            // pnlBranches
             // 
-            this.metroSetPanel3.AutoScroll = true;
-            this.metroSetPanel3.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(30)))));
-            this.metroSetPanel3.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(110)))), ((int)(((byte)(110)))), ((int)(((byte)(110)))));
-            this.metroSetPanel3.BorderThickness = 1;
-            this.metroSetPanel3.Controls.Add(this.lblSolutionEmpty);
-            this.metroSetPanel3.Controls.Add(this.lblSolution);
-            this.metroSetPanel3.IsDerivedStyle = true;
-            this.metroSetPanel3.Location = new System.Drawing.Point(556, 50);
-            this.metroSetPanel3.Name = "metroSetPanel3";
-            this.metroSetPanel3.Size = new System.Drawing.Size(1349, 1026);
-            this.metroSetPanel3.Style = MetroSet_UI.Enums.Style.Dark;
-            this.metroSetPanel3.StyleManager = null;
-            this.metroSetPanel3.TabIndex = 11;
-            this.metroSetPanel3.ThemeAuthor = "Narwin";
-            this.metroSetPanel3.ThemeName = "MetroDark";
+            this.pnlBranches.AutoScroll = true;
+            this.pnlBranches.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(30)))), ((int)(((byte)(30)))), ((int)(((byte)(30)))));
+            this.pnlBranches.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(110)))), ((int)(((byte)(110)))), ((int)(((byte)(110)))));
+            this.pnlBranches.BorderThickness = 1;
+            this.pnlBranches.Controls.Add(this.lblSolutionEmpty);
+            this.pnlBranches.Controls.Add(this.lblSolution);
+            this.pnlBranches.IsDerivedStyle = true;
+            this.pnlBranches.Location = new System.Drawing.Point(556, 50);
+            this.pnlBranches.Name = "pnlBranches";
+            this.pnlBranches.Size = new System.Drawing.Size(1349, 1026);
+            this.pnlBranches.Style = MetroSet_UI.Enums.Style.Dark;
+            this.pnlBranches.StyleManager = null;
+            this.pnlBranches.TabIndex = 11;
+            this.pnlBranches.ThemeAuthor = "Narwin";
+            this.pnlBranches.ThemeName = "MetroDark";
             // 
             // lblSolutionEmpty
             // 
@@ -1072,7 +1072,7 @@
             this.Controls.Add(this.metroSetPanel7);
             this.Controls.Add(this.metroSetPanel6);
             this.Controls.Add(this.metroSetPanel5);
-            this.Controls.Add(this.metroSetPanel3);
+            this.Controls.Add(this.pnlBranches);
             this.Controls.Add(this.metroSetPanel4);
             this.Controls.Add(this.metroSetPanel1);
             this.Controls.Add(this.metroSetPanel2);
@@ -1091,7 +1091,7 @@
             this.metroSetPanel1.ResumeLayout(false);
             this.pnlDragnDrop.ResumeLayout(false);
             this.metroSetPanel4.ResumeLayout(false);
-            this.metroSetPanel3.ResumeLayout(false);
+            this.pnlBranches.ResumeLayout(false);
             this.metroSetPanel5.ResumeLayout(false);
             this.metroSetPanel6.ResumeLayout(false);
             this.metroSetPanel7.ResumeLayout(false);
@@ -1118,7 +1118,7 @@
         private MetroSet_UI.Controls.MetroSetPanel metroSetPanel4;
         private MetroSet_UI.Controls.MetroSetLabel lblCASolution;
         private MetroSet_UI.Controls.MetroSetRichTextBox rtbOutput;
-        private MetroSet_UI.Controls.MetroSetPanel metroSetPanel3;
+        private MetroSet_UI.Controls.MetroSetPanel pnlBranches;
         private MetroSet_UI.Controls.MetroSetLabel lblSolution;
         private MetroSet_UI.Controls.MetroSetLabel lblSolutionEmpty;
         private MetroSet_UI.Controls.MetroSetPanel metroSetPanel5;
