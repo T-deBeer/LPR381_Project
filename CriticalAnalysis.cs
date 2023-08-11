@@ -11,17 +11,24 @@ namespace LPR381_Project
     {
         private double[,] initialTable;
         private double[,] finalTable;
+        private double[] cBV;
+        private double[,] B;
+        private double[] b;
 
         public CriticalAnalysis(double[,] initialTable, double[,] finalTable)
         {
             this.InitialTable = initialTable;
             this.FinalTable = finalTable;
+
+            cBV = GetObjectiveFunctionCoefficients();
+            B = GetBasicVariableColumns();
+            b = GetRHSColumnValues();
         }
 
         public double[,] InitialTable { get => initialTable; set => initialTable = value; }
         public double[,] FinalTable { get => finalTable; set => finalTable = value; }
-            // BV
-        public int[] GetBasicVariableIndexes()
+        // BV
+        private int[] GetBasicVariableIndexes()
         {
             int numRows = FinalTable.GetLength(0);
             int numCols = FinalTable.GetLength(1);

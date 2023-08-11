@@ -127,9 +127,6 @@ namespace LPR381_Project
 
             CriticalAnalysis ca = new CriticalAnalysis(initialTable, matrixOptimal);
 
-            // BV*
-            int[] basicVariableIndexes = ca.GetBasicVariableIndexes();
-
             //// XBV
             //double[,] xBV = MathPreliminaries.GetBasicVariablesMatrix(initialTable, basicVariableIndexes);
 
