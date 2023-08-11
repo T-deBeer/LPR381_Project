@@ -61,8 +61,9 @@ namespace LPR381_Project
         //}
 
         // CBV
-        public double[] GetObjectiveFunctionCoefficients(int[] basicVariableIndexes)
+        public double[] GetObjectiveFunctionCoefficients()
         {
+            int[] basicVariableIndexes = GetBasicVariableIndexes();
             int numRows = basicVariableIndexes.Length;
             double[] objectiveFunctionCoefficients = new double[numRows];
 
@@ -76,8 +77,9 @@ namespace LPR381_Project
         }
 
         // B
-        public double[,] GetBasicVariableColumns(int[] basicVariableIndexes)
+        public double[,] GetBasicVariableColumns()
         {
+            int[] basicVariableIndexes = GetBasicVariableIndexes();
             int numRows = basicVariableIndexes.Length;
             int numCols = numRows;
             double[,] B = new double[numRows, numCols];

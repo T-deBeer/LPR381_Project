@@ -134,7 +134,7 @@ namespace LPR381_Project
             //double[,] xBV = MathPreliminaries.GetBasicVariablesMatrix(initialTable, basicVariableIndexes);
 
             // CBV
-            double[] CBV = ca.GetObjectiveFunctionCoefficients(basicVariableIndexes);
+            double[] CBV = ca.GetObjectiveFunctionCoefficients();
             string line = "";
             for (int i = 0; i < CBV.Length; i++)
             {
@@ -143,7 +143,7 @@ namespace LPR381_Project
             rtbOutput.Text = rtbOutput.Text + "\n\nCBV:\n" + line;
 
             // B
-            double[,] B = ca.GetBasicVariableColumns(basicVariableIndexes);
+            double[,] B = ca.GetBasicVariableColumns();
             line = "";
             for (int i = 0; i < B.GetLength(0); i++)
             {
