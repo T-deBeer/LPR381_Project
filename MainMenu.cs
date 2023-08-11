@@ -50,9 +50,6 @@ namespace LPR381_Project
             txtCAChanges.Enabled = false;
             btnCAChanges.Enabled = false;
             btnConstraints.Enabled = false;
-            cboConstraintVar.Enabled = false;
-            cboConstraintComp.Enabled = false;
-            txtConstraintVal.Enabled = false;
             btnShadowPrices.Enabled = false;
             cboShadowPriceVar.Enabled = false;
 
@@ -107,25 +104,13 @@ namespace LPR381_Project
                     lines = File.ReadAllLines(filePath);
                 }
             }
+            rtbFileOutput.Text = "";
+            foreach (var item in lines)
+            {
+                rtbFileOutput.AppendText(item + "\n");
+                lp.Add(item);
+            }
 
-            LinearModel lp = new LinearModel(lines);
-            rtbFileOutput.Text += "SIMPLEX CANONICAL FORM:\n";
-            rtbFileOutput.Text += (lp.CanonObjFunctionToString());
-            rtbFileOutput.Text += ("\nsubject to:\n");
-            rtbFileOutput.Text += (lp.CanonSimplexConstraintsToString());
-            rtbFileOutput.Text += "\n\n";
-
-            //double[,] table = lp.SimplexTables[lp.SimplexTables.Count - 1];
-
-            //for (int i = 0; i < table.GetLength(0); i++)
-            //{
-            //    string res = "";
-            //    for (int j = 0; j < table.GetLength(1); j++)
-            //    {
-            //        res += $"{table[i, j]}\t";
-            //    }
-            //    rtbFileOutput.Text += $"{res}\n";
-            //}
             btnSolve.Enabled = true;
             cboMethod.Enabled = true;
             cboMethod.SelectedIndex = 0;
@@ -133,6 +118,9 @@ namespace LPR381_Project
 
         private void btnSolve_Click(object sender, EventArgs e)
         {
+            btnConstraints.Enabled = true;
+            mtxtCon.Enabled = true;
+
             LinearModel lm = new LinearModel(lp.ToArray());
             switch (cboMethod.SelectedIndex)
             {
@@ -210,7 +198,7 @@ namespace LPR381_Project
             // Unbounded solution.
             for (int i = 0; i < finalTable.GetLength(1); i++)
             {
-                if (finalTable[0,i] < 0)
+                if (finalTable[0, i] < 0)
                 {
                     MessageBox.Show("The solution is unbounded given the problem.\n\nTry inspecing the Linear programming problem for any variables that can be unbounded.", "Unbounded solution", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return false;
@@ -219,7 +207,7 @@ namespace LPR381_Project
             // Multiple solutions.
             for (int i = 0; i < finalTable.GetLength(1); i++)
             {
-                if (finalTable[0,i] == 0)
+                if (finalTable[0, i] == 0)
                 {
                     sum = 0;
                     for (int j = 0; j < finalTable.GetLength(0); j++)
@@ -234,6 +222,107 @@ namespace LPR381_Project
                 }
             }
             return true;
+        }
+
+        private void btnConstraints_Click(object sender, EventArgs e)
+        {
+            List<string> constraintToAdd = new List<string>(mtxtCon.Text.Split(" "));
+
+            LinearModel lm = new LinearModel(lp.ToArray());
+            Simplex solution = new Simplex(lm.SimplexInitial, lm.ProblemType);
+
+            List<double[,]> solutionTables = solution.DualSimplexAlgorithm();
+            double[,] finalTable = solutionTables[solutionTables.Count -1];
+            
+
+            //Constraint variable
+            Dictionary<string, string> newConstraint = new Dictionary<string, string>();
+            List<Dictionary<string, string>> tempConstraints = new List<Dictionary<string, string>>();
+            List<int> basicVariables = new List<int>();
+
+            if (constraintToAdd.Count != lm.ObjectiveFunction.Count+2)
+            {
+                MessageBox.Show("Please ensure that the form of the constraint mathces the form of the original model.");
+            }
+            else
+            {
+                
+                for (int i = 0; i < finalTable.GetLength(1); i++)
+                {
+                    double sum = 0;
+                    for (int j = 0; j < finalTable.GetLength(0); j++)
+                    {
+                        sum += finalTable[j, i];
+                    }
+
+                    if (sum == 1)
+                    {
+                        basicVariables.Add(i);
+                    }
+                }
+
+                newConstraint.Add("sign", constraintToAdd[constraintToAdd.Count - 2]);
+                newConstraint.Add("rhs", constraintToAdd[constraintToAdd.Count - 1]);
+
+                constraintToAdd.RemoveAt(constraintToAdd.Count - 2);
+                constraintToAdd.RemoveAt(constraintToAdd.Count - 1);
+
+                for (int i = 0; i < constraintToAdd.Count; i++)
+                {
+                    newConstraint.Add($"X{i + 1}", constraintToAdd[i]);
+                }
+
+                //Add Slack and Excess variables
+                switch (newConstraint["sign"])
+                {
+                    case "<=":
+                        {
+                            newConstraint.Add("S", "+1");
+                        }
+                        break;
+
+                    case ">=":
+                        {
+                            newConstraint.Add("E", "+1");
+                            foreach (var kvp in newConstraint.Where(x => x.Key.Contains('X') || x.Key.Contains("rhs")))
+                            {
+                                newConstraint[kvp.Key] = (double.Parse(newConstraint[kvp.Key]) * -1).ToString();
+                            }
+                        }
+                        break;
+
+                    case "=":
+                        {
+                            Dictionary<string, string> temp = new Dictionary<string, string>(newConstraint);
+                            newConstraint.Add("S", "+1");
+
+                            foreach (var kvp in temp.Where(x => x.Key.Contains('X') || x.Key.Contains("rhs")))
+                            {
+                                temp[kvp.Key] = (double.Parse(temp[kvp.Key]) * -1).ToString();
+                            }
+
+                            temp.Add("E", "+1");
+
+                            tempConstraints.Add(temp);
+                        }
+                        break;
+                }
+
+                //Create table entry for new constraint
+                double[] newConstraintRow = new double[finalTable.GetLength(1) + 1];
+
+                int count = 0;
+                foreach (var kvp in newConstraint.Where(x => x.Key.Contains('X'))) 
+                {
+                    newConstraintRow[count] = double.Parse(newConstraint[kvp.Key]);
+                    count++;
+                }
+
+                newConstraintRow[finalTable.GetLength(1)-1] = 1;
+                newConstraintRow[finalTable.GetLength(1)] = double.Parse(newConstraint["rhs"]);
+
+                
+            }
         }
     }
 }

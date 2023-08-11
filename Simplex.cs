@@ -399,7 +399,7 @@ namespace LPR381_Project
                 {
                     for (int j = 0; j < item.GetLength(1); j++)
                     {
-                        line += item[i, j] + "\t";
+                        line += Math.Round(item[i, j], 4) + "\t";
                     }
                     line += "\n";
                 }
@@ -418,7 +418,7 @@ namespace LPR381_Project
                 {
                     for (int j = 0; j < item.GetLength(1); j++)
                     {
-                        line += item[i, j] + "\t";
+                        line += Math.Round(item[i, j], 4) + "\t";
                     }
                     line += "\n";
                 }
@@ -437,7 +437,7 @@ namespace LPR381_Project
                 {
                     for (int j = 0; j < item.GetLength(1); j++)
                     {
-                        line += item[i, j] + "\t";
+                        line += Math.Round(item[i, j], 4) + "\t";
                     }
                     line += "\n";
                 }
