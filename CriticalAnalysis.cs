@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MathNet.Numerics.LinearAlgebra;
 
 namespace LPR381_Project
 {
@@ -111,7 +112,32 @@ namespace LPR381_Project
 
             return rhsColumn;
         }
-    }
 
-        ////////////////////////////////////////////////////////////////////////
+        // MATRIX MATH EXAMPLES:
+        public double[,] MatrixMultiplyExample(double[] b, double[,] B)
+        {
+            // Reshape the vector into a 1x3 matrix (double[,])
+            double[,] newb = new double[1, b.Length];
+            for (int i = 0; i < b.Length; i++)
+            {
+                newb[0, i] = b[i];
+            }
+
+            Matrix<double> matrixb = Matrix<double>.Build.DenseOfArray(newb);
+            Matrix<double> matrixB = Matrix<double>.Build.DenseOfArray(B);
+
+            Matrix<double> result = matrixb * matrixB;
+
+            return result.ToArray();
+        }
+
+        public double DeterminantExample(double[,] B)
+        {
+            Matrix<double> matrixB = Matrix<double>.Build.DenseOfArray(B);
+
+            double result = matrixB.Determinant();
+
+            return result;
+        }
+    }
 }

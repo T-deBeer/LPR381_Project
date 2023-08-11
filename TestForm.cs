@@ -158,11 +158,28 @@ namespace LPR381_Project
             // b
             double[] b = ca.GetRHSColumnValues();
             line = "";
-            for (int i = 0; i < CBV.Length; i++)
+            for (int i = 0; i < b.Length; i++)
             {
                 line += b[i].ToString() + "\t";
             }
             rtbOutput.Text = rtbOutput.Text + "\n\nb:\n" + line;
+
+            // Matrix multiplication.
+            double[,] multiply = ca.MatrixMultiplyExample(b, B);
+            line = "";
+            for (int i = 0; i < multiply.GetLength(0); i++)
+            {
+                for (int j = 0; j < multiply.GetLength(1); j++)
+                {
+                    line += multiply[i,j] + "\t";
+                }
+                line += "\n";
+            }
+            rtbOutput.Text = rtbOutput.Text + "\n\nMultiplication of b and B:\n" + line;
+
+            // Matrix determinant.
+            double det = ca.DeterminantExample(B);
+            rtbOutput.Text = rtbOutput.Text + "\n\nDeterminant of B:" + det;
         }
     }
 }
