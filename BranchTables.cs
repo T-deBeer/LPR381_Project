@@ -7,12 +7,12 @@ using System.Windows.Forms;
 
 namespace LPR381_Project
 {
-    internal class BranchTables
+    internal class BranchTable
     {
         string level;
         double[,] table;
         DataGridView dataGrid;
-        public BranchTables(string level, double[,] table)
+        public BranchTable(string level, double[,] table)
         {
             this.Level = level;
             this.Table = table;
