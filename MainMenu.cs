@@ -92,7 +92,7 @@ namespace LPR381_Project
         {
             string filePath = string.Empty;
             string[] lines = Array.Empty<string>();
-
+            lp.Clear();
             using (OpenFileDialog ofd = new OpenFileDialog())
             {
                 ofd.Filter = "Text Files (*.txt)|*.txt";
