@@ -55,36 +55,36 @@ namespace LPR381_Project
 
             cbForm.Location = new System.Drawing.Point(1816, 4);
 
-            //List<BranchTable> placementQueue = branchTables.OrderBy(x => x.Level.Length).ToList();
+            List<BranchTable> placementQueue = branchTables.OrderBy(x => x.Level.Length).ToList();
 
-            //List<BranchTable> sub1 = branchTables.Where(x => x.Level[0] == '1').ToList();
+            List<BranchTable> sub1 = branchTables.Where(x => x.Level[0] == '1').ToList();
 
-            //List<BranchTable> sub2 = branchTables.Where(x => x.Level[0] == '2').ToList();
+            List<BranchTable> sub2 = branchTables.Where(x => x.Level[0] == '2').ToList();
+            
 
+            double x = Math.Pow(2, placementQueue.Last().Level.Length) / 2;
+            int y = placementQueue.Select(x => x.Level.Length).Distinct().Count();
 
-            //double x = Math.Pow(2, placementQueue.Last().Level.Length) / 2;
-            //int y = placementQueue.Select(x => x.Level.Length).Distinct().Count();
+            int width = (int)x * placementQueue.Last().DataGrid.ClientSize.Width + 100;
+            int height = y * placementQueue.Last().DataGrid.ClientSize.Height + 100;
 
-            //int width = (int)x * placementQueue.Last().DataGrid.ClientSize.Width + 100;
-            //int height = y * placementQueue.Last().DataGrid.ClientSize.Height + 100;
+            int tableWidth = placementQueue.Last().DataGrid.Width;
 
-            //int tableWidth = placementQueue.Last().DataGrid.Width;
+            for (int i = 0; i < sub1.Count(); i++)
+            {
+                string level = sub1[i].Level;
 
-            //for (int i = 0; i < sub1.Count(); i++)
-            //{
-            //    string level = sub1[i].Level;
+                sub1[i].DataGrid.Left = width / 2 - sub1[i].DataGrid.Width / 2;
+                sub1[i].DataGrid.Top += sub1.Last().DataGrid.Height + 50;
 
-            //    sub1[i].DataGrid.Left = width / 2 - sub1[i].DataGrid.Width / 2;
-            //    sub1[i].DataGrid.Top += sub1.Last().DataGrid.Height + 50;
-
-            //    for (int j = 1; j < sub1[i].Level.Length; j++)
-            //    {
-            //        sub1[i].DataGrid.Top += sub1.Last().DataGrid.Height + 50;
-            //        sub1[i].DataGrid.Left += (sub1[i].Level[j] == '1' ? -1 : 1) * (pnlBranches.Width / (int)Math.Pow(2, j)) / 2;
-            //    }
-            //    pnlBranches.Controls.Add(sub1[i].DataGrid);
-            //    sub1[i].DataGrid.CurrentCell = null;
-            //}
+                for (int j = 1; j < sub1[i].Level.Length; j++)
+                {
+                    sub1[i].DataGrid.Top += sub1.Last().DataGrid.Height + 50;
+                    sub1[i].DataGrid.Left += (sub1[i].Level[j] == '1' ? -1 : 1) * (pnlBranches.Width / (int)Math.Pow(2, j)) / 2;
+                }
+                pnlBranches.Controls.Add(sub1[i].DataGrid);
+                sub1[i].DataGrid.CurrentCell = null;
+            }
         }
 
         private void pnlDragnDrop_DragEnter(object sender, DragEventArgs e)
