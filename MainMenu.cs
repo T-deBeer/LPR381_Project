@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -18,7 +19,7 @@ namespace LPR381_Project
         public MainMenu()
         {
             InitializeComponent();
-        }       
+        }
         private void MainMenu_Load(object sender, EventArgs e)
         {
             rtbFileOutput.BackColor = Color.FromArgb(30, 30, 30);
@@ -78,7 +79,7 @@ namespace LPR381_Project
             List<BranchTable> sub1 = branchTables.Where(x => x.Level[0] == '1').ToList();
 
             List<BranchTable> sub2 = branchTables.Where(x => x.Level[0] == '2').ToList();
-            
+
 
             double x = Math.Pow(2, placementQueue.Last().Level.Length) / 2;
             int y = placementQueue.Select(x => x.Level.Length).Distinct().Count();
@@ -369,7 +370,98 @@ namespace LPR381_Project
 
                 newConstraintRow[finalTable.GetLength(1) - 1] = 1;
                 newConstraintRow[finalTable.GetLength(1)] = double.Parse(newConstraint["rhs"]);
+
+                List<List<double>> listTable = ArrayToList(finalTable);
+                List<double> listCon = new List<double>(newConstraintRow);
+
+                List<List<double>> newTable = AddConstraint(listCon, listTable, finalTable.GetLength(0), finalTable.GetLength(1));
+
+                double[,] tab = ListToArray(newTable);
+
+                Simplex sp = new Simplex(tab, lm.ProblemType);
+                rtbOutput.Text = sp.PrintDual();
             }
+
+
+        }
+        public List<List<double>> ArrayToList(double[,] table)
+        {
+            // Populate Nested lists with values from the array
+            List<List<double>> listTable = new List<List<double>>();
+
+            for (int i = 0; i < table.GetLength(0); i++)
+            {
+                List<double> row = new List<double>();
+                for (int j = 0; j < table.GetLength(1); j++)
+                {
+                    row.Add(table[i, j]);
+                }
+                listTable.Add(row);
+            }
+            return listTable;
+        }
+        public double[,] ListToArray(List<List<double>> table)
+        {
+            // Populate Nested lists with values from the array
+            double[,] listTable = new double[table.Count, table[0].Count];
+
+            for (int i = 0; i < table.Count; i++)
+            {
+                for (int j = 0; j < table[i].Count; j++)
+                {
+                    listTable[i, j] = table[i][j];
+                }
+            }
+            return listTable;
+        }
+        public List<List<double>> AddConstraint(List<double> constraint, List<List<double>> table, int columns, int rows)
+        {
+            double sumWithoutConstraint = 0;
+            List<double> sum = new List<double>();
+            List<int> clashes = new List<int>();
+
+            for (int i = 0; i < columns; i++)
+            {
+                if (i == table[0].Count - 2)
+                {
+                    table[i].Insert(table[0].Count() - 2, constraint[constraint.Count() - 2]);
+                }
+                else
+                {
+                    table[i].Insert(table[0].Count() - 2, 0);
+                }
+            }
+            //columns++;
+            for (int i = 0; i < rows; i++)
+            {
+                int row = 0;
+                for (int j = 0; j < columns; j++)
+                {
+                    sumWithoutConstraint += table[j][i];
+                    row = j;
+                }
+                if (sumWithoutConstraint == 1)
+                {
+                    if (sumWithoutConstraint + constraint[i + 1] != 1)
+                    {
+                        clashes.Add(row);
+                    }
+                }
+                sum.Add(sumWithoutConstraint);
+            }
+
+
+            if (clashes.Count > 0)
+            {
+                for (int i = 0; i < constraint.Count(); i++)
+                {
+                    constraint[i] = table[clashes[0]][i] - constraint[i];
+                }
+            }
+
+            table.Add(constraint);
+            rows++;
+            return table;
         }
     }
 }
