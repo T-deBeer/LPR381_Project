@@ -535,12 +535,6 @@ namespace LPR381_Project
                 }
                 sum.Add(sumWithoutConstraint);
             }
-        }
-
-        private void cboCAChangeRow_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            txtCAChangeValue.Text = cboCAChangeRow.Items[cboCAChangeRow.SelectedIndex].ToString();
-
 
             if (clashes.Count > 0)
             {
@@ -553,6 +547,14 @@ namespace LPR381_Project
             table.Add(constraint);
             rows++;
             return table;
+        }
+
+        private void cboCAChangeRow_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            txtCAChangeValue.Text = cboCAChangeRow.Items[cboCAChangeRow.SelectedIndex].ToString();
+
+
+            
         }
     }
 }
