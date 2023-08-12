@@ -35,8 +35,6 @@ namespace LPR381_Project
             lblFileOutput.ForeColor = Color.FromArgb(28, 131, 174);
             lblSolution.ForeColor = Color.FromArgb(28, 131, 174);
             lblSolve.ForeColor = Color.FromArgb(28, 131, 174);
-            lblCAChangeDesc.ForeColor = Color.FromArgb(255, 255, 255);
-            lblCAChangePos.ForeColor = Color.FromArgb(255, 255, 255);
             lblShadowPrices.ForeColor = Color.FromArgb(28, 131, 174);
             lblConstraint.ForeColor = Color.FromArgb(28, 131, 174);
 
@@ -46,11 +44,12 @@ namespace LPR381_Project
             cboMethod.Enabled = false;
             cboCARangeRow.Enabled = false;
             cboCARangeCol.Enabled = false;
-            txtCAChanges.Enabled = false;
+            txtCAChangeValue.Enabled = false;
             btnCAChanges.Enabled = false;
             btnConstraints.Enabled = false;
             btnShadowPrices.Enabled = false;
             cboShadowPriceVar.Enabled = false;
+            txtCAChangeValue.Enabled = false;
 
             cbForm.Location = new System.Drawing.Point(1816, 4);
             //Testing here
@@ -124,15 +123,16 @@ namespace LPR381_Project
                 foreach (string filePath in droppedFiles)
                 {
                     lines = File.ReadAllLines(filePath);
+                    cboCAChangeRow.Items.Clear();
                     foreach (var item in lines)
                     {
                         rtbFileOutput.AppendText(item + "\n");
                         lp.Add(item);
+                        cboCAChangeRow.Items.Add(item);
                     }
                 }
                 btnSolve.Enabled = true;
                 cboMethod.Enabled = true;
-                btnDuality.Enabled = true;
                 cboMethod.SelectedIndex = 0;
             }
         }
@@ -154,10 +154,12 @@ namespace LPR381_Project
                 }
             }
             rtbFileOutput.Text = "";
+            cboCAChangeRow.Items.Clear();
             foreach (var item in lines)
             {
                 rtbFileOutput.AppendText(item + "\n");
                 lp.Add(item);
+                cboCAChangeRow.Items.Add(item);
             }
 
             btnSolve.Enabled = true;
@@ -182,6 +184,7 @@ namespace LPR381_Project
                     }
                     Simplex sp = new Simplex(lm.SimplexInitial, lm.ProblemType);
                     rtbOutput.Text = sp.PrintPrimal();
+                    EnableElements();
                     break;
                 case 1:
                     if (lm.SignRes.Contains("int") || lm.SignRes.Contains("bin"))
@@ -193,6 +196,7 @@ namespace LPR381_Project
                     Simplex st = new Simplex(lm.TwoPhaseInitial, lm.ProblemType);
                     List<double[,]> result = st.TwoPhaseAlgorithm(lm.TwoPhaseArtificialColumns);
                     rtbOutput.Text = st.PrintTwoPhase(result);
+                    EnableElements();
                     break;
                 case 2:
                     if (lm.SignRes.Contains("int") || lm.SignRes.Contains("bin"))
@@ -203,6 +207,7 @@ namespace LPR381_Project
                     }
                     Simplex sd = new Simplex(lm.SimplexInitial, lm.ProblemType);
                     rtbOutput.Text = sd.PrintDual();
+                    EnableElements();
                     break;
                 case 3:
                     // Branch and Bound
@@ -210,10 +215,28 @@ namespace LPR381_Project
                 case 4:
                     CuttingPlane cp = new CuttingPlane(lm.SimplexInitial, lm.ProblemType, lm.SignRes.ToArray());
                     rtbOutput.Text = cp.PrintResults();
+                    EnableElements();
                     break;
                 default:
                     MessageBox.Show("Invalid method selected, please try another method.", "Method Selection", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     break;
+            }
+
+            void EnableElements()
+            {
+                btnDuality.Enabled = true;
+
+                cboCAChangeRow.Enabled = true;
+                cboCAChangeRow.SelectedIndex = 0;
+                txtCAChangeValue.Enabled = true;
+                btnCAChanges.Enabled = true;
+
+                btnCARanges.Enabled = true;
+                cboCARangeCol.Enabled = true;
+                cboCARangeRow.Enabled = true;
+
+                btnShadowPrices.Enabled = true;
+                cboShadowPriceVar.Enabled = true;
             }
         }
 
@@ -370,6 +393,11 @@ namespace LPR381_Project
                 newConstraintRow[finalTable.GetLength(1) - 1] = 1;
                 newConstraintRow[finalTable.GetLength(1)] = double.Parse(newConstraint["rhs"]);
             }
+        }
+
+        private void cboCAChangeRow_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            txtCAChangeValue.Text = cboCAChangeRow.Items[cboCAChangeRow.SelectedIndex].ToString();
         }
     }
 }
