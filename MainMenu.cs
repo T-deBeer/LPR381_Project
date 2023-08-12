@@ -18,7 +18,70 @@ namespace LPR381_Project
         public MainMenu()
         {
             InitializeComponent();
-        }       
+        }
+        private void PrintTables(List<BranchTable>? tables = null, bool branchBound = false)
+        {
+            pnlBranches.Controls.Clear();
+            tables = new List<BranchTable>
+            {
+                new BranchTable("1", new double[,] { { 1, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } }),
+                new BranchTable("6", new double[,] { { 6, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } }),
+                new BranchTable("2", new double[,] { { 2, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } }),
+                new BranchTable("3", new double[,] { { 3, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } }),
+                new BranchTable("5", new double[,] { { 5, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } }),
+                new BranchTable("4", new double[,] { { 4, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } }),
+                new BranchTable("7", new double[,] { { 7, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } }),
+                new BranchTable("8", new double[,] { { 8, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } }),
+                new BranchTable("9", new double[,] { { 9, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } }),
+            };
+
+            if (branchBound == false)
+            {
+                tables = tables.OrderBy(x => int.Parse(x.Level)).ToList();
+                int top = 20;
+                foreach (BranchTable table in tables)
+                {
+                    table.DataGrid.Top = top;
+                    table.DataGrid.Left = pnlBranches.Width / 2 - table.DataGrid.Width / 2;
+                    top += table.DataGrid.Height + 40;
+                    pnlBranches.Controls.Add(table.DataGrid);
+                    table.DataGrid.CurrentCell = null;
+                }
+            }
+            else
+            {
+                List<BranchTable> placementQueue = tables.OrderBy(x => x.Level.Length).ToList();
+
+                List<BranchTable> sub1 = tables.Where(x => x.Level[0] == '1').ToList();
+
+                List<BranchTable> sub2 = tables.Where(x => x.Level[0] == '2').ToList();
+
+
+                double x = Math.Pow(2, placementQueue.Last().Level.Length) / 2;
+                int y = placementQueue.Select(x => x.Level.Length).Distinct().Count();
+
+                int width = (int)x * placementQueue.Last().DataGrid.ClientSize.Width + 100;
+                int height = y * placementQueue.Last().DataGrid.ClientSize.Height + 100;
+
+                int tableWidth = placementQueue.Last().DataGrid.Width;
+
+                for (int i = 0; i < sub1.Count(); i++)
+                {
+                    string level = sub1[i].Level;
+
+                    sub1[i].DataGrid.Left = width / 2 - sub1[i].DataGrid.Width / 2;
+                    sub1[i].DataGrid.Top += sub1.Last().DataGrid.Height + 50;
+
+                    for (int j = 1; j < sub1[i].Level.Length; j++)
+                    {
+                        sub1[i].DataGrid.Top += sub1.Last().DataGrid.Height + 50;
+                        sub1[i].DataGrid.Left += (sub1[i].Level[j] == '1' ? -1 : 1) * (pnlBranches.Width / (int)Math.Pow(2, j)) / 2;
+                    }
+                    pnlBranches.Controls.Add(sub1[i].DataGrid);
+                    sub1[i].DataGrid.CurrentCell = null;
+                }
+            }
+        }
         private void MainMenu_Load(object sender, EventArgs e)
         {
             rtbFileOutput.BackColor = Color.FromArgb(30, 30, 30);
@@ -71,38 +134,7 @@ namespace LPR381_Project
                 new BranchTable("221", new double[,] { { 221, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } }),
                 new BranchTable("222", new double[,] { { 222, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } }),
             };
-
-
-            List<BranchTable> placementQueue = branchTables.OrderBy(x => x.Level.Length).ToList();
-
-            List<BranchTable> sub1 = branchTables.Where(x => x.Level[0] == '1').ToList();
-
-            List<BranchTable> sub2 = branchTables.Where(x => x.Level[0] == '2').ToList();
             
-
-            double x = Math.Pow(2, placementQueue.Last().Level.Length) / 2;
-            int y = placementQueue.Select(x => x.Level.Length).Distinct().Count();
-
-            int width = (int)x * placementQueue.Last().DataGrid.ClientSize.Width + 100;
-            int height = y * placementQueue.Last().DataGrid.ClientSize.Height + 100;
-
-            int tableWidth = placementQueue.Last().DataGrid.Width;
-
-            for (int i = 0; i < sub1.Count(); i++)
-            {
-                string level = sub1[i].Level;
-
-                sub1[i].DataGrid.Left = width / 2 - sub1[i].DataGrid.Width / 2;
-                sub1[i].DataGrid.Top += sub1.Last().DataGrid.Height + 50;
-
-                for (int j = 1; j < sub1[i].Level.Length; j++)
-                {
-                    sub1[i].DataGrid.Top += sub1.Last().DataGrid.Height + 50;
-                    sub1[i].DataGrid.Left += (sub1[i].Level[j] == '1' ? -1 : 1) * (pnlBranches.Width / (int)Math.Pow(2, j)) / 2;
-                }
-                pnlBranches.Controls.Add(sub1[i].DataGrid);
-                sub1[i].DataGrid.CurrentCell = null;
-            }
         }
 
         private void pnlDragnDrop_DragEnter(object sender, DragEventArgs e)
