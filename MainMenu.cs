@@ -510,14 +510,14 @@ namespace LPR381_Project
             {
                 if (i == table[0].Count - 2)
                 {
-                    table[i].Insert(table[0].Count() - 2, constraint[constraint.Count() - 2]);
+                    table[i].Insert(columns - 2, constraint[constraint.Count() - 2]);
                 }
                 else
                 {
-                    table[i].Insert(table[0].Count() - 2, 0);
+                    table[i].Insert(columns - 2, 0);
                 }
             }
-            //columns++;
+            columns++;
             for (int i = 0; i < rows; i++)
             {
                 int row = 0;
@@ -543,9 +543,7 @@ namespace LPR381_Project
                     constraint[i] = table[clashes[0]][i] - constraint[i];
                 }
             }
-
-            table.Add(constraint);
-            rows++;
+       
             return table;
         }
 
