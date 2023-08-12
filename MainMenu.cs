@@ -20,6 +20,69 @@ namespace LPR381_Project
         {
             InitializeComponent();
         }
+        private void PrintTables(List<BranchTable>? tables = null, bool branchBound = false)
+        {
+            pnlBranches.Controls.Clear();
+            tables = new List<BranchTable>
+            {
+                new BranchTable("1", new double[,] { { 1, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } }),
+                new BranchTable("6", new double[,] { { 6, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } }),
+                new BranchTable("2", new double[,] { { 2, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } }),
+                new BranchTable("3", new double[,] { { 3, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } }),
+                new BranchTable("5", new double[,] { { 5, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } }),
+                new BranchTable("4", new double[,] { { 4, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } }),
+                new BranchTable("7", new double[,] { { 7, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } }),
+                new BranchTable("8", new double[,] { { 8, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } }),
+                new BranchTable("9", new double[,] { { 9, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } }),
+            };
+
+            if (branchBound == false)
+            {
+                tables = tables.OrderBy(x => int.Parse(x.Level)).ToList();
+                int top = 20;
+                foreach (BranchTable table in tables)
+                {
+                    table.DataGrid.Top = top;
+                    table.DataGrid.Left = pnlBranches.Width / 2 - table.DataGrid.Width / 2;
+                    top += table.DataGrid.Height + 40;
+                    pnlBranches.Controls.Add(table.DataGrid);
+                    table.DataGrid.CurrentCell = null;
+                }
+            }
+            else
+            {
+                List<BranchTable> placementQueue = tables.OrderBy(x => x.Level.Length).ToList();
+
+                List<BranchTable> sub1 = tables.Where(x => x.Level[0] == '1').ToList();
+
+                List<BranchTable> sub2 = tables.Where(x => x.Level[0] == '2').ToList();
+
+
+                double x = Math.Pow(2, placementQueue.Last().Level.Length) / 2;
+                int y = placementQueue.Select(x => x.Level.Length).Distinct().Count();
+
+                int width = (int)x * placementQueue.Last().DataGrid.ClientSize.Width + 100;
+                int height = y * placementQueue.Last().DataGrid.ClientSize.Height + 100;
+
+                int tableWidth = placementQueue.Last().DataGrid.Width;
+
+                for (int i = 0; i < sub1.Count(); i++)
+                {
+                    string level = sub1[i].Level;
+
+                    sub1[i].DataGrid.Left = width / 2 - sub1[i].DataGrid.Width / 2;
+                    sub1[i].DataGrid.Top += sub1.Last().DataGrid.Height + 50;
+
+                    for (int j = 1; j < sub1[i].Level.Length; j++)
+                    {
+                        sub1[i].DataGrid.Top += sub1.Last().DataGrid.Height + 50;
+                        sub1[i].DataGrid.Left += (sub1[i].Level[j] == '1' ? -1 : 1) * (pnlBranches.Width / (int)Math.Pow(2, j)) / 2;
+                    }
+                    pnlBranches.Controls.Add(sub1[i].DataGrid);
+                    sub1[i].DataGrid.CurrentCell = null;
+                }
+            }
+        }
         private void MainMenu_Load(object sender, EventArgs e)
         {
             rtbFileOutput.BackColor = Color.FromArgb(30, 30, 30);
@@ -36,8 +99,6 @@ namespace LPR381_Project
             lblFileOutput.ForeColor = Color.FromArgb(28, 131, 174);
             lblSolution.ForeColor = Color.FromArgb(28, 131, 174);
             lblSolve.ForeColor = Color.FromArgb(28, 131, 174);
-            lblCAChangeDesc.ForeColor = Color.FromArgb(255, 255, 255);
-            lblCAChangePos.ForeColor = Color.FromArgb(255, 255, 255);
             lblShadowPrices.ForeColor = Color.FromArgb(28, 131, 174);
             lblConstraint.ForeColor = Color.FromArgb(28, 131, 174);
 
@@ -47,11 +108,12 @@ namespace LPR381_Project
             cboMethod.Enabled = false;
             cboCARangeRow.Enabled = false;
             cboCARangeCol.Enabled = false;
-            txtCAChanges.Enabled = false;
+            txtCAChangeValue.Enabled = false;
             btnCAChanges.Enabled = false;
             btnConstraints.Enabled = false;
             btnShadowPrices.Enabled = false;
             cboShadowPriceVar.Enabled = false;
+            txtCAChangeValue.Enabled = false;
 
             cbForm.Location = new System.Drawing.Point(1816, 4);
             //Testing here
@@ -79,7 +141,7 @@ namespace LPR381_Project
             List<BranchTable> sub1 = branchTables.Where(x => x.Level[0] == '1').ToList();
 
             List<BranchTable> sub2 = branchTables.Where(x => x.Level[0] == '2').ToList();
-
+            
 
             double x = Math.Pow(2, placementQueue.Last().Level.Length) / 2;
             int y = placementQueue.Select(x => x.Level.Length).Distinct().Count();
@@ -125,15 +187,16 @@ namespace LPR381_Project
                 foreach (string filePath in droppedFiles)
                 {
                     lines = File.ReadAllLines(filePath);
+                    cboCAChangeRow.Items.Clear();
                     foreach (var item in lines)
                     {
                         rtbFileOutput.AppendText(item + "\n");
                         lp.Add(item);
+                        cboCAChangeRow.Items.Add(item);
                     }
                 }
                 btnSolve.Enabled = true;
                 cboMethod.Enabled = true;
-                btnDuality.Enabled = true;
                 cboMethod.SelectedIndex = 0;
             }
         }
@@ -155,10 +218,12 @@ namespace LPR381_Project
                 }
             }
             rtbFileOutput.Text = "";
+            cboCAChangeRow.Items.Clear();
             foreach (var item in lines)
             {
                 rtbFileOutput.AppendText(item + "\n");
                 lp.Add(item);
+                cboCAChangeRow.Items.Add(item);
             }
 
             btnSolve.Enabled = true;
@@ -183,6 +248,7 @@ namespace LPR381_Project
                     }
                     Simplex sp = new Simplex(lm.SimplexInitial, lm.ProblemType);
                     rtbOutput.Text = sp.PrintPrimal();
+                    EnableElements();
                     break;
                 case 1:
                     if (lm.SignRes.Contains("int") || lm.SignRes.Contains("bin"))
@@ -194,6 +260,7 @@ namespace LPR381_Project
                     Simplex st = new Simplex(lm.TwoPhaseInitial, lm.ProblemType);
                     List<double[,]> result = st.TwoPhaseAlgorithm(lm.TwoPhaseArtificialColumns);
                     rtbOutput.Text = st.PrintTwoPhase(result);
+                    EnableElements();
                     break;
                 case 2:
                     if (lm.SignRes.Contains("int") || lm.SignRes.Contains("bin"))
@@ -204,6 +271,7 @@ namespace LPR381_Project
                     }
                     Simplex sd = new Simplex(lm.SimplexInitial, lm.ProblemType);
                     rtbOutput.Text = sd.PrintDual();
+                    EnableElements();
                     break;
                 case 3:
                     // Branch and Bound
@@ -211,10 +279,28 @@ namespace LPR381_Project
                 case 4:
                     CuttingPlane cp = new CuttingPlane(lm.SimplexInitial, lm.ProblemType, lm.SignRes.ToArray());
                     rtbOutput.Text = cp.PrintResults();
+                    EnableElements();
                     break;
                 default:
                     MessageBox.Show("Invalid method selected, please try another method.", "Method Selection", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     break;
+            }
+
+            void EnableElements()
+            {
+                btnDuality.Enabled = true;
+
+                cboCAChangeRow.Enabled = true;
+                cboCAChangeRow.SelectedIndex = 0;
+                txtCAChangeValue.Enabled = true;
+                btnCAChanges.Enabled = true;
+
+                btnCARanges.Enabled = true;
+                cboCARangeCol.Enabled = true;
+                cboCARangeRow.Enabled = true;
+
+                btnShadowPrices.Enabled = true;
+                cboShadowPriceVar.Enabled = true;
             }
         }
 
@@ -449,6 +535,11 @@ namespace LPR381_Project
                 }
                 sum.Add(sumWithoutConstraint);
             }
+        }
+
+        private void cboCAChangeRow_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            txtCAChangeValue.Text = cboCAChangeRow.Items[cboCAChangeRow.SelectedIndex].ToString();
 
 
             if (clashes.Count > 0)
