@@ -19,7 +19,9 @@ namespace LPR381_Project
         {
             InitializeComponent();
         }
-
+        public void PrintTables(List<BranchTable> tables, bool branncBound = false) {
+            
+        }
         private void MainMenu_Load(object sender, EventArgs e)
         {
             rtbFileOutput.BackColor = Color.FromArgb(30, 30, 30);
