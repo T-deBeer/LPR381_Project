@@ -936,11 +936,7 @@ namespace LPR381_Project
 
                     case ">=":
                         {
-                            newConstraint.Add("E", "+1");
-                            foreach (var kvp in newConstraint.Where(x => x.Key.Contains('X') || x.Key.Contains("rhs")))
-                            {
-                                newConstraint[kvp.Key] = (double.Parse(newConstraint[kvp.Key]) * -1).ToString();
-                            }
+                            newConstraint.Add("E", "-1");
                         }
                         break;
 
@@ -954,7 +950,7 @@ namespace LPR381_Project
                                 temp[kvp.Key] = (double.Parse(temp[kvp.Key]) * -1).ToString();
                             }
 
-                            temp.Add("E", "+1");
+                            temp.Add("E", "-1");
 
                             tempConstraints.Add(temp);
                         }
@@ -970,8 +966,14 @@ namespace LPR381_Project
                     newConstraintRow[count] = double.Parse(newConstraint[kvp.Key]);
                     count++;
                 }
+                
+                foreach (var kvp in newConstraint.Where(x => x.Key.Contains('E') || x.Key.Contains('S')))
+                {
+                    newConstraintRow[finalTable.GetLength(1) - 1] = double.Parse(newConstraint[kvp.Key]);
+                    count++;
+                }
 
-                newConstraintRow[finalTable.GetLength(1) - 1] = 1;
+                
                 newConstraintRow[finalTable.GetLength(1)] = double.Parse(newConstraint["rhs"]);
 
                 List<List<double>> listTable = ArrayToList(finalTable);
@@ -982,7 +984,51 @@ namespace LPR381_Project
                 double[,] tab = ListToArray(newTable);
 
                 Simplex sp = new Simplex(tab, lm.ProblemType);
-                //rtbOutput.Text = sp.PrintDual();
+
+                List<double[,]> tables = sp.DualSimplexAlgorithm();
+                //List<double[,]> tables = new List<double[,]>();
+
+                //tables.Add(finalTable);
+                //tables.AddRange(newTables);
+
+                List<string> headers = new List<string>();
+                List<string> rowHeaders = new List<string>();
+                List<BranchTable> branches = new List<BranchTable>();
+
+                rowHeaders.Add($"Z");
+
+                count = 1;
+                foreach (var kvp in lm.ObjectiveFunction.Where(x => x.Key.Contains("X")))
+                {
+                    headers.Add(kvp.Key);
+                }
+
+                int rowCount = 1;
+                foreach (var con in lm.ConstraintsSimplex)
+                {
+                    rowHeaders.Add($"{rowCount}");
+                    rowCount++;
+
+                    foreach (var kvp in con.Where(x => !x.Key.Contains('X') && x.Key != "rhs" && x.Key != "sign"))
+                    {
+                        headers.Add(kvp.Key);
+                    }
+                }
+
+                headers.Add("new");
+                rowHeaders.Add($"{rowCount}");
+                headers.Add("rhs");
+
+
+                foreach (var table in tables)
+                {
+                    BranchTable tbl = new BranchTable(count.ToString(), table, headers, rowHeaders);
+                    branches.Add(tbl);
+                    count++;
+                }
+
+                btnOutputClear_Click(sender, e);
+                PrintTables(branches);
             }
         }
         public List<List<double>> ArrayToList(double[,] table)
@@ -1038,10 +1084,6 @@ namespace LPR381_Project
         public List<List<double>> AddConstraint(List<double> constraint, List<List<double>> table, int columns, int rows)
         {
             //List<double> sum = new List<double>();
-            for (int i = 0; i < constraint.Count(); i++)
-            {
-                constraint[i] *= -1;
-            }
             List<int> clashes = new List<int>();
             for (int i = 0; i < columns; i++)
             {
@@ -1066,14 +1108,7 @@ namespace LPR381_Project
 
             for (int i = 0; i < rows; i++)
             {
-                //if (i == columns - 2)
-                //{
-                //    table[i].Insert(columns - 2, constraint[constraint.Count() - 2]);
-                //}
-                //else
-                //{
                 table[i].Insert(columns - 2, 0);
-                //}
             }
             columns++;
             for (int i = 0; i < clashes.Count(); i++)
