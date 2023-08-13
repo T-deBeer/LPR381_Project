@@ -186,13 +186,13 @@ namespace LPR381_Project
 
             tableQueue.Enqueue(new BranchTable("0", ListToArray(initialTable), columnHeaders, rowHeaders));
 
-        //    while (tableQueue.Count != 0)
-        //    {
-        //        BranchTable branchTable = tableQueue.Dequeue();
-        //        List<List<double>> table = ArrayToList(branchTable.Table);      
+            while (tableQueue.Count != 0)
+            {
+                BranchTable branchTable = tableQueue.Dequeue();
+                List<List<double>> table = ArrayToList(branchTable.Table);      
                 
-        //        int row = DetermineCutRow(table);                    /// ifi
-        //        List<List<double>> constraints = GenerateConstraints(row, table[row].IndexOf(1), table);
+                int row = DetermineCutRow(table);                    /// ifi
+                List<List<double>> constraints = GenerateConstraints(row, table[row].IndexOf(1), table);
 
                 for (int i = 0; i < constraints.Count(); i++)
                 {
