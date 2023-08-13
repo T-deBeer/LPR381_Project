@@ -23,7 +23,7 @@ namespace LPR381_Project
         public string[] SignRestrictions { get => signRestrictions; set => signRestrictions = value; }
 
         // CUTTING PLANE ALGORITHM
-        private List<List<double[,]>> CuttingPlaneSolve()
+        public List<List<double[,]>> CuttingPlaneSolve()
         {
             List<List<double[,]>> final = new List<List<double[,]>>();
 

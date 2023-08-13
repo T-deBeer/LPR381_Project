@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using MetroSet_UI.Forms;
 using static System.Windows.Forms.LinkLabel;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TreeView;
 
 namespace LPR381_Project
 {
@@ -20,22 +21,9 @@ namespace LPR381_Project
         {
             InitializeComponent();
         }
-        private void PrintTables(List<BranchTable>? tables = null, bool branchBound = false)
+        private void PrintTables(List<BranchTable>? tables = null, bool branchBound = false, List<string>? headers = null)
         {
-            pnlBranches.Controls.Clear();
-            tables = new List<BranchTable>
-            {
-                new BranchTable("1", new double[,] { { 1, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } }),
-                new BranchTable("6", new double[,] { { 6, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } }),
-                new BranchTable("2", new double[,] { { 2, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } }),
-                new BranchTable("3", new double[,] { { 3, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } }),
-                new BranchTable("5", new double[,] { { 5, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } }),
-                new BranchTable("4", new double[,] { { 4, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } }),
-                new BranchTable("7", new double[,] { { 7, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } }),
-                new BranchTable("8", new double[,] { { 8, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } }),
-                new BranchTable("9", new double[,] { { 9, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } }),
-            };
-
+            //pnlBranches.Controls.Clear();
             if (branchBound == false)
             {
                 tables = tables.OrderBy(x => int.Parse(x.Level)).ToList();
@@ -116,56 +104,6 @@ namespace LPR381_Project
             txtCAChangeValue.Enabled = false;
 
             cbForm.Location = new System.Drawing.Point(1816, 4);
-            //Testing here
-            List<BranchTable> branchTables = new List<BranchTable>
-            {
-                new BranchTable("1", new double[,] { { 1, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } }),
-                new BranchTable("11", new double[,] { { 11, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } }),
-                new BranchTable("12", new double[,] { { 12, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } }),
-                new BranchTable("111", new double[,] { { 111, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } }),
-                new BranchTable("112", new double[,] { { 112, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } }),
-                new BranchTable("121", new double[,] { { 121, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } }),
-                new BranchTable("122", new double[,] { { 122, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } }),
-                new BranchTable("2", new double[,] { { 2, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } }),
-                new BranchTable("21", new double[,] { { 21, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } }),
-                new BranchTable("22", new double[,] { { 22, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } }),
-                new BranchTable("211", new double[,] { { 211, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } }),
-                new BranchTable("212", new double[,] { { 212, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } }),
-                new BranchTable("221", new double[,] { { 221, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } }),
-                new BranchTable("222", new double[,] { { 222, 2, 3 }, { 1, 2, 3 }, { 1, 2, 3 } }),
-            };
-
-
-            List<BranchTable> placementQueue = branchTables.OrderBy(x => x.Level.Length).ToList();
-
-            List<BranchTable> sub1 = branchTables.Where(x => x.Level[0] == '1').ToList();
-
-            List<BranchTable> sub2 = branchTables.Where(x => x.Level[0] == '2').ToList();
-            
-
-            double x = Math.Pow(2, placementQueue.Last().Level.Length) / 2;
-            int y = placementQueue.Select(x => x.Level.Length).Distinct().Count();
-
-            int width = (int)x * placementQueue.Last().DataGrid.ClientSize.Width + 100;
-            int height = y * placementQueue.Last().DataGrid.ClientSize.Height + 100;
-
-            int tableWidth = placementQueue.Last().DataGrid.Width;
-
-            for (int i = 0; i < sub1.Count(); i++)
-            {
-                string level = sub1[i].Level;
-
-                sub1[i].DataGrid.Left = width / 2 - sub1[i].DataGrid.Width / 2;
-                sub1[i].DataGrid.Top += sub1.Last().DataGrid.Height + 50;
-
-                for (int j = 1; j < sub1[i].Level.Length; j++)
-                {
-                    sub1[i].DataGrid.Top += sub1.Last().DataGrid.Height + 50;
-                    sub1[i].DataGrid.Left += (sub1[i].Level[j] == '1' ? -1 : 1) * (pnlBranches.Width / (int)Math.Pow(2, j)) / 2;
-                }
-                pnlBranches.Controls.Add(sub1[i].DataGrid);
-                sub1[i].DataGrid.CurrentCell = null;
-            }
         }
 
         private void pnlDragnDrop_DragEnter(object sender, DragEventArgs e)
@@ -233,10 +171,15 @@ namespace LPR381_Project
 
         private void btnSolve_Click(object sender, EventArgs e)
         {
+            lblSolutionEmpty.Visible = false;
+
             btnConstraints.Enabled = true;
             mtxtCon.Enabled = true;
 
             LinearModel lm = new LinearModel(lp.ToArray());
+            List<BranchTable> branches = new List<BranchTable>();
+            List<string> headers = new List<string>();
+
             switch (cboMethod.SelectedIndex)
             {
                 case 0:
@@ -247,7 +190,33 @@ namespace LPR381_Project
                             "Try using the 'Branch and Bound' or 'Cutting Plane' algorithms for values that have int or bin.", "Sign Restrictions", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                     Simplex sp = new Simplex(lm.SimplexInitial, lm.ProblemType);
-                    rtbOutput.Text = sp.PrintPrimal();
+                    List<double[,]> tables = sp.PrimalSimplexAlgorithm();
+
+                    foreach (var kvp in lm.ObjectiveFunction.Where(x => x.Key.Contains('X')))
+                    {
+                        headers.Add(kvp.Key);
+                    }
+
+                    foreach (var con in lm.ConstraintsSimplex)
+                    {
+                        foreach (var kvp in con.Where(x => !x.Key.Contains('X') && x.Key != "rhs" && x.Key != "sign"))
+                        {
+                            headers.Add(kvp.Key);
+                        }
+                    }
+                    headers.Add("rhs");
+                    int count = 1;
+                    foreach (var table in tables)
+                    {
+                        BranchTable newTable = new BranchTable(count.ToString(), table, headers);
+                        branches.Add(newTable);
+                        count++;
+                    }
+
+                    btnOutputClear_Click(sender, e);
+
+                    PrintTables(branches);
+
                     EnableElements();
                     break;
                 case 1:
@@ -259,7 +228,32 @@ namespace LPR381_Project
                     }
                     Simplex st = new Simplex(lm.TwoPhaseInitial, lm.ProblemType);
                     List<double[,]> result = st.TwoPhaseAlgorithm(lm.TwoPhaseArtificialColumns);
-                    rtbOutput.Text = st.PrintTwoPhase(result);
+
+                    count = 1;
+                    foreach (var kvp in lm.ObjectiveFunction.Where(x => x.Key.Contains('X')))
+                    {
+                        headers.Add(kvp.Key);
+                    }
+
+                    foreach (var con in lm.ConstraintsSimplex)
+                    {
+                        foreach (var kvp in con.Where(x => !x.Key.Contains('X') && x.Key != "rhs" && x.Key != "sign"))
+                        {
+                            headers.Add(kvp.Key);
+                        }
+                    }
+                    headers.Add("rhs");
+
+
+                    foreach (var table in result)
+                    {
+                        BranchTable newTable = new BranchTable(count.ToString(), table, headers);
+                        branches.Add(newTable);
+                        count++;
+                    }
+                    btnOutputClear_Click(sender, e);
+
+                    PrintTables(branches);
                     EnableElements();
                     break;
                 case 2:
@@ -270,7 +264,32 @@ namespace LPR381_Project
                             "Try using the 'Branch and Bound' or 'Cutting Plane' algorithms for values that have int or bin.", "Sign Restrictions", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                     Simplex sd = new Simplex(lm.SimplexInitial, lm.ProblemType);
-                    rtbOutput.Text = sd.PrintDual();
+
+                    List<double[,]> dualResult = sd.DualSimplexAlgorithm();
+                    count = 1;
+                    foreach (var kvp in lm.ObjectiveFunction.Where(x => x.Key.Contains('X')))
+                    {
+                        headers.Add(kvp.Key);
+                    }
+
+                    foreach (var con in lm.ConstraintsSimplex)
+                    {
+                        foreach (var kvp in con.Where(x => !x.Key.Contains('X') && x.Key != "rhs" && x.Key != "sign"))
+                        {
+                            headers.Add(kvp.Key);
+                        }
+                    }
+                    headers.Add("rhs");
+
+                    foreach (var table in dualResult)
+                    {
+                        BranchTable newTable = new BranchTable(count.ToString(), table, headers);
+                        branches.Add(newTable);
+                        count++;
+                    }
+                    btnOutputClear_Click(sender, e);
+
+                    PrintTables(branches);
                     EnableElements();
                     break;
                 case 3:
@@ -278,7 +297,44 @@ namespace LPR381_Project
                     break;
                 case 4:
                     CuttingPlane cp = new CuttingPlane(lm.SimplexInitial, lm.ProblemType, lm.SignRes.ToArray());
-                    rtbOutput.Text = cp.PrintResults();
+
+
+                    List<List<double[,]>> cpResultList = cp.CuttingPlaneSolve();
+                    List<double[,]> cpResult = new List<double[,]>();
+                    count = 1;
+
+                    foreach (var iteration in cpResultList)
+                    {
+                        foreach (var table in iteration)
+                        {
+                            cpResult.Add(table);
+                        }
+                    }
+                    foreach (var kvp in lm.ObjectiveFunction.Where(x => x.Key.Contains('X')))
+                    {
+                        headers.Add(kvp.Key);
+                    }
+
+                    foreach (var con in lm.ConstraintsSimplex)
+                    {
+                        foreach (var kvp in con.Where(x => !x.Key.Contains('X') && x.Key != "rhs" && x.Key != "sign"))
+                        {
+                            headers.Add(kvp.Key);
+                        }
+                    }
+                    headers.Add("S");
+                    headers.Add("rhs");
+
+                    foreach (var table in cpResult)
+                    {
+                        BranchTable newTable = new BranchTable(count.ToString(), table, headers);
+                        branches.Add(newTable);
+                        count++;
+                    }
+
+                    btnOutputClear_Click(sender, e);
+                    PrintTables(branches);
+
                     EnableElements();
                     break;
                 default:
@@ -310,8 +366,39 @@ namespace LPR381_Project
             LinearModel lm = new LinearModel(lp.ToArray());
             rtbOutput.AppendText(lm.CanonDualFunctionToString() + "\n");
             rtbOutput.AppendText(lm.CanonDualConstraintsToString() + "\n");
+
+            
             Simplex s = new Simplex(lm.DualityInitial, lm.DualProblemType);
-            rtbOutput.AppendText("\n" + s.PrintDual() + "\n");
+            rtbOutput.AppendText(s.PrintDual());
+
+            List<double[,]> tables = s.DualSimplexAlgorithm();
+            List<string> headers = new List<string>();
+            List<BranchTable> branches = new List<BranchTable>();
+
+            int count = 1;
+            foreach (var kvp in lm.DualityFunction.Where(x => x.Key.Contains('Y')))
+            {
+                headers.Add(kvp.Key);
+            }
+
+            foreach (var con in lm.DualityConstraints)
+            {
+                foreach (var kvp in con.Where(x => !x.Key.Contains('Y') && x.Key != "rhs" && x.Key != "sign"))
+                {
+                    headers.Add(kvp.Key);
+                }
+            }
+            headers.Add("rhs");
+
+            foreach (var table in tables)
+            {
+                BranchTable newTable = new BranchTable(count.ToString(), table, headers);
+                branches.Add(newTable);
+                count++;
+            }
+
+            btnOutputClear_Click(sender, e);
+            PrintTables(branches);
         }
 
         public bool CheckFeasibility(List<double[,]> result)
@@ -541,7 +628,7 @@ namespace LPR381_Project
                     constraint[i] = table[clashes[0]][i] - constraint[i];
                 }
             }
-       
+
             return table;
         }
 
@@ -560,6 +647,7 @@ namespace LPR381_Project
                     pnlBranches.Controls.RemoveAt(i);
                 }
             }
+            //lblSolutionEmpty.Visible = true;
         }
 
         private void btnCAOutputClear_Click(object sender, EventArgs e)

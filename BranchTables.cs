@@ -11,11 +11,14 @@ namespace LPR381_Project
     {
         string level;
         double[,] table;
+        List<string> headers;
+
         DataGridView dataGrid;
-        public BranchTable(string level, double[,] table)
+        public BranchTable(string level, double[,] table, List<string> headers)
         {
             this.Level = level;
             this.Table = table;
+            this.headers = headers;
             ///////////////////
             ///Style data grid here
             dataGrid = new DataGridView
@@ -25,7 +28,7 @@ namespace LPR381_Project
                 Left = 0,
                 ReadOnly = true,
                 MultiSelect = false,
-                RowHeadersVisible = false,
+                RowHeadersVisible = true,
                 AllowUserToResizeColumns = false,
                 AllowUserToAddRows = false,
                 AllowUserToDeleteRows = false,
@@ -63,7 +66,7 @@ namespace LPR381_Project
             dataGrid.Height = (rows + 1) * 30;
             for (int j = 0; j < cols; j++)
             {
-                dataGrid.Columns.Add($"Column{j}", $"Header {j}");
+                dataGrid.Columns.Add($"Column{j}", $" {headers[j]}");
                 dataGrid.Columns[j].Width = 100;
             }
             for (int i = 0; i < rows; i++)
@@ -71,8 +74,9 @@ namespace LPR381_Project
                 string[] row = new string[cols];
                 for (int j = 0; j < cols; j++)
                 {
-                    row[j] = table[i, j].ToString();
+                    row[j] = Math.Round(table[i, j],3).ToString();
                 }
+
                 dataGrid.Rows.Add(row);
                 dataGrid.Rows[i].Height = 30;
             }

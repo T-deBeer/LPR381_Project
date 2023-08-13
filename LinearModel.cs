@@ -429,7 +429,7 @@ namespace LPR381_Project
 
             //Duality initial tableau
             int dualCount = 0;
-            this.DualityInitial = new double[this.DualityConstraints.Count + 1, decVars + this.DualityConstraints.Count + 1];
+            this.DualityInitial = new double[this.DualityConstraints.Count + 1, decVars + this.DualityConstraints.Count + 2];
             foreach (var kvp in this.DualityFunction)
             {
                 this.DualityInitial[0, dualCount] = kvp.Value * -1;
