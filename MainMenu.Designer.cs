@@ -41,6 +41,7 @@
             this.pnlDragnDrop = new MetroSet_UI.Controls.MetroSetPanel();
             this.lblDrop = new MetroSet_UI.Controls.MetroSetLabel();
             this.metroSetPanel4 = new MetroSet_UI.Controls.MetroSetPanel();
+            this.btnCAOutputClear = new MetroSet_UI.Controls.MetroSetButton();
             this.lblCASolution = new MetroSet_UI.Controls.MetroSetLabel();
             this.rtbOutput = new MetroSet_UI.Controls.MetroSetRichTextBox();
             this.pnlBranches = new MetroSet_UI.Controls.MetroSetPanel();
@@ -76,7 +77,6 @@
             this.metroSetLabel12 = new MetroSet_UI.Controls.MetroSetLabel();
             this.btnConstraints = new MetroSet_UI.Controls.MetroSetButton();
             this.lblConstraint = new MetroSet_UI.Controls.MetroSetLabel();
-            this.btnCAOutputClear = new MetroSet_UI.Controls.MetroSetButton();
             this.metroSetPanel2.SuspendLayout();
             this.metroSetPanel1.SuspendLayout();
             this.pnlDragnDrop.SuspendLayout();
@@ -352,6 +352,33 @@
             this.metroSetPanel4.TabIndex = 10;
             this.metroSetPanel4.ThemeAuthor = "Narwin";
             this.metroSetPanel4.ThemeName = "MetroDark";
+            // 
+            // btnCAOutputClear
+            // 
+            this.btnCAOutputClear.DisabledBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(120)))), ((int)(((byte)(65)))), ((int)(((byte)(177)))), ((int)(((byte)(225)))));
+            this.btnCAOutputClear.DisabledBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(120)))), ((int)(((byte)(65)))), ((int)(((byte)(177)))), ((int)(((byte)(225)))));
+            this.btnCAOutputClear.DisabledForeColor = System.Drawing.Color.Gray;
+            this.btnCAOutputClear.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.btnCAOutputClear.HoverBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(95)))), ((int)(((byte)(207)))), ((int)(((byte)(255)))));
+            this.btnCAOutputClear.HoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(95)))), ((int)(((byte)(207)))), ((int)(((byte)(255)))));
+            this.btnCAOutputClear.HoverTextColor = System.Drawing.Color.White;
+            this.btnCAOutputClear.IsDerivedStyle = true;
+            this.btnCAOutputClear.Location = new System.Drawing.Point(204, 0);
+            this.btnCAOutputClear.Name = "btnCAOutputClear";
+            this.btnCAOutputClear.NormalBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(177)))), ((int)(((byte)(225)))));
+            this.btnCAOutputClear.NormalColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(177)))), ((int)(((byte)(225)))));
+            this.btnCAOutputClear.NormalTextColor = System.Drawing.Color.White;
+            this.btnCAOutputClear.PressBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(147)))), ((int)(((byte)(195)))));
+            this.btnCAOutputClear.PressColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(147)))), ((int)(((byte)(195)))));
+            this.btnCAOutputClear.PressTextColor = System.Drawing.Color.White;
+            this.btnCAOutputClear.Size = new System.Drawing.Size(117, 34);
+            this.btnCAOutputClear.Style = MetroSet_UI.Enums.Style.Light;
+            this.btnCAOutputClear.StyleManager = null;
+            this.btnCAOutputClear.TabIndex = 10;
+            this.btnCAOutputClear.Text = "Clear";
+            this.btnCAOutputClear.ThemeAuthor = "Narwin";
+            this.btnCAOutputClear.ThemeName = "MetroLite";
+            this.btnCAOutputClear.Click += new System.EventHandler(this.btnCAOutputClear_Click);
             // 
             // lblCASolution
             // 
@@ -1091,33 +1118,6 @@
             this.lblConstraint.Text = "Add constraints:";
             this.lblConstraint.ThemeAuthor = "Narwin";
             this.lblConstraint.ThemeName = "MetroDark";
-            // 
-            // btnCAOutputClear
-            // 
-            this.btnCAOutputClear.DisabledBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(120)))), ((int)(((byte)(65)))), ((int)(((byte)(177)))), ((int)(((byte)(225)))));
-            this.btnCAOutputClear.DisabledBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(120)))), ((int)(((byte)(65)))), ((int)(((byte)(177)))), ((int)(((byte)(225)))));
-            this.btnCAOutputClear.DisabledForeColor = System.Drawing.Color.Gray;
-            this.btnCAOutputClear.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.btnCAOutputClear.HoverBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(95)))), ((int)(((byte)(207)))), ((int)(((byte)(255)))));
-            this.btnCAOutputClear.HoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(95)))), ((int)(((byte)(207)))), ((int)(((byte)(255)))));
-            this.btnCAOutputClear.HoverTextColor = System.Drawing.Color.White;
-            this.btnCAOutputClear.IsDerivedStyle = true;
-            this.btnCAOutputClear.Location = new System.Drawing.Point(204, 3);
-            this.btnCAOutputClear.Name = "btnCAOutputClear";
-            this.btnCAOutputClear.NormalBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(177)))), ((int)(((byte)(225)))));
-            this.btnCAOutputClear.NormalColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(177)))), ((int)(((byte)(225)))));
-            this.btnCAOutputClear.NormalTextColor = System.Drawing.Color.White;
-            this.btnCAOutputClear.PressBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(147)))), ((int)(((byte)(195)))));
-            this.btnCAOutputClear.PressColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(147)))), ((int)(((byte)(195)))));
-            this.btnCAOutputClear.PressTextColor = System.Drawing.Color.White;
-            this.btnCAOutputClear.Size = new System.Drawing.Size(117, 34);
-            this.btnCAOutputClear.Style = MetroSet_UI.Enums.Style.Light;
-            this.btnCAOutputClear.StyleManager = null;
-            this.btnCAOutputClear.TabIndex = 10;
-            this.btnCAOutputClear.Text = "Clear";
-            this.btnCAOutputClear.ThemeAuthor = "Narwin";
-            this.btnCAOutputClear.ThemeName = "MetroLite";
-            this.btnCAOutputClear.Click += new System.EventHandler(this.btnCAOutputClear_Click);
             // 
             // MainMenu
             // 
