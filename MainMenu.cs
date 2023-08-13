@@ -121,22 +121,78 @@ namespace LPR381_Project
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
-                string[] droppedFiles = (string[])e.Data.GetData(DataFormats.FileDrop);
-                string[] lines;
-                rtbFileOutput.Text = "";
-                lp.Clear();
-                foreach (string filePath in droppedFiles)
+                try
                 {
-                    lines = File.ReadAllLines(filePath);
-                    cboCAChangeRow.Items.Clear();
-                    foreach (var item in lines)
+                    string[] droppedFiles = (string[])e.Data.GetData(DataFormats.FileDrop);
+                    string[] lines;
+                    rtbFileOutput.Text = "";
+                    lp.Clear();
+                    foreach (string filePath in droppedFiles)
                     {
-                        rtbFileOutput.AppendText(item + "\n");
-                        lp.Add(item);
-                        cboCAChangeRow.Items.Add(item);
+                        lines = File.ReadAllLines(filePath);
+                        cboCAChangeRow.Items.Clear();
+                        foreach (var item in lines)
+                        {
+                            rtbFileOutput.AppendText(item + "\n");
+                            lp.Add(item);
+                            cboCAChangeRow.Items.Add(item);
+                        }
+                    }
+
+                    LinearModel lm = new LinearModel(lp.ToArray());
+                    rtbFileOutput.AppendText("\nSIMPLEX CANONICAL FORM:\n");
+                    rtbFileOutput.AppendText(lm.ObjFunctionToString() + "\n");
+                    rtbFileOutput.AppendText(lm.CanonSimplexConstraintsToString() + "\n");
+
+                    rtbFileOutput.AppendText("\nTWO-PHSES CANONICAL FORM:\n");
+                    rtbFileOutput.AppendText(lm.WFunctionToString() + "\n");
+                    rtbFileOutput.AppendText(lm.ObjFunctionToString() + "\n");
+                    rtbFileOutput.AppendText(lm.CanonTwoPhaseConstraintsToString() + "\n");
+
+                    rtbFileOutput.AppendText("\nDUALITY CANONICAL FORM:\n");
+                    rtbFileOutput.AppendText(lm.CanonDualFunctionToString() + "\n");
+                    rtbFileOutput.AppendText(lm.CanonDualConstraintsToString() + "\n");
+
+
+                    btnSolve.Enabled = true;
+                    cboMethod.Enabled = true;
+                    cboMethod.SelectedIndex = 0;
+                }
+                catch (Exception)
+                {
+                    MessageBox.Show("The textfile was not in the correct format.\n" +
+                            "Please ensure that each variable is separated by a space and there are not any additional spaces. All numbers except the rhs have signs (+/-). And should have a min/max at the start.\n"
+                            , "Textfile error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+        }
+
+        private void btnFile_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                string filePath = string.Empty;
+                string[] lines = Array.Empty<string>();
+                lp.Clear();
+                using (OpenFileDialog ofd = new OpenFileDialog())
+                {
+                    ofd.Filter = "Text Files (*.txt)|*.txt";
+
+                    if (ofd.ShowDialog() == DialogResult.OK)
+                    {
+                        filePath = ofd.FileName;
+
+                        lines = File.ReadAllLines(filePath);
                     }
                 }
-
+                rtbFileOutput.Text = "";
+                cboCAChangeRow.Items.Clear();
+                foreach (var item in lines)
+                {
+                    rtbFileOutput.AppendText(item + "\n");
+                    lp.Add(item);
+                    cboCAChangeRow.Items.Add(item);
+                }
                 LinearModel lm = new LinearModel(lp.ToArray());
                 rtbFileOutput.AppendText("\nSIMPLEX CANONICAL FORM:\n");
                 rtbFileOutput.AppendText(lm.ObjFunctionToString() + "\n");
@@ -156,50 +212,12 @@ namespace LPR381_Project
                 cboMethod.Enabled = true;
                 cboMethod.SelectedIndex = 0;
             }
-        }
-
-        private void btnFile_Click(object sender, EventArgs e)
-        {
-            string filePath = string.Empty;
-            string[] lines = Array.Empty<string>();
-            lp.Clear();
-            using (OpenFileDialog ofd = new OpenFileDialog())
+            catch (Exception)
             {
-                ofd.Filter = "Text Files (*.txt)|*.txt";
-
-                if (ofd.ShowDialog() == DialogResult.OK)
-                {
-                    filePath = ofd.FileName;
-
-                    lines = File.ReadAllLines(filePath);
-                }
-            }
-            rtbFileOutput.Text = "";
-            cboCAChangeRow.Items.Clear();
-            foreach (var item in lines)
-            {
-                rtbFileOutput.AppendText(item + "\n");
-                lp.Add(item);
-                cboCAChangeRow.Items.Add(item);
-            }
-            LinearModel lm = new LinearModel(lp.ToArray());
-            rtbFileOutput.AppendText("\nSIMPLEX CANONICAL FORM:\n");
-            rtbFileOutput.AppendText(lm.ObjFunctionToString() + "\n");
-            rtbFileOutput.AppendText(lm.CanonSimplexConstraintsToString() + "\n");
-
-            rtbFileOutput.AppendText("\nTWO-PHSES CANONICAL FORM:\n");
-            rtbFileOutput.AppendText(lm.WFunctionToString() + "\n");
-            rtbFileOutput.AppendText(lm.ObjFunctionToString() + "\n");
-            rtbFileOutput.AppendText(lm.CanonTwoPhaseConstraintsToString() + "\n");
-
-            rtbFileOutput.AppendText("\nDUALITY CANONICAL FORM:\n");
-            rtbFileOutput.AppendText(lm.CanonDualFunctionToString() + "\n");
-            rtbFileOutput.AppendText(lm.CanonDualConstraintsToString() + "\n");
-
-
-            btnSolve.Enabled = true;
-            cboMethod.Enabled = true;
-            cboMethod.SelectedIndex = 0;
+                MessageBox.Show("The textfile was not in the correct format.\n" +
+                            "Please ensure that each variable is separated by a space and there are not any additional spaces. All numbers except the rhs have signs (+/-). And should have a min/max at the start.\n"
+                            , "Textfile error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            } 
         }
 
         private void btnSolve_Click(object sender, EventArgs e)
@@ -437,7 +455,41 @@ namespace LPR381_Project
                     EnableElements();
                     break;
                 case 3:
-                    // Branch and Bound
+                    if (lm.SignRes.Contains("int") || lm.SignRes.Contains("bin"))
+                    {
+                        MessageBox.Show("Some of the values in this Linear Programming model are either Integer (int) or binary (bin). \n" +
+                            "The Dual Simplex alogrithm will not be able to satisfy these value restrictions but will still continue to solve it as unrestricted.\n" +
+                            "Try using the 'Branch and Bound' or 'Cutting Plane' algorithms for values that have int or bin.", "Sign Restrictions", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                    sd = new Simplex(lm.SimplexInitial, lm.ProblemType);
+
+                    dualResult = sd.DualSimplexAlgorithm();
+                    finalTable = dualResult[dualResult.Count - 1];
+
+                    rowHeaders.Add($"Z");
+
+                    count = 1;
+                    foreach (var kvp in lm.ObjectiveFunction.Where(x => x.Key.Contains('X')))
+                    {
+                        headers.Add(kvp.Key);
+                    }
+
+                    rowCount = 1;
+                    foreach (var con in lm.ConstraintsSimplex)
+                    {
+                        rowHeaders.Add($"{rowCount}");
+                        rowCount++;
+
+                        foreach (var kvp in con.Where(x => !x.Key.Contains('X') && x.Key != "rhs" && x.Key != "sign"))
+                        {
+                            headers.Add(kvp.Key);
+                        }
+                    }
+                    headers.Add("rhs");
+
+                    
+                    BranchnBound branchnBound = new BranchnBound(finalTable);
+                    PrintTables(branchnBound.Solve(lm.ProblemType, headers, rowHeaders));
                     break;
                 case 4:
                     CuttingPlane cp = new CuttingPlane(lm.SimplexInitial, lm.ProblemType, lm.SignRes.ToArray());

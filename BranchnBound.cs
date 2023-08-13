@@ -9,10 +9,7 @@ namespace LPR381_Project
     internal class BranchnBound
     {
         private List<List<double>> initialTable;
-        private List<double> xRHS;
         private int xColumnsAmount;
-        private int columns;
-        private int rows;
         private List<List<double>> ArrayToList(double[,] table)
         {
             // Populate Nested lists with values from the array
@@ -29,16 +26,17 @@ namespace LPR381_Project
             }
             return listTable;
         }
-        public BranchnBound(double[,] initialTable, int xColumnsAmount)
+        public BranchnBound(double[,] initialTable)
         {
-            this.initialTable = ArrayToList(initialTable);
-            this.xColumnsAmount = xColumnsAmount;
-            columns = initialTable.GetLength(1);
-            rows = initialTable.GetLength(0);
+            this.initialTable = ArrayToList(initialTable);            
+            int columns = initialTable.GetLength(1);
+            int rows = initialTable.GetLength(0);
+            this.xColumnsAmount = columns - rows;
         }
         private bool IsBasic(int columnIndex, List<List<double>> table)
         {
             List<double> column = new List<double>();
+            int rows = table.Count();
             //Grab values from column
             for (int i = 0; i < rows; i++)
             {
@@ -56,87 +54,74 @@ namespace LPR381_Project
             // Sum of basic variable column = 1 (accounts for example: 0 1 1 which would pass the previous test)
             return column.Sum() == 1;
         }
-        private List<double> FindXValues(List<List<double>> table)
+        private List<double> GetRHS(List<List<double>> table)
         {
             List<double> rhs = new List<double>();
-
-            for (int i = 0; i < xColumnsAmount; i++)
+            int rows = table.Count();
+            int columns = table[0].Count();
+            for (int i = 1; i < rows; i++)
             {
-                if (IsBasic(i, table))
-                {
-                    for (int j = 0; j < rows; j++)
-                    {
-                        if (table[j][i] == 1)
-                        {
-                            rhs.Add(table[j][columns - 1]);
-                        }
-                    }
-                }
-                else
-                {
-                    rhs.Add(0);
-                }
-
+                rhs.Add(table[i][columns - 1]);
             }
             return rhs;
         }
         private int DetermineCutRow(List<List<double>> table)
         {
-            List<double> rhs = FindXValues(table);
-            rhs.RemoveAll(x => x == 0);
+            List<double> rhs = GetRHS(table);
             List<double> fractions = new List<double>();
-            for (int i = 0; i < rows; i++)
+            for (int i = 0; i < rhs.Count(); i++)
             {
-                double fraction = Math.Floor(rhs[i] - rhs[i]);
-                fractions.Add(Math.Abs(fraction - 0.5));
+                double fraction = Math.Floor(rhs[i]) - rhs[i];
+                fractions.Add(Math.Abs(Math.Abs(fraction) - 0.5));
             }
             double lowestFraction = fractions.Min();
             bool hasMinDuplicates = fractions.FindAll(x => x == lowestFraction).Count > 1;
             if (hasMinDuplicates)
             {
                 int indexOfLargestRHS = 0;
-                for (int i = 1; i < fractions.Count(); i++)
+                for (int i = 0; i < fractions.Count(); i++)
                 {
                     if (fractions[i] == lowestFraction && rhs[i] > rhs[indexOfLargestRHS])
                     {
                         indexOfLargestRHS = i;
                     }
                 }
-                return indexOfLargestRHS;
+                return indexOfLargestRHS + 1;
             }
             else
             {
-                return fractions.IndexOf(lowestFraction);
+                return fractions.IndexOf(lowestFraction) + 1;
             }
         }
         public List<List<double>> GenerateConstraints(int rowIndex, int columnIndex, List<List<double>> table)
         {
+            int columns = table[0].Count();
             List<List<double>> newRows = new List<List<double>>();
+           
             double rhs = table[rowIndex][columns - 1];
-
-            List<double> constraintRow = Enumerable.Repeat(0.0, columns + 1).ToList();
+            List<double> constraintRow = Enumerable.Repeat(0.0, columns).ToList();
             double rhsLower = Math.Floor(rhs);
             constraintRow[columnIndex] = 1.0;
             constraintRow[columns - 1] = rhsLower;
-            constraintRow.Insert(columns - 2, 1);
-            constraintRow.ForEach(x => x *= -1);//multiply after adding
+            constraintRow.Insert(columns - 1, 1);                        
 
             newRows.Add(constraintRow);
-
-            constraintRow.Clear();
-            constraintRow = Enumerable.Repeat(0.0, columns + 1).ToList();
+        
+            constraintRow = Enumerable.Repeat(0.0, columns).ToList();
             double rhsHigher = Math.Ceiling(rhs);
             constraintRow[columnIndex] = 1.0;
             constraintRow[columns - 1] = rhsHigher;
-            constraintRow.Insert(columns - 2, -1);
+            constraintRow.Insert(columns - 1, -1);            
 
             newRows.Add(constraintRow);
 
             return newRows;
         }
-        private List<List<double>> AddConstraint(List<double> constraint, BranchTable branchTable)
+        private BranchTable AddConstraint(List<double> constraint, BranchTable branchTable, bool makeNegative = false)
         {
             List<List<double>> table = ArrayToList(branchTable.Table);
+            int columns = table[0].Count();
+            int rows = table.Count();
             List<int> clashes = new List<int>();
             for (int i = 0; i < columns; i++)
             {
@@ -161,7 +146,7 @@ namespace LPR381_Project
 
             for (int i = 0; i < rows; i++)
             {
-                table[i].Insert(columns - 2, 0);
+                table[i].Insert(columns - 1, 0);
             }
 
             columns++;
@@ -171,13 +156,14 @@ namespace LPR381_Project
                 List<double> newRow = new List<double>();
                 for (int j = 0; j < columns; j++)
                 {
-                    double newElement = table[clashes[i]][j] - constraint[j];
+                    double newElement = (table[clashes[i]][j] - constraint[j]) * (makeNegative ? -1 : 1);
                     newRow.Add(newElement);
                 }
                 table.Add(newRow);
             }            
             rows++;
-            return table;
+            branchTable.Table = ListToArray(table);
+            return branchTable;
         }
         public double[,] ListToArray(List<List<double>> table)
         {
@@ -193,43 +179,64 @@ namespace LPR381_Project
             }
             return listTable;
         }
-        //public void Solve(string problemType, List<string> headers)
-        //{
-        //    Queue<BranchTable> tableQueue = new Queue<BranchTable> ();
-        //    List<BranchTable> branches = new List<BranchTable>();
+        public List<BranchTable> Solve(string problemType, List<string> columnHeaders, List<string> rowHeaders)
+        {
+            Queue<BranchTable> tableQueue = new Queue<BranchTable> ();
+            List<BranchTable> branches = new List<BranchTable>();
 
-        //    tableQueue.Enqueue(new BranchTable("0", ListToArray(initialTable), headers));
+            tableQueue.Enqueue(new BranchTable("0", ListToArray(initialTable), columnHeaders, rowHeaders));
 
-        //    while (tableQueue.Count != 0)
-        //    {
-        //        BranchTable branchTable = tableQueue.Dequeue();
-        //        List<List<double>> table = ArrayToList(branchTable.Table);      
+            while (tableQueue.Count != 0)
+            {
+                BranchTable branchTable = tableQueue.Dequeue();
+                List<List<double>> table = ArrayToList(branchTable.Table);      
                 
-        //        int row = DetermineCutRow(table);                    /// ifi
-        //        List<List<double>> constraints = GenerateConstraints(row, table[row].IndexOf(1), table);
+                int row = DetermineCutRow(table);                    /// ifi
+                List<List<double>> constraints = GenerateConstraints(row, table[row].IndexOf(1), table);
 
-        //        for (int i = 0; i < constraints.Count(); i++)
-        //        {
-        //            List<List<double>> newTable = AddConstraint(constraints[i], branchTable);
-        //            //solvedTable = Solve table
-        //            Simplex simplex = new Simplex(ListToArray(newTable), problemType);
-        //            List<double[,]> pivots = simplex.DualSimplexAlgorithm();
-        //            ///
+                for (int i = 0; i < constraints.Count(); i++)
+                {
+                    BranchTable branchTableIteration = new BranchTable(branchTable);
+                    branchTableIteration = AddConstraint(constraints[i], branchTableIteration, constraints[i].Last() > 0);
+                    
+                    Simplex simplex = new Simplex(branchTableIteration.Table, problemType);
+                    List<double[,]> pivots = simplex.DualSimplexAlgorithm();
+                    
+                    double[,] optimalTable = pivots.Last();                  
+                    if (branchTableIteration.Table != optimalTable)
+                    {
+                        List<string> newColumnHeaders = columnHeaders;
+                        newColumnHeaders.Insert(columnHeaders.Count() - 1, i % 2 == 0 ? "S" : "E");
+                        List<string> newRowHeaders = rowHeaders;
+                        newRowHeaders.Add((int.Parse(newRowHeaders.Last()) + 1).ToString());
 
-        //            List<List<double>> optimalTable = ArrayToList(pivots.Last());
-        //            double sum = 0;
-
-        //            for (int j = 0; j < optimalTable.Count(); j++)
-        //            {
-        //                sum += optimalTable[j][columns - 1];
-        //            }
-        //            if (Math.Floor(sum) - sum != 0)
-        //            {
-        //                tableQueue.Enqueue(optimalTable);
-        //            }
-        //            branches.Add(newTable);
-        //        }
-        //    }
-        //}
+                        BranchTable newAddition = new BranchTable($"{branchTableIteration.Level}{i + 1}", optimalTable, newColumnHeaders, newRowHeaders);
+                        bool hasFraction = false;
+                        for (int j = 0; j < optimalTable.GetLength(0); j++)
+                        {
+                            hasFraction = optimalTable[j, optimalTable.GetLength(1) - 1] - Math.Floor(optimalTable[j, optimalTable.GetLength(0) - 1]) > 0;
+                            if (hasFraction)
+                            {
+                                break;
+                            }
+                        }
+                        if (hasFraction)
+                        {
+                            tableQueue.Enqueue(newAddition);
+                        }
+                        for (int j = 0; j < pivots.Count(); j++)
+                        {
+                            branches.Add(new BranchTable(newAddition.Level, optimalTable, columnHeaders, rowHeaders));
+                        }
+                        branches.Add(newAddition);
+                    }
+                    else 
+                    {
+                        MessageBox.Show("");
+                    }
+                }
+            }
+            return branches;
+        }
     }
 }

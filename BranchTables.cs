@@ -11,10 +11,18 @@ namespace LPR381_Project
     {
         string level;
         double[,] table;
-        List<string> headers;
+        public List<string> headers;
         List<string> rowHeaders;
 
         DataGridView dataGrid;
+        public BranchTable(BranchTable table) 
+        {
+            this.headers = table.headers;
+            this.level = table.level;
+            this.rowHeaders = table.rowHeaders;
+            this.table = table.table;
+            this.DataGrid = table.DataGrid;
+        }
         public BranchTable(string level, double[,] table, List<string> headers, List<string> rowHeaders)
         {
             this.Level = level;
@@ -67,10 +75,15 @@ namespace LPR381_Project
                 },
             };
             ///////////////////
-            //dataGrid.RowHeadersDefaultCellStyle.BackColor = Color.Yellow;
+            populateGrid();
+        }
+        public void populateGrid()
+        {
+            dataGrid.Rows.Clear();
+            dataGrid.Columns.Clear();
             int cols = table.GetLength(1);
             int rows = table.GetLength(0);
-            dataGrid.Width = (cols + 1)* 100 + 5;
+            dataGrid.Width = (cols + 1) * 100 + 5;
             dataGrid.Height = (rows + 1) * 30;
             dataGrid.RowHeadersWidth = 100;
 
@@ -84,7 +97,7 @@ namespace LPR381_Project
                 string[] row = new string[cols];
                 for (int j = 0; j < cols; j++)
                 {
-                    row[j] = Math.Round(table[i, j],3).ToString();
+                    row[j] = Math.Round(table[i, j], 3).ToString();
                 }
 
                 dataGrid.Rows.Add(row);
@@ -93,7 +106,6 @@ namespace LPR381_Project
 
             }
         }
-
         public double[,] Table { get => table; set => table = value; }
         public string Level { get => level; set => level = value; }
         public DataGridView DataGrid { get => dataGrid; set => dataGrid = value; }
