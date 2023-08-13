@@ -134,45 +134,48 @@ namespace LPR381_Project
 
             return newRows;
         }
-        private List<List<double>> AddConstraint(List<double> constraint, List<List<double>> table)
+        private List<List<double>> AddConstraint(List<double> constraint, BranchTable branchTable)
         {
-            double sumWithoutConstraint = 0;
-            List<double> sum = new List<double>();
+            List<List<double>> table = ArrayToList(branchTable.Table);
             List<int> clashes = new List<int>();
-
             for (int i = 0; i < columns; i++)
             {
-                if (i == table[0].Count - 2)
+                if (IsBasic(i, table))
                 {
-                    table[i].Insert(table[0].Count() - 2, constraint[constraint.Count() - 2]);
-                }
-                else
-                {
-                    table[i].Insert(table[0].Count() - 2, 0);
-                }
-            }
-            columns++;
-            for (int i = 0; i < rows; i++)
-            {
-                int row = 0;
-                for (int j = 0; j < columns; j++)
-                {
-                    sumWithoutConstraint += table[j][i];
-                    row = j;
-                }
-                if (sumWithoutConstraint == 1)
-                {
-                    if (sumWithoutConstraint + constraint[i] != 1)
+                    double sum = 0;
+                    int rowClash = 0;
+                    for (int j = 0; j < rows; j++)
                     {
-                        clashes.Add(row);
+                        sum += table[j][i];
+                        if (table[j][i] == 1)
+                        {
+                            rowClash = j;
+                        }
+                    }
+                    if (sum != sum + constraint[i])
+                    {
+                        clashes.Add(rowClash);
                     }
                 }
-                sum.Add(sumWithoutConstraint);
             }
-            for (int i = 0; i < constraint.Count(); i++)
+
+            for (int i = 0; i < rows; i++)
             {
-                constraint[i] = table[clashes[0]][i] - constraint[i];
+                table[i].Insert(columns - 2, 0);
             }
+
+            columns++;
+
+            for (int i = 0; i < clashes.Count(); i++)
+            {
+                List<double> newRow = new List<double>();
+                for (int j = 0; j < columns; j++)
+                {
+                    double newElement = table[clashes[i]][j] - constraint[j];
+                    newRow.Add(newElement);
+                }
+                table.Add(newRow);
+            }            
             rows++;
             return table;
         }
@@ -190,31 +193,39 @@ namespace LPR381_Project
             }
             return listTable;
         }
-        public void Solve(string problemType)
+        public void Solve(string problemType, List<string> headers)
         {
-            Queue<List<List<double>>> tableQueue = new Queue<List<List<double>>>();
-            List<List<List<double>>> branches = new List<List<List<double>>>();
-            tableQueue.Enqueue(initialTable);
+            Queue<BranchTable> tableQueue = new Queue<BranchTable> ();
+            List<BranchTable> branches = new List<BranchTable>();
+
+            tableQueue.Enqueue(new BranchTable("0", ListToArray(initialTable), headers));
+
             while (tableQueue.Count != 0)
             {
-                List<List<double>> table = tableQueue.Dequeue();
+                BranchTable branchTable = tableQueue.Dequeue();
+                List<List<double>> table = ArrayToList(branchTable.Table);      
+                
                 int row = DetermineCutRow(table);                    /// ifi
                 List<List<double>> constraints = GenerateConstraints(row, table[row].IndexOf(1), table);
+
                 for (int i = 0; i < constraints.Count(); i++)
                 {
-                    List<List<double>> newTable = AddConstraint(constraints[i], table);
+                    List<List<double>> newTable = AddConstraint(constraints[i], branchTable);
                     //solvedTable = Solve table
                     Simplex simplex = new Simplex(ListToArray(newTable), problemType);
                     List<double[,]> pivots = simplex.DualSimplexAlgorithm();
                     ///
+
+                    List<List<double>> optimalTable = ArrayToList(pivots.Last());
                     double sum = 0;
-                    for (int j = 0; j < newTable.Count(); j++)
+
+                    for (int j = 0; j < optimalTable.Count(); j++)
                     {
-                        sum += newTable[j][columns - 1];
+                        sum += optimalTable[j][columns - 1];
                     }
                     if (Math.Floor(sum) - sum != 0)
                     {
-                        tableQueue.Enqueue(newTable);
+                        tableQueue.Enqueue(optimalTable);
                     }
                     branches.Add(newTable);
                 }
