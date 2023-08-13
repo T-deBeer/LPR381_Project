@@ -11,9 +11,9 @@ namespace LPR381_Project
     {
         private double[,] initialTable;
         private double[,] finalTable;
-        private int[] basicVariableIndexes;
-        private double[] cBV;
-        private double[,] B;
+        private List<int[]> basicVariableIndexes;
+        private List<double[]> cBV;
+        private List<double[,]> B;
         private double[] b;
 
         public CriticalAnalysis(double[,] initialTable, double[,] finalTable)
@@ -30,79 +30,117 @@ namespace LPR381_Project
         public double[,] InitialTable { get => initialTable; set => initialTable = value; }
         public double[,] FinalTable { get => finalTable; set => finalTable = value; }
         // BV
-        private int[] GetBasicVariableIndexes()
+        public List<int[]> GetBasicVariableIndexes()
         {
             int numRows = FinalTable.GetLength(0);
             int numCols = FinalTable.GetLength(1);
-            int[] basicVariableIndexes = new int[numRows - 1];
+            List<int> basicVariableIndexes = new List<int>();
+            List<int> nonBasicVariableIndexes = new List<int>();
 
-            for (int i = 1; i < numRows; i++)
+            List<int[]> BV_NBV = new List<int[]>();
+
+            double sum = 0;
+            for (int i = 0; i < numCols - 1; i++)
             {
-                for (int j = 0; j < numCols - 1; j++)
+                sum = 0;
+                for (int j = 1; j < numRows; j++)
                 {
-                    if (Math.Abs(FinalTable[i, j] - 1.0) < 1e-10)
+                    if (FinalTable[j,i] == 1 || FinalTable[j, i] == 0)
                     {
-                        basicVariableIndexes[i - 1] = j;
+                        sum += FinalTable[j, i];
+                    }
+                    else
+                    {
+                        sum = 1000;
                         break;
                     }
                 }
-            }
-
-            return basicVariableIndexes;
-        }
-
-        //// xBV
-        //public static double[,] GetBasicVariablesMatrix(double[,] initialTable, int[] basicVariableIndexes)
-        //{
-        //    int numRows = basicVariableIndexes.Length;
-        //    int numCols = initialTable.GetLength(1);
-        //    double[,] basicVariablesMatrix = new double[numRows, numCols];
-
-        //    for (int i = 0; i < numRows; i++)
-        //    {
-        //        int basicVarIdx = basicVariableIndexes[i];
-        //        for (int j = 0; j < numCols; j++)
-        //        {
-        //            basicVariablesMatrix[i, j] = initialTable[i + 1, j];
-        //        }
-        //    }
-
-        //    return basicVariablesMatrix;
-        //}
-
-        // CBV
-        public double[] GetObjectiveFunctionCoefficients()
-        {
-            int numRows = basicVariableIndexes.Length;
-            double[] objectiveFunctionCoefficients = new double[numRows];
-
-            for (int i = 0; i < numRows; i++)
-            {
-                int basicVarIdx = basicVariableIndexes[i];
-                objectiveFunctionCoefficients[i] = InitialTable[0, basicVarIdx];
-            }
-
-            return objectiveFunctionCoefficients;
-        }
-
-        // B
-        public double[,] GetBasicVariableColumns()
-        {
-            int numRows = basicVariableIndexes.Length;
-            int numCols = numRows;
-            double[,] B = new double[numRows, numCols];
-
-            for (int i = 0; i < numRows; i++)
-            {
-                int basicVarIdx = basicVariableIndexes[i];
-                for (int j = 0; j < numRows; j++)
+                if (sum == 1)
                 {
-                    B[j, i] = InitialTable[j + 1, basicVarIdx];
-                    //Console.WriteLine($"B Matrix values: {B[j, i]}");
+                    basicVariableIndexes.Add(i);
+                }
+                else
+                {
+                    nonBasicVariableIndexes.Add(i);
+                }
+            }
+            BV_NBV.Add(basicVariableIndexes.ToArray());
+            BV_NBV.Add(nonBasicVariableIndexes.ToArray());
+
+            return BV_NBV;
+        }
+
+        // CBV & CNBV
+        public List<double[]> GetObjectiveFunctionCoefficients()
+        {
+            int[] BVIndexes = basicVariableIndexes.ElementAt(0);
+            int[] nonBVIndexes = basicVariableIndexes.ElementAt(1);
+            int numBVRows = BVIndexes.Length;
+            int numNBVRows = nonBVIndexes.Length;
+            double[] bvObjC = new double[numBVRows];
+            double[] nbvObjC = new double[numNBVRows];
+
+            List<double[]> CBV_CNBV = new List<double[]>();
+
+            for (int i = 0; i < numBVRows; i++)
+            {
+                bvObjC[i] = InitialTable[0, BVIndexes[i]];
+            }
+
+            for (int i = 0; i < numBVRows; i++)
+            {
+                nbvObjC[i] = InitialTable[0, nonBVIndexes[i]];
+            }
+
+            CBV_CNBV.Add(bvObjC);
+            CBV_CNBV.Add(nbvObjC);
+
+            return CBV_CNBV;
+        }
+
+        // B & N
+        public List<double[,]> GetBasicVariableColumns()
+        {
+            int[] BVIndexes = basicVariableIndexes.ElementAt(0);
+            int[] nonBVIndexes = basicVariableIndexes.ElementAt(1);
+            int numBVRows = FinalTable.GetLength(0) - 1;
+            int numNBVRows = FinalTable.GetLength(0) - 1;
+            int numBVCols = BVIndexes.Length;
+            int numNBVCols = nonBVIndexes.Length;
+
+            double[,] B = new double[numBVRows, numBVCols];
+            double[,] N = new double[numNBVRows, numNBVCols];
+
+            List<double[,]> B_N = new List<double[,]>();
+            int iterB = 0;
+            int iterN = 0;
+
+            for (int i = 0; i < FinalTable.GetLength(1) - 1; i++)
+            {
+                if (BVIndexes.Contains(i))
+                {
+                    for (int j = 0; j < B.GetLength(0); j++)
+                    {
+                        //Console.WriteLine($"B Matrix values: {B[j, i]}");
+                        B[j, iterB] = InitialTable[j + 1, BVIndexes[Array.IndexOf(BVIndexes, i)]];
+                    }
+                    iterB++;
+                } 
+                else if (nonBVIndexes.Contains(i))
+                {
+                    for (int j = 0; j < B.GetLength(0); j++)
+                    {
+                        //Console.WriteLine($"B Matrix values: {B[j, i]}");
+                        N[j, iterN] = InitialTable[j + 1, nonBVIndexes[Array.IndexOf(nonBVIndexes, i)]];
+                    }
+                    iterN++;
                 }
             }
 
-            return B;
+            B_N.Add(B);
+            B_N.Add(N);
+
+            return B_N;
         }
 
         // b

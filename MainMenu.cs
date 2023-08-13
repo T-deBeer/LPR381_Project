@@ -467,8 +467,6 @@ namespace LPR381_Project
                 Simplex sp = new Simplex(tab, lm.ProblemType);
                 rtbOutput.Text = sp.PrintDual();
             }
-
-
         }
         public List<List<double>> ArrayToList(double[,] table)
         {
@@ -577,9 +575,23 @@ namespace LPR381_Project
         private void cboCAChangeRow_SelectedIndexChanged(object sender, EventArgs e)
         {
             txtCAChangeValue.Text = cboCAChangeRow.Items[cboCAChangeRow.SelectedIndex].ToString();
+        }
 
+        private void btnOutputClear_Click(object sender, EventArgs e)
+        {
+            // Iterate through the child controls of the panel and remove DataGridView controls
+            for (int i = pnlBranches.Controls.Count - 1; i >= 0; i--)
+            {
+                if (pnlBranches.Controls[i] is DataGridView)
+                {
+                    pnlBranches.Controls.RemoveAt(i);
+                }
+            }
+        }
 
-
+        private void btnCAOutputClear_Click(object sender, EventArgs e)
+        {
+            rtbOutput.Text = "";
         }
     }
 }
