@@ -355,33 +355,6 @@
             // 
             // btnCAOutputClear
             // 
-            this.btnCAOutputClear.DisabledBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(120)))), ((int)(((byte)(65)))), ((int)(((byte)(177)))), ((int)(((byte)(225)))));
-            this.btnCAOutputClear.DisabledBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(120)))), ((int)(((byte)(65)))), ((int)(((byte)(177)))), ((int)(((byte)(225)))));
-            this.btnCAOutputClear.DisabledForeColor = System.Drawing.Color.Gray;
-            this.btnCAOutputClear.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.btnCAOutputClear.HoverBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(95)))), ((int)(((byte)(207)))), ((int)(((byte)(255)))));
-            this.btnCAOutputClear.HoverColor = System.Drawing.Color.FromArgb(((int)(((byte)(95)))), ((int)(((byte)(207)))), ((int)(((byte)(255)))));
-            this.btnCAOutputClear.HoverTextColor = System.Drawing.Color.White;
-            this.btnCAOutputClear.IsDerivedStyle = true;
-            this.btnCAOutputClear.Location = new System.Drawing.Point(204, 0);
-            this.btnCAOutputClear.Name = "btnCAOutputClear";
-            this.btnCAOutputClear.NormalBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(177)))), ((int)(((byte)(225)))));
-            this.btnCAOutputClear.NormalColor = System.Drawing.Color.FromArgb(((int)(((byte)(65)))), ((int)(((byte)(177)))), ((int)(((byte)(225)))));
-            this.btnCAOutputClear.NormalTextColor = System.Drawing.Color.White;
-            this.btnCAOutputClear.PressBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(147)))), ((int)(((byte)(195)))));
-            this.btnCAOutputClear.PressColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(147)))), ((int)(((byte)(195)))));
-            this.btnCAOutputClear.PressTextColor = System.Drawing.Color.White;
-            this.btnCAOutputClear.Size = new System.Drawing.Size(117, 34);
-            this.btnCAOutputClear.Style = MetroSet_UI.Enums.Style.Light;
-            this.btnCAOutputClear.StyleManager = null;
-            this.btnCAOutputClear.TabIndex = 10;
-            this.btnCAOutputClear.Text = "Clear";
-            this.btnCAOutputClear.ThemeAuthor = "Narwin";
-            this.btnCAOutputClear.ThemeName = "MetroLite";
-            this.btnCAOutputClear.Click += new System.EventHandler(this.btnCAOutputClear_Click);
-            // 
-            // btnCAOutputClear
-            // 
             btnCAOutputClear.DisabledBackColor = Color.FromArgb(120, 65, 177, 225);
             btnCAOutputClear.DisabledBorderColor = Color.FromArgb(120, 65, 177, 225);
             btnCAOutputClear.DisabledForeColor = Color.Gray;
@@ -712,6 +685,7 @@
             txtCAChangeValue.DisabledBackColor = Color.FromArgb(80, 80, 80);
             txtCAChangeValue.DisabledBorderColor = Color.FromArgb(109, 109, 109);
             txtCAChangeValue.DisabledForeColor = Color.FromArgb(109, 109, 109);
+            txtCAChangeValue.Enabled = false;
             txtCAChangeValue.Font = new Font("Microsoft Sans Serif", 10F, FontStyle.Regular, GraphicsUnit.Point);
             txtCAChangeValue.HoverColor = Color.FromArgb(65, 177, 225);
             txtCAChangeValue.Image = null;

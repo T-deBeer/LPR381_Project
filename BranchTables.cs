@@ -12,13 +12,15 @@ namespace LPR381_Project
         string level;
         double[,] table;
         List<string> headers;
+        List<string> rowHeaders;
 
         DataGridView dataGrid;
-        public BranchTable(string level, double[,] table, List<string> headers)
+        public BranchTable(string level, double[,] table, List<string> headers, List<string> rowHeaders)
         {
             this.Level = level;
             this.Table = table;
             this.headers = headers;
+            this.rowHeaders = rowHeaders;
             ///////////////////
             ///Style data grid here
             dataGrid = new DataGridView
@@ -51,6 +53,12 @@ namespace LPR381_Project
                     // Text
                     ForeColor = Color.FromArgb(255, 255, 255),
                 },
+                RowHeadersDefaultCellStyle = new DataGridViewCellStyle
+                {
+                    BackColor = Color.FromArgb(28, 131, 174),
+                    // Text
+                    ForeColor = Color.FromArgb(255, 255, 255),
+                },
                 AlternatingRowsDefaultCellStyle = new DataGridViewCellStyle
                 {
                     BackColor = Color.FromArgb(40, 40, 40),
@@ -59,11 +67,13 @@ namespace LPR381_Project
                 },
             };
             ///////////////////
-            dataGrid.RowHeadersDefaultCellStyle.BackColor = Color.Yellow;
+            //dataGrid.RowHeadersDefaultCellStyle.BackColor = Color.Yellow;
             int cols = table.GetLength(1);
             int rows = table.GetLength(0);
-            dataGrid.Width = cols * 100 + 5;
+            dataGrid.Width = (cols + 1)* 100 + 5;
             dataGrid.Height = (rows + 1) * 30;
+            dataGrid.RowHeadersWidth = 100;
+
             for (int j = 0; j < cols; j++)
             {
                 dataGrid.Columns.Add($"Column{j}", $" {headers[j]}");
@@ -79,6 +89,8 @@ namespace LPR381_Project
 
                 dataGrid.Rows.Add(row);
                 dataGrid.Rows[i].Height = 30;
+                dataGrid.Rows[i].HeaderCell.Value = rowHeaders[i];
+
             }
         }
 

@@ -133,6 +133,22 @@ namespace LPR381_Project
                         cboCAChangeRow.Items.Add(item);
                     }
                 }
+
+                LinearModel lm = new LinearModel(lp.ToArray());
+                rtbFileOutput.AppendText("\nSIMPLEX CANONICAL FORM:\n");
+                rtbFileOutput.AppendText(lm.ObjFunctionToString() + "\n");
+                rtbFileOutput.AppendText(lm.CanonSimplexConstraintsToString() + "\n");
+
+                rtbFileOutput.AppendText("\nTWO-PHSES CANONICAL FORM:\n");
+                rtbFileOutput.AppendText(lm.WFunctionToString() + "\n");
+                rtbFileOutput.AppendText(lm.ObjFunctionToString() + "\n");
+                rtbFileOutput.AppendText(lm.CanonTwoPhaseConstraintsToString() + "\n");
+
+                rtbFileOutput.AppendText("\nDUALITY CANONICAL FORM:\n");
+                rtbFileOutput.AppendText(lm.CanonDualFunctionToString() + "\n");
+                rtbFileOutput.AppendText(lm.CanonDualConstraintsToString() + "\n");
+
+
                 btnSolve.Enabled = true;
                 cboMethod.Enabled = true;
                 cboMethod.SelectedIndex = 0;
@@ -163,6 +179,20 @@ namespace LPR381_Project
                 lp.Add(item);
                 cboCAChangeRow.Items.Add(item);
             }
+            LinearModel lm = new LinearModel(lp.ToArray());
+            rtbFileOutput.AppendText("\nSIMPLEX CANONICAL FORM:\n");
+            rtbFileOutput.AppendText(lm.ObjFunctionToString() + "\n");
+            rtbFileOutput.AppendText(lm.CanonSimplexConstraintsToString()+ "\n");
+            
+            rtbFileOutput.AppendText("\nTWO-PHSES CANONICAL FORM:\n");
+            rtbFileOutput.AppendText(lm.WFunctionToString() + "\n");
+            rtbFileOutput.AppendText(lm.ObjFunctionToString() + "\n");
+            rtbFileOutput.AppendText(lm.CanonTwoPhaseConstraintsToString() + "\n");
+            
+            rtbFileOutput.AppendText("\nDUALITY CANONICAL FORM:\n");
+            rtbFileOutput.AppendText(lm.CanonDualFunctionToString() + "\n");
+            rtbFileOutput.AppendText(lm.CanonDualConstraintsToString() + "\n");
+
 
             btnSolve.Enabled = true;
             cboMethod.Enabled = true;
@@ -177,8 +207,12 @@ namespace LPR381_Project
             mtxtCon.Enabled = true;
 
             LinearModel lm = new LinearModel(lp.ToArray());
+                
+
             List<BranchTable> branches = new List<BranchTable>();
             List<string> headers = new List<string>();
+            List<string> rowHeaders = new List<string>();
+            double[,] finalTable = new double[lm.SimplexInitial.GetLength(0), lm.SimplexInitial.GetLength(1)];
 
             switch (cboMethod.SelectedIndex)
             {
@@ -191,14 +225,21 @@ namespace LPR381_Project
                     }
                     Simplex sp = new Simplex(lm.SimplexInitial, lm.ProblemType);
                     List<double[,]> tables = sp.PrimalSimplexAlgorithm();
+                    finalTable = tables[tables.Count -1];
+
+                    rowHeaders.Add($"Z");
 
                     foreach (var kvp in lm.ObjectiveFunction.Where(x => x.Key.Contains('X')))
                     {
                         headers.Add(kvp.Key);
                     }
 
+                    int rowCount = 1;
                     foreach (var con in lm.ConstraintsSimplex)
                     {
+                        rowHeaders.Add($"{rowCount}");
+                        rowCount++;
+
                         foreach (var kvp in con.Where(x => !x.Key.Contains('X') && x.Key != "rhs" && x.Key != "sign"))
                         {
                             headers.Add(kvp.Key);
@@ -208,7 +249,7 @@ namespace LPR381_Project
                     int count = 1;
                     foreach (var table in tables)
                     {
-                        BranchTable newTable = new BranchTable(count.ToString(), table, headers);
+                        BranchTable newTable = new BranchTable(count.ToString(), table, headers, rowHeaders);
                         branches.Add(newTable);
                         count++;
                     }
@@ -228,6 +269,11 @@ namespace LPR381_Project
                     }
                     Simplex st = new Simplex(lm.TwoPhaseInitial, lm.ProblemType);
                     List<double[,]> result = st.TwoPhaseAlgorithm(lm.TwoPhaseArtificialColumns);
+                    //finalTable = result[result.Count - 1];
+
+
+                    rowHeaders.Add("W");
+                    rowHeaders.Add($"Z");
 
                     count = 1;
                     foreach (var kvp in lm.ObjectiveFunction.Where(x => x.Key.Contains('X')))
@@ -235,8 +281,12 @@ namespace LPR381_Project
                         headers.Add(kvp.Key);
                     }
 
+                    rowCount = 1;
                     foreach (var con in lm.ConstraintsSimplex)
                     {
+                        rowHeaders.Add($"{rowCount}");
+                        rowCount++;
+
                         foreach (var kvp in con.Where(x => !x.Key.Contains('X') && x.Key != "rhs" && x.Key != "sign"))
                         {
                             headers.Add(kvp.Key);
@@ -247,7 +297,7 @@ namespace LPR381_Project
 
                     foreach (var table in result)
                     {
-                        BranchTable newTable = new BranchTable(count.ToString(), table, headers);
+                        BranchTable newTable = new BranchTable(count.ToString(), table, headers, rowHeaders);
                         branches.Add(newTable);
                         count++;
                     }
@@ -266,14 +316,22 @@ namespace LPR381_Project
                     Simplex sd = new Simplex(lm.SimplexInitial, lm.ProblemType);
 
                     List<double[,]> dualResult = sd.DualSimplexAlgorithm();
+                    finalTable = dualResult[dualResult.Count - 1];
+
+                    rowHeaders.Add($"Z");
+
                     count = 1;
                     foreach (var kvp in lm.ObjectiveFunction.Where(x => x.Key.Contains('X')))
                     {
                         headers.Add(kvp.Key);
                     }
 
+                    rowCount = 1;
                     foreach (var con in lm.ConstraintsSimplex)
                     {
+                        rowHeaders.Add($"{rowCount}");
+                        rowCount++;
+
                         foreach (var kvp in con.Where(x => !x.Key.Contains('X') && x.Key != "rhs" && x.Key != "sign"))
                         {
                             headers.Add(kvp.Key);
@@ -283,7 +341,7 @@ namespace LPR381_Project
 
                     foreach (var table in dualResult)
                     {
-                        BranchTable newTable = new BranchTable(count.ToString(), table, headers);
+                        BranchTable newTable = new BranchTable(count.ToString(), table, headers, rowHeaders);
                         branches.Add(newTable);
                         count++;
                     }
@@ -301,6 +359,10 @@ namespace LPR381_Project
 
                     List<List<double[,]>> cpResultList = cp.CuttingPlaneSolve();
                     List<double[,]> cpResult = new List<double[,]>();
+                    finalTable = cpResult[cpResult.Count - 1];
+
+                    rowHeaders.Add($"Z");
+
                     count = 1;
 
                     foreach (var iteration in cpResultList)
@@ -314,20 +376,26 @@ namespace LPR381_Project
                     {
                         headers.Add(kvp.Key);
                     }
-
+                    rowCount = 1;
                     foreach (var con in lm.ConstraintsSimplex)
                     {
+                        rowHeaders.Add($"{rowCount}");
+                        rowCount++;
+
+
                         foreach (var kvp in con.Where(x => !x.Key.Contains('X') && x.Key != "rhs" && x.Key != "sign"))
                         {
                             headers.Add(kvp.Key);
                         }
                     }
+
+                    rowHeaders.Add($"{rowCount}");
                     headers.Add("S");
                     headers.Add("rhs");
 
                     foreach (var table in cpResult)
                     {
-                        BranchTable newTable = new BranchTable(count.ToString(), table, headers);
+                        BranchTable newTable = new BranchTable(count.ToString(), table, headers, rowHeaders);
                         branches.Add(newTable);
                         count++;
                     }
@@ -341,6 +409,10 @@ namespace LPR381_Project
                     MessageBox.Show("Invalid method selected, please try another method.", "Method Selection", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     break;
             }
+
+            CriticalAnalysis ca = new CriticalAnalysis(lm.SimplexInitial, finalTable);
+            rtbOutput.AppendText("Cbv\n");
+            //rtbOutput.AppendText(String.Join(" ", ca.GetBasicVariableColumns()));
 
             void EnableElements()
             {
@@ -367,13 +439,15 @@ namespace LPR381_Project
             rtbOutput.AppendText(lm.CanonDualFunctionToString() + "\n");
             rtbOutput.AppendText(lm.CanonDualConstraintsToString() + "\n");
 
-            
+
             Simplex s = new Simplex(lm.DualityInitial, lm.DualProblemType);
-            rtbOutput.AppendText(s.PrintDual());
 
             List<double[,]> tables = s.DualSimplexAlgorithm();
             List<string> headers = new List<string>();
+            List<string> rowHeaders = new List<string>();
             List<BranchTable> branches = new List<BranchTable>();
+
+            rowHeaders.Add($"W");
 
             int count = 1;
             foreach (var kvp in lm.DualityFunction.Where(x => x.Key.Contains('Y')))
@@ -381,8 +455,12 @@ namespace LPR381_Project
                 headers.Add(kvp.Key);
             }
 
+            int rowCount = 1;
             foreach (var con in lm.DualityConstraints)
             {
+                rowHeaders.Add($"{rowCount}");
+                rowCount++;
+
                 foreach (var kvp in con.Where(x => !x.Key.Contains('Y') && x.Key != "rhs" && x.Key != "sign"))
                 {
                     headers.Add(kvp.Key);
@@ -390,9 +468,10 @@ namespace LPR381_Project
             }
             headers.Add("rhs");
 
+
             foreach (var table in tables)
             {
-                BranchTable newTable = new BranchTable(count.ToString(), table, headers);
+                BranchTable newTable = new BranchTable(count.ToString(), table, headers, rowHeaders);
                 branches.Add(newTable);
                 count++;
             }
@@ -615,15 +694,15 @@ namespace LPR381_Project
             List<int> clashes = new List<int>();
             for (int i = 0; i < columns; i++)
             {
-                if (IsBasic(i, table, rows)) 
+                if (IsBasic(i, table, rows))
                 {
                     double sum = 0;
                     int rowClash = 0;
                     for (int j = 0; j < rows; j++)
                     {
                         sum += table[j][i];
-                        if (table[j][i] == 1) 
-                        { 
+                        if (table[j][i] == 1)
+                        {
                             rowClash = j;
                         }
                     }
@@ -631,7 +710,7 @@ namespace LPR381_Project
                     {
                         clashes.Add(rowClash);
                     }
-                }               
+                }
             }
 
             for (int i = 0; i < rows; i++)
@@ -642,7 +721,7 @@ namespace LPR381_Project
                 //}
                 //else
                 //{
-                    table[i].Insert(columns - 2, 0);
+                table[i].Insert(columns - 2, 0);
                 //}
             }
             columns++;
@@ -650,7 +729,7 @@ namespace LPR381_Project
             {
                 List<double> newRow = new List<double>();
                 for (int j = 0; j < columns; j++)
-                {                    
+                {
                     double newElement = table[clashes[i]][j] - constraint[j];
                     newRow.Add(newElement);
                 }
