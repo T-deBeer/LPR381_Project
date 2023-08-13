@@ -137,6 +137,7 @@
             btnCARanges.Text = "Analyze";
             btnCARanges.ThemeAuthor = "Narwin";
             btnCARanges.ThemeName = "MetroLite";
+            btnCARanges.Click += btnCARanges_Click;
             // 
             // metroSetLabel2
             // 

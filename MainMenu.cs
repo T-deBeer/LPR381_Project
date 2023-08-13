@@ -13,6 +13,8 @@ using MathNet.Numerics.LinearAlgebra;
 using MetroSet_UI.Forms;
 using static System.Windows.Forms.LinkLabel;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TreeView;
+using MathNet.Symbolics;
+using System.Linq.Expressions;
 
 namespace LPR381_Project
 {
@@ -258,6 +260,30 @@ namespace LPR381_Project
                     btnOutputClear_Click(sender, e);
 
                     PrintTables(branches);
+                    cboCARangeCol.Items.Clear();
+                    cboCARangeRow.Items.Clear();
+
+                    foreach (var kvp in lm.ObjectiveFunction.Where(x => x.Key.Contains('X')))
+                    {
+                        cboCARangeCol.Items.Add(kvp.Key);
+                    }
+
+                    int conCounter = 1;
+                    foreach (var con in lm.ConstraintsSimplex)
+                    {
+                        foreach (var kvp in con.Where(x => x.Key.Contains('S') || x.Key.Contains("E")))
+                        {
+                            cboCARangeCol.Items.Add(kvp.Key + conCounter.ToString());
+                            conCounter++;
+                        }
+                    }
+
+                    cboCARangeRow.Items.Add("Z");
+                    for (int i = 0; i < lm.ConstraintsSimplex.Count; i++)
+                    {
+                        cboCARangeRow.Items.Add($"Constraint {i + 1}");
+                    }
+
 
                     EnableElements();
                     break;
@@ -290,7 +316,16 @@ namespace LPR381_Project
 
                         foreach (var kvp in con.Where(x => !x.Key.Contains('X') && x.Key != "rhs" && x.Key != "sign"))
                         {
-                            headers.Add(kvp.Key);
+                            if (kvp.Key == "E")
+                            {
+                                headers.Add(kvp.Key);
+                                headers.Add("A");
+                            }
+                            else
+                            {
+                                headers.Add(kvp.Key);
+                            }
+
                         }
                     }
                     headers.Add("rhs");
@@ -303,6 +338,31 @@ namespace LPR381_Project
                         count++;
                     }
                     btnOutputClear_Click(sender, e);
+
+                    cboCARangeCol.Items.Clear();
+                    cboCARangeRow.Items.Clear();
+
+                    foreach (var kvp in lm.ObjectiveFunction.Where(x => x.Key.Contains('X')))
+                    {
+                        cboCARangeCol.Items.Add(kvp.Key);
+                    }
+
+                    conCounter = 1;
+                    foreach (var con in lm.ConstraintsSimplex)
+                    {
+                        foreach (var kvp in con.Where(x => x.Key.Contains('S') || x.Key.Contains("E")))
+                        {
+                            cboCARangeCol.Items.Add(kvp.Key + conCounter.ToString());
+                            conCounter++;
+                        }
+                    }
+
+                    cboCARangeRow.Items.Add("W");
+                    cboCARangeRow.Items.Add("Z");
+                    for (int i = 0; i < lm.ConstraintsSimplex.Count; i++)
+                    {
+                        cboCARangeRow.Items.Add($"Constraint {i + 1}");
+                    }
 
                     PrintTables(branches);
                     EnableElements();
@@ -349,6 +409,31 @@ namespace LPR381_Project
                     btnOutputClear_Click(sender, e);
 
                     PrintTables(branches);
+
+                    cboCARangeCol.Items.Clear();
+                    cboCARangeRow.Items.Clear();
+
+                    foreach (var kvp in lm.ObjectiveFunction.Where(x => x.Key.Contains('X')))
+                    {
+                        cboCARangeCol.Items.Add(kvp.Key);
+                    }
+
+                    conCounter = 1;
+                    foreach (var con in lm.ConstraintsSimplex)
+                    {
+                        foreach (var kvp in con.Where(x => x.Key.Contains('S') || x.Key.Contains("E")))
+                        {
+                            cboCARangeCol.Items.Add(kvp.Key + conCounter.ToString());
+                            conCounter++;
+                        }
+                    }
+
+                    cboCARangeRow.Items.Add("Z");
+                    for (int i = 0; i < lm.ConstraintsSimplex.Count; i++)
+                    {
+                        cboCARangeRow.Items.Add($"Constraint {i + 1}");
+                    }
+
                     EnableElements();
                     break;
                 case 3:
@@ -360,7 +445,6 @@ namespace LPR381_Project
 
                     List<List<double[,]>> cpResultList = cp.CuttingPlaneSolve();
                     List<double[,]> cpResult = new List<double[,]>();
-                    finalTable = cpResult[cpResult.Count - 1];
 
                     rowHeaders.Add($"Z");
 
@@ -403,6 +487,30 @@ namespace LPR381_Project
 
                     btnOutputClear_Click(sender, e);
                     PrintTables(branches);
+
+                    cboCARangeCol.Items.Clear();
+                    cboCARangeRow.Items.Clear();
+
+                    foreach (var kvp in lm.ObjectiveFunction.Where(x => x.Key.Contains('X')))
+                    {
+                        cboCARangeCol.Items.Add(kvp.Key);
+                    }
+
+                    conCounter = 1;
+                    foreach (var con in lm.ConstraintsSimplex)
+                    {
+                        foreach (var kvp in con.Where(x => x.Key.Contains('S') || x.Key.Contains("E")))
+                        {
+                            cboCARangeCol.Items.Add(kvp.Key + conCounter.ToString());
+                            conCounter++;
+                        }
+                    }
+
+                    cboCARangeRow.Items.Add("Z");
+                    for (int i = 0; i < lm.ConstraintsSimplex.Count; i++)
+                    {
+                        cboCARangeRow.Items.Add($"Constraint {i + 1}");
+                    }
 
                     EnableElements();
                     break;
@@ -496,6 +604,8 @@ namespace LPR381_Project
                 btnShadowPrices.Enabled = true;
                 cboShadowPriceVar.Enabled = true;
             }
+
+
         }
 
         private void btnDuality_Click(object sender, EventArgs e)
@@ -1043,7 +1153,7 @@ namespace LPR381_Project
             CriticalAnalysis ca = new CriticalAnalysis(lm.SimplexInitial, tables[tables.Count - 1]);
 
             rtbOutput.Text = "";
-            rtbOutput.AppendText($"\nSHADOW PRICE FOR CONSTRAINT {selectedConstraint+1}\n");
+            rtbOutput.AppendText($"\nSHADOW PRICE FOR CONSTRAINT {selectedConstraint + 1}\n");
 
             rtbOutput.AppendText($"\nCbvB-1 x b =");
             string caOutput = "[\t";
@@ -1053,18 +1163,18 @@ namespace LPR381_Project
                 caOutput += $"{Math.Round(cBVbInverse[0, i], 4)}\t";
             }
             caOutput += "] x";
-            
+
 
             for (int i = 0; i < ca.z.Length; i++)
             {
                 caOutput += $"\t[\t{Math.Round(ca.z[i], 4)}\t]\n";
-                caOutput += new string('\t', cBVbInverse.GetLength(1) + 2 );
+                caOutput += new string('\t', cBVbInverse.GetLength(1) + 2);
             }
             Matrix<double> matrixZ = Matrix<double>.Build.DenseOfColumnArrays(ca.z);
 
             double zOld = ca.CbvBinverse.Multiply(matrixZ).ToArray()[0, 0];
 
-            rtbOutput.AppendText(caOutput+"\n");
+            rtbOutput.AppendText(caOutput + "\n");
             rtbOutput.AppendText($"Zold = {zOld}\n\n");
 
 
@@ -1087,13 +1197,109 @@ namespace LPR381_Project
             }
             Matrix<double> newMatrixZ = Matrix<double>.Build.DenseOfColumnArrays(newB);
 
-            double zNew= ca.CbvBinverse.Multiply(newMatrixZ).ToArray()[0, 0];
+            double zNew = ca.CbvBinverse.Multiply(newMatrixZ).ToArray()[0, 0];
 
             rtbOutput.AppendText(caOutput + "\n");
             rtbOutput.AppendText($"Znew = {zNew}\n\n");
 
 
             rtbOutput.AppendText($"Shadow Price = Znew - Zold = {zNew - zOld}\n\n");
+        }
+
+        private void btnCARanges_Click(object sender, EventArgs e)
+        {
+            if (cboCAChangeRow.SelectedIndex != -1 && cboCARangeCol.SelectedIndex != -1)
+            {
+                int selectedRow = cboCARangeRow.SelectedIndex;
+                int selectedCol = cboCARangeCol.SelectedIndex;
+
+                LinearModel lm = new LinearModel(lp.ToArray());
+                Simplex sp = new Simplex(lm.SimplexInitial, lm.ProblemType);
+                Simplex spTwoPhase = new Simplex(lm.TwoPhaseInitial, lm.ProblemType);
+
+                List<double[,]> tables = new List<double[,]>();
+                bool twoPhase = false;
+
+                switch (cboMethod.SelectedIndex)
+                {
+                    case 0:
+                        {
+                            tables = sp.PrimalSimplexAlgorithm();
+                        }
+                        break;
+                    case 1:
+                        {
+                            tables = spTwoPhase.TwoPhaseAlgorithm(lm.TwoPhaseArtificialColumns);
+                            twoPhase = true;
+                        }
+                        break;
+                    case 2:
+                        {
+                            tables = sp.DualSimplexAlgorithm();
+                        }
+                        break;
+                    case 4:
+                        {
+                            CuttingPlane cp = new CuttingPlane(lm.SimplexInitial, lm.ProblemType, lm.SignRes.ToArray());
+                            List<List<double[,]>> cpResultList = cp.CuttingPlaneSolve();
+
+                            foreach (var iteration in cpResultList)
+                            {
+                                foreach (var table in iteration)
+                                {
+                                    tables.Add(table);
+                                }
+                            }
+                        }
+                        break;
+                    default:
+                        break;
+                }
+
+
+                double[,] table = tables[tables.Count - 1];
+                if (!twoPhase)
+                {
+                    CriticalAnalysis ca = new CriticalAnalysis(lm.SimplexInitial, table);
+
+                    var delta = SymbolicExpression.Variable("delta");
+                    bool basicAffected = false;
+                    foreach (var coord in ca.basicVariableCoords)
+                    {
+                        if (coord.ContainsKey(selectedRow))
+                        {
+                            basicAffected = true;
+                        }
+                    }
+
+                    if (!basicAffected)
+                    {
+                        if (selectedRow == 0)
+                        {
+                            
+                            double[] A = new double[table.GetLength(0) - 1];
+
+                            for (int i = 1; i < table.GetLength(0); i++)
+                            {
+                                A[i - 1] = table[i, selectedCol];
+                            }
+                            Matrix<double> matrixA = Matrix<double>.Build.DenseOfColumnArrays(A);
+
+                            
+                        }
+                    }
+
+
+                }
+                else
+                {
+                    CriticalAnalysis ca = new CriticalAnalysis(lm.SimplexInitial, tables[tables.Count - 1]);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Ensure that you have selected a value from both comboboxes.");
+            }
         }
     }
 }

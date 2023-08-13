@@ -6,12 +6,13 @@ using System.Threading.Tasks;
 using MathNet.Numerics.LinearAlgebra;
 using MathNet.Numerics.Providers.LinearAlgebra;
 
+
 namespace LPR381_Project
 {
     internal class CriticalAnalysis
     {
 
-        private List<Dictionary<int, int>> basicVariableCoords;
+        public List<Dictionary<int, int>> basicVariableCoords;
         public double[] cBV;
         public double[,] B;
         public double[] z;
