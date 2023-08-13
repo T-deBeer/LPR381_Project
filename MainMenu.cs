@@ -1227,7 +1227,7 @@ namespace LPR381_Project
             double zOld = ca.CbvBinverse.Multiply(matrixZ).ToArray()[0, 0];
 
             rtbOutput.AppendText(caOutput + "\n");
-            rtbOutput.AppendText($"Zold = {zOld}\n\n");
+            rtbOutput.AppendText($"Zold = {Math.Round(zOld, 3)}\n\n");
 
 
             double[] newB = ca.z;
@@ -1252,10 +1252,10 @@ namespace LPR381_Project
             double zNew = ca.CbvBinverse.Multiply(newMatrixZ).ToArray()[0, 0];
 
             rtbOutput.AppendText(caOutput + "\n");
-            rtbOutput.AppendText($"Znew = {zNew}\n\n");
+            rtbOutput.AppendText($"Znew = {Math.Round(zNew, 3)}\n\n");
 
 
-            rtbOutput.AppendText($"Shadow Price = Znew - Zold = {zNew - zOld}\n\n");
+            rtbOutput.AppendText($"Shadow Price = Znew - Zold = {Math.Round(zNew - zOld, 3)}\n\n");
         }
 
         private void btnCARanges_Click(object sender, EventArgs e)
@@ -1297,9 +1297,9 @@ namespace LPR381_Project
 
                             foreach (var iteration in cpResultList)
                             {
-                                foreach (var table in iteration)
+                                foreach (var item in iteration)
                                 {
-                                    tables.Add(table);
+                                    tables.Add(item);
                                 }
                             }
                         }
