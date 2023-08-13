@@ -193,43 +193,43 @@ namespace LPR381_Project
             }
             return listTable;
         }
-        public void Solve(string problemType, List<string> headers)
-        {
-            Queue<BranchTable> tableQueue = new Queue<BranchTable> ();
-            List<BranchTable> branches = new List<BranchTable>();
+        //public void Solve(string problemType, List<string> headers)
+        //{
+        //    Queue<BranchTable> tableQueue = new Queue<BranchTable> ();
+        //    List<BranchTable> branches = new List<BranchTable>();
 
-            tableQueue.Enqueue(new BranchTable("0", ListToArray(initialTable), headers));
+        //    tableQueue.Enqueue(new BranchTable("0", ListToArray(initialTable), headers));
 
-            while (tableQueue.Count != 0)
-            {
-                BranchTable branchTable = tableQueue.Dequeue();
-                List<List<double>> table = ArrayToList(branchTable.Table);      
+        //    while (tableQueue.Count != 0)
+        //    {
+        //        BranchTable branchTable = tableQueue.Dequeue();
+        //        List<List<double>> table = ArrayToList(branchTable.Table);      
                 
-                int row = DetermineCutRow(table);                    /// ifi
-                List<List<double>> constraints = GenerateConstraints(row, table[row].IndexOf(1), table);
+        //        int row = DetermineCutRow(table);                    /// ifi
+        //        List<List<double>> constraints = GenerateConstraints(row, table[row].IndexOf(1), table);
 
-                for (int i = 0; i < constraints.Count(); i++)
-                {
-                    List<List<double>> newTable = AddConstraint(constraints[i], branchTable);
-                    //solvedTable = Solve table
-                    Simplex simplex = new Simplex(ListToArray(newTable), problemType);
-                    List<double[,]> pivots = simplex.DualSimplexAlgorithm();
-                    ///
+        //        for (int i = 0; i < constraints.Count(); i++)
+        //        {
+        //            List<List<double>> newTable = AddConstraint(constraints[i], branchTable);
+        //            //solvedTable = Solve table
+        //            Simplex simplex = new Simplex(ListToArray(newTable), problemType);
+        //            List<double[,]> pivots = simplex.DualSimplexAlgorithm();
+        //            ///
 
-                    List<List<double>> optimalTable = ArrayToList(pivots.Last());
-                    double sum = 0;
+        //            List<List<double>> optimalTable = ArrayToList(pivots.Last());
+        //            double sum = 0;
 
-                    for (int j = 0; j < optimalTable.Count(); j++)
-                    {
-                        sum += optimalTable[j][columns - 1];
-                    }
-                    if (Math.Floor(sum) - sum != 0)
-                    {
-                        tableQueue.Enqueue(optimalTable);
-                    }
-                    branches.Add(newTable);
-                }
-            }
-        }
+        //            for (int j = 0; j < optimalTable.Count(); j++)
+        //            {
+        //                sum += optimalTable[j][columns - 1];
+        //            }
+        //            if (Math.Floor(sum) - sum != 0)
+        //            {
+        //                tableQueue.Enqueue(optimalTable);
+        //            }
+        //            branches.Add(newTable);
+        //        }
+        //    }
+        //}
     }
 }

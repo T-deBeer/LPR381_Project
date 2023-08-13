@@ -685,7 +685,6 @@
             txtCAChangeValue.DisabledBackColor = Color.FromArgb(80, 80, 80);
             txtCAChangeValue.DisabledBorderColor = Color.FromArgb(109, 109, 109);
             txtCAChangeValue.DisabledForeColor = Color.FromArgb(109, 109, 109);
-            txtCAChangeValue.Enabled = false;
             txtCAChangeValue.Font = new Font("Microsoft Sans Serif", 10F, FontStyle.Regular, GraphicsUnit.Point);
             txtCAChangeValue.HoverColor = Color.FromArgb(65, 177, 225);
             txtCAChangeValue.Image = null;
@@ -761,6 +760,7 @@
             btnCAChanges.Text = "Apply";
             btnCAChanges.ThemeAuthor = "Narwin";
             btnCAChanges.ThemeName = "MetroLite";
+            btnCAChanges.Click += btnCAChanges_Click;
             // 
             // metroSetLabel5
             // 
@@ -982,6 +982,7 @@
             btnShadowPrices.Text = "Calculate";
             btnShadowPrices.ThemeAuthor = "Narwin";
             btnShadowPrices.ThemeName = "MetroLite";
+            btnShadowPrices.Click += btnShadowPrices_Click;
             // 
             // lblShadowPrices
             // 
@@ -1041,12 +1042,11 @@
             mtxtCon.Style = MetroSet_UI.Enums.Style.Dark;
             mtxtCon.StyleManager = null;
             mtxtCon.TabIndex = 9;
-            mtxtCon.Text = "+0 +0 <= +0";
             mtxtCon.TextAlign = HorizontalAlignment.Left;
             mtxtCon.ThemeAuthor = "Narwin";
             mtxtCon.ThemeName = "MetroDark";
             mtxtCon.UseSystemPasswordChar = false;
-            mtxtCon.WatermarkText = "";
+            mtxtCon.WatermarkText = "+0 +0 <= +0";
             // 
             // metroSetLabel12
             // 

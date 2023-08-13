@@ -8,6 +8,8 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using MathNet.Numerics.Distributions;
+using MathNet.Numerics.LinearAlgebra;
 using MetroSet_UI.Forms;
 using static System.Windows.Forms.LinkLabel;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TreeView;
@@ -101,7 +103,6 @@ namespace LPR381_Project
             btnConstraints.Enabled = false;
             btnShadowPrices.Enabled = false;
             cboShadowPriceVar.Enabled = false;
-            txtCAChangeValue.Enabled = false;
 
             cbForm.Location = new System.Drawing.Point(1816, 4);
         }
@@ -182,13 +183,13 @@ namespace LPR381_Project
             LinearModel lm = new LinearModel(lp.ToArray());
             rtbFileOutput.AppendText("\nSIMPLEX CANONICAL FORM:\n");
             rtbFileOutput.AppendText(lm.ObjFunctionToString() + "\n");
-            rtbFileOutput.AppendText(lm.CanonSimplexConstraintsToString()+ "\n");
-            
+            rtbFileOutput.AppendText(lm.CanonSimplexConstraintsToString() + "\n");
+
             rtbFileOutput.AppendText("\nTWO-PHSES CANONICAL FORM:\n");
             rtbFileOutput.AppendText(lm.WFunctionToString() + "\n");
             rtbFileOutput.AppendText(lm.ObjFunctionToString() + "\n");
             rtbFileOutput.AppendText(lm.CanonTwoPhaseConstraintsToString() + "\n");
-            
+
             rtbFileOutput.AppendText("\nDUALITY CANONICAL FORM:\n");
             rtbFileOutput.AppendText(lm.CanonDualFunctionToString() + "\n");
             rtbFileOutput.AppendText(lm.CanonDualConstraintsToString() + "\n");
@@ -207,7 +208,7 @@ namespace LPR381_Project
             mtxtCon.Enabled = true;
 
             LinearModel lm = new LinearModel(lp.ToArray());
-                
+
 
             List<BranchTable> branches = new List<BranchTable>();
             List<string> headers = new List<string>();
@@ -225,7 +226,7 @@ namespace LPR381_Project
                     }
                     Simplex sp = new Simplex(lm.SimplexInitial, lm.ProblemType);
                     List<double[,]> tables = sp.PrimalSimplexAlgorithm();
-                    finalTable = tables[tables.Count -1];
+                    finalTable = tables[tables.Count - 1];
 
                     rowHeaders.Add($"Z");
 
@@ -411,8 +412,73 @@ namespace LPR381_Project
             }
 
             CriticalAnalysis ca = new CriticalAnalysis(lm.SimplexInitial, finalTable);
-            rtbOutput.AppendText("Cbv\n");
-            //rtbOutput.AppendText(String.Join(" ", ca.GetBasicVariableColumns()));
+            rtbOutput.Text = "";
+            rtbOutput.AppendText("\nCbv = ");
+
+            string caOutput = "[\t";
+            for (int i = 0; i < ca.cBV.Length; i++)
+            {
+                caOutput += $"{Math.Round(ca.cBV[i], 4)};\t";
+            }
+            caOutput += "]";
+            rtbOutput.AppendText(caOutput + "\n");
+
+            caOutput = "";
+            Matrix<double> matrixB = Matrix<double>.Build.DenseOfArray(ca.B).Transpose();
+            double[,] bArray = matrixB.ToArray();
+
+            rtbOutput.AppendText("\n B =");
+            for (int i = 0; i < bArray.GetLength(0); i++)
+            {
+                caOutput = "\t[\t";
+                for (int j = 0; j < bArray.GetLength(1); j++)
+                {
+                    caOutput += $"{Math.Round(bArray[i, j], 4)};\t";
+                }
+                caOutput += "]";
+                rtbOutput.AppendText(caOutput + "\n");
+            }
+
+            caOutput = "";
+
+            rtbOutput.AppendText($"\n B-1 =");
+            double[,] bInverseArray = ca.BInverse.Transpose().ToArray();
+            for (int i = 0; i < bInverseArray.GetLength(0); i++)
+            {
+                caOutput = "\t[\t";
+                for (int j = 0; j < bInverseArray.GetLength(1); j++)
+                {
+                    caOutput += $"{Math.Round(bInverseArray[i, j], 4)};\t";
+                }
+                caOutput += "]";
+                rtbOutput.AppendText(caOutput + "\n");
+            }
+
+
+            rtbOutput.AppendText($"\nCbvB-1 =");
+            caOutput = "[\t";
+            double[,] cBVbInverse = ca.CbvBinverse.ToArray();
+            for (int i = 0; i < cBVbInverse.GetLength(1); i++)
+            {
+                caOutput += $"{Math.Round(cBVbInverse[0, i], 4)};\t";
+            }
+            caOutput += "]";
+            rtbOutput.AppendText(caOutput + "\n");
+
+
+            rtbOutput.AppendText($"\nb =");
+            caOutput = "";
+            for (int i = 0; i < ca.z.Length; i++)
+            {
+                caOutput += $"\t[\t{Math.Round(ca.z[i], 4)}\t]\n";
+            }
+            rtbOutput.AppendText(caOutput + "\n");
+
+            cboShadowPriceVar.Items.Clear();
+            for (int i = 1; i <= lm.ConstraintsSimplex.Count; i++)
+            {
+                cboShadowPriceVar.Items.Add($"Constraint {i}");
+            }
 
             void EnableElements()
             {
@@ -434,12 +500,7 @@ namespace LPR381_Project
 
         private void btnDuality_Click(object sender, EventArgs e)
         {
-            rtbOutput.Text = "";
             LinearModel lm = new LinearModel(lp.ToArray());
-            rtbOutput.AppendText(lm.CanonDualFunctionToString() + "\n");
-            rtbOutput.AppendText(lm.CanonDualConstraintsToString() + "\n");
-
-
             Simplex s = new Simplex(lm.DualityInitial, lm.DualProblemType);
 
             List<double[,]> tables = s.DualSimplexAlgorithm();
@@ -478,6 +539,69 @@ namespace LPR381_Project
 
             btnOutputClear_Click(sender, e);
             PrintTables(branches);
+
+            CriticalAnalysis ca = new CriticalAnalysis(lm.DualityInitial, tables[tables.Count - 1]);
+            rtbOutput.Text = "";
+            rtbOutput.AppendText("\nCbv = ");
+
+            string caOutput = "[\t";
+            for (int i = 0; i < ca.cBV.Length; i++)
+            {
+                caOutput += $"{Math.Round(ca.cBV[i], 4)};\t";
+            }
+            caOutput += "]";
+            rtbOutput.AppendText(caOutput + "\n");
+
+            caOutput = "";
+            Matrix<double> matrixB = Matrix<double>.Build.DenseOfArray(ca.B).Transpose();
+            double[,] bArray = matrixB.ToArray();
+
+            rtbOutput.AppendText("\n B =");
+            for (int i = 0; i < bArray.GetLength(0); i++)
+            {
+                caOutput = "\t[\t";
+                for (int j = 0; j < bArray.GetLength(1); j++)
+                {
+                    caOutput += $"{Math.Round(bArray[i, j], 4)};\t";
+                }
+                caOutput += "]";
+                rtbOutput.AppendText(caOutput + "\n");
+            }
+
+            caOutput = "";
+
+            rtbOutput.AppendText($"\n B-1 =");
+            double[,] bInverseArray = ca.BInverse.Transpose().ToArray();
+            for (int i = 0; i < bInverseArray.GetLength(0); i++)
+            {
+                caOutput = "\t[\t";
+                for (int j = 0; j < bInverseArray.GetLength(1); j++)
+                {
+                    caOutput += $"{Math.Round(bInverseArray[i, j], 4)};\t";
+                }
+                caOutput += "]";
+                rtbOutput.AppendText(caOutput + "\n");
+            }
+
+
+            rtbOutput.AppendText($"\nCbvB-1 =");
+            caOutput = "[\t";
+            double[,] cBVbInverse = ca.CbvBinverse.ToArray();
+            for (int i = 0; i < cBVbInverse.GetLength(1); i++)
+            {
+                caOutput += $"{Math.Round(cBVbInverse[0, i], 4)};\t";
+            }
+            caOutput += "]";
+            rtbOutput.AppendText(caOutput + "\n");
+
+
+            rtbOutput.AppendText($"\nb =");
+            caOutput = "";
+            for (int i = 0; i < ca.z.Length; i++)
+            {
+                caOutput += $"\t[\t{Math.Round(ca.z[i], 4)}\t]\n";
+            }
+            rtbOutput.AppendText(caOutput + "\n");
         }
 
         public bool CheckFeasibility(List<double[,]> result)
@@ -631,7 +755,7 @@ namespace LPR381_Project
                 double[,] tab = ListToArray(newTable);
 
                 Simplex sp = new Simplex(tab, lm.ProblemType);
-                rtbOutput.Text = sp.PrintDual();
+                //rtbOutput.Text = sp.PrintDual();
             }
         }
         public List<List<double>> ArrayToList(double[,] table)
@@ -742,6 +866,7 @@ namespace LPR381_Project
         private void cboCAChangeRow_SelectedIndexChanged(object sender, EventArgs e)
         {
             txtCAChangeValue.Text = cboCAChangeRow.Items[cboCAChangeRow.SelectedIndex].ToString();
+            txtCAChangeValue.BackColor = Color.FromArgb(34, 34, 34);
         }
 
         private void btnOutputClear_Click(object sender, EventArgs e)
@@ -760,6 +885,215 @@ namespace LPR381_Project
         private void btnCAOutputClear_Click(object sender, EventArgs e)
         {
             rtbOutput.Text = "";
+        }
+
+        private void btnCAChanges_Click(object sender, EventArgs e)
+        {
+            if (lp[cboCAChangeRow.SelectedIndex].Split(" ").Length != txtCAChangeValue.Text.Split(" ").Length)
+            {
+                MessageBox.Show("Ensure that the value you are trying to enter's form matches the selcted row that you want to change");
+            }
+            else
+            {
+                lp[cboCAChangeRow.SelectedIndex] = txtCAChangeValue.Text;
+
+                LinearModel lm = new LinearModel(lp.ToArray());
+                List<BranchTable> branches = new List<BranchTable>();
+
+                rtbFileOutput.Text = "";
+                cboCAChangeRow.Items.Clear();
+
+                txtCAChangeValue.Text = "";
+
+
+                foreach (var item in lp)
+                {
+                    rtbFileOutput.AppendText(item + "\n");
+                    cboCAChangeRow.Items.Add(item);
+                }
+
+                cboCAChangeRow.SelectedIndex = 0;
+
+                rtbFileOutput.AppendText("\nSIMPLEX CANONICAL FORM:\n");
+                rtbFileOutput.AppendText(lm.ObjFunctionToString() + "\n");
+                rtbFileOutput.AppendText(lm.CanonSimplexConstraintsToString() + "\n");
+
+                rtbFileOutput.AppendText("\nTWO-PHSES CANONICAL FORM:\n");
+                rtbFileOutput.AppendText(lm.WFunctionToString() + "\n");
+                rtbFileOutput.AppendText(lm.ObjFunctionToString() + "\n");
+                rtbFileOutput.AppendText(lm.CanonTwoPhaseConstraintsToString() + "\n");
+
+                rtbFileOutput.AppendText("\nDUALITY CANONICAL FORM:\n");
+                rtbFileOutput.AppendText(lm.CanonDualFunctionToString() + "\n");
+                rtbFileOutput.AppendText(lm.CanonDualConstraintsToString() + "\n");
+
+                Simplex sd = new Simplex(lm.SimplexInitial, lm.ProblemType);
+
+                List<string> headers = new List<string>();
+                List<string> rowHeaders = new List<string>();
+
+                List<double[,]> dualResult = sd.DualSimplexAlgorithm();
+                double[,] finalTable = dualResult[dualResult.Count - 1];
+
+                rowHeaders.Add($"Z");
+
+                int count = 1;
+                foreach (var kvp in lm.ObjectiveFunction.Where(x => x.Key.Contains('X')))
+                {
+                    headers.Add(kvp.Key);
+                }
+
+                int rowCount = 1;
+                foreach (var con in lm.ConstraintsSimplex)
+                {
+                    rowHeaders.Add($"{rowCount}");
+                    rowCount++;
+
+                    foreach (var kvp in con.Where(x => !x.Key.Contains('X') && x.Key != "rhs" && x.Key != "sign"))
+                    {
+                        headers.Add(kvp.Key);
+                    }
+                }
+                headers.Add("rhs");
+
+                foreach (var table in dualResult)
+                {
+                    BranchTable newTable = new BranchTable(count.ToString(), table, headers, rowHeaders);
+                    branches.Add(newTable);
+                    count++;
+                }
+                btnOutputClear_Click(sender, e);
+                PrintTables(branches);
+
+
+                CriticalAnalysis ca = new CriticalAnalysis(lm.SimplexInitial, finalTable);
+                rtbOutput.Text = "";
+                rtbOutput.AppendText("\nCbv = ");
+
+                string caOutput = "[\t";
+                for (int i = 0; i < ca.cBV.Length; i++)
+                {
+                    caOutput += $"{Math.Round(ca.cBV[i], 4)};\t";
+                }
+                caOutput += "]";
+                rtbOutput.AppendText(caOutput + "\n");
+
+                caOutput = "";
+                Matrix<double> matrixB = Matrix<double>.Build.DenseOfArray(ca.B).Transpose();
+                double[,] bArray = matrixB.ToArray();
+
+                rtbOutput.AppendText("\n B =");
+                for (int i = 0; i < bArray.GetLength(0); i++)
+                {
+                    caOutput = "\t[\t";
+                    for (int j = 0; j < bArray.GetLength(1); j++)
+                    {
+                        caOutput += $"{Math.Round(bArray[i, j], 4)};\t";
+                    }
+                    caOutput += "]";
+                    rtbOutput.AppendText(caOutput + "\n");
+                }
+
+                caOutput = "";
+
+                rtbOutput.AppendText($"\n B-1 =");
+                double[,] bInverseArray = ca.BInverse.Transpose().ToArray();
+                for (int i = 0; i < bInverseArray.GetLength(0); i++)
+                {
+                    caOutput = "\t[\t";
+                    for (int j = 0; j < bInverseArray.GetLength(1); j++)
+                    {
+                        caOutput += $"{Math.Round(bInverseArray[i, j], 4)};\t";
+                    }
+                    caOutput += "]";
+                    rtbOutput.AppendText(caOutput + "\n");
+                }
+
+
+                rtbOutput.AppendText($"\nCbvB-1 =");
+                caOutput = "[\t";
+                double[,] cBVbInverse = ca.CbvBinverse.ToArray();
+                for (int i = 0; i < cBVbInverse.GetLength(1); i++)
+                {
+                    caOutput += $"{Math.Round(cBVbInverse[0, i], 4)};\t";
+                }
+                caOutput += "]";
+                rtbOutput.AppendText(caOutput + "\n");
+
+
+                rtbOutput.AppendText($"\nb =");
+                caOutput = "";
+                for (int i = 0; i < ca.z.Length; i++)
+                {
+                    caOutput += $"\t[\t{Math.Round(ca.z[i], 4)}\t]\n";
+                }
+                rtbOutput.AppendText(caOutput + "\n");
+            }
+        }
+
+        private void btnShadowPrices_Click(object sender, EventArgs e)
+        {
+            int selectedConstraint = cboShadowPriceVar.SelectedIndex;
+
+            LinearModel lm = new LinearModel(lp.ToArray());
+            Simplex sp = new Simplex(lm.SimplexInitial, lm.ProblemType);
+
+            List<double[,]> tables = sp.DualSimplexAlgorithm();
+
+            CriticalAnalysis ca = new CriticalAnalysis(lm.SimplexInitial, tables[tables.Count - 1]);
+
+            rtbOutput.Text = "";
+            rtbOutput.AppendText($"\nSHADOW PRICE FOR CONSTRAINT {selectedConstraint+1}\n");
+
+            rtbOutput.AppendText($"\nCbvB-1 x b =");
+            string caOutput = "[\t";
+            double[,] cBVbInverse = ca.CbvBinverse.ToArray();
+            for (int i = 0; i < cBVbInverse.GetLength(1); i++)
+            {
+                caOutput += $"{Math.Round(cBVbInverse[0, i], 4)}\t";
+            }
+            caOutput += "] x";
+            
+
+            for (int i = 0; i < ca.z.Length; i++)
+            {
+                caOutput += $"\t[\t{Math.Round(ca.z[i], 4)}\t]\n";
+                caOutput += new string('\t', cBVbInverse.GetLength(1) + 2 );
+            }
+            Matrix<double> matrixZ = Matrix<double>.Build.DenseOfColumnArrays(ca.z);
+
+            double zOld = ca.CbvBinverse.Multiply(matrixZ).ToArray()[0, 0];
+
+            rtbOutput.AppendText(caOutput+"\n");
+            rtbOutput.AppendText($"Zold = {zOld}\n\n");
+
+
+            double[] newB = ca.z;
+
+            newB[selectedConstraint] += 1;
+            rtbOutput.AppendText($"\nCbvB-1 x b =");
+            caOutput = "[\t";
+            for (int i = 0; i < cBVbInverse.GetLength(1); i++)
+            {
+                caOutput += $"{Math.Round(cBVbInverse[0, i], 4)}\t";
+            }
+            caOutput += "] x";
+
+
+            for (int i = 0; i < ca.z.Length; i++)
+            {
+                caOutput += $"\t[\t{Math.Round(ca.z[i], 4)}\t]\n";
+                caOutput += new string('\t', cBVbInverse.GetLength(1) + 2);
+            }
+            Matrix<double> newMatrixZ = Matrix<double>.Build.DenseOfColumnArrays(newB);
+
+            double zNew= ca.CbvBinverse.Multiply(newMatrixZ).ToArray()[0, 0];
+
+            rtbOutput.AppendText(caOutput + "\n");
+            rtbOutput.AppendText($"Znew = {zNew}\n\n");
+
+
+            rtbOutput.AppendText($"Shadow Price = Znew - Zold = {zNew - zOld}\n\n");
         }
     }
 }

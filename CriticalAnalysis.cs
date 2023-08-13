@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using MathNet.Numerics.LinearAlgebra;
+using MathNet.Numerics.Providers.LinearAlgebra;
 
 namespace LPR381_Project
 {
@@ -11,9 +12,9 @@ namespace LPR381_Project
     {
 
         private List<Dictionary<int, int>> basicVariableCoords;
-        private double[] cBV;
-        private double[,] B;
-        private double[] b;
+        public double[] cBV;
+        public double[,] B;
+        public double[] z;
 
         public CriticalAnalysis(double[,] initialTable, double[,] finalTable)
         {
@@ -23,10 +24,22 @@ namespace LPR381_Project
             this.basicVariableCoords = GetBasicVariableCoords();
             this.cBV = GetCBV();
             this.B = GetB();
+            this.z = GetRHS();
+
+            Matrix<double> matrixCbv = Matrix<double>.Build.DenseOfRowArrays(this.cBV);
+            Matrix<double> matrixZ = Matrix<double>.Build.DenseOfColumnArrays(this.z);
+            Matrix<double> matrixB = Matrix<double>.Build.DenseOfArray(this.B);
+
+            BInverse = matrixB.Inverse();
+            CbvBinverse = matrixCbv.Multiply(BInverse.Transpose());
         }
+
+        
 
         public double[,] InitialTable { get; set; }
         public double[,] FinalTable { get; set; }
+        public Matrix<double> BInverse { get; set; }
+        public Matrix<double> CbvBinverse { get; set; }
 
         //Basic Variables
         public List<Dictionary<int, int>> GetBasicVariableCoords()
@@ -71,14 +84,22 @@ namespace LPR381_Project
             double[] CBV = new double[FinalTable.GetLength(0) - 1];
 
             int count = 0;
-            foreach (var coord in basicVariableCoords)
+            if (basicVariableCoords.Count == CBV.Length)
             {
-                foreach (var kvp in coord)
+                foreach (var coord in basicVariableCoords)
                 {
-                    CBV[count] = -1 * InitialTable[0, kvp.Value];
-                    count++;
+                    foreach (var kvp in coord)
+                    {
+                        CBV[count] = -1 * InitialTable[0, kvp.Value];
+                        count++;
+                    }
                 }
             }
+            else
+            {
+                MessageBox.Show("This solution is infeasible, thus not Cbv could be found.");
+            }
+            
 
             return CBV;
         }
@@ -97,8 +118,12 @@ namespace LPR381_Project
                     {
                         if (kvp.Key == i)
                         {
-                            B[count, row] = InitialTable[i, kvp.Value];
-                            row++;
+                            for (int j = 1; j < InitialTable.GetLength(0); j++)
+                            {
+                                B[count, row] = InitialTable[j, kvp.Value];
+                                row++;
+                            }
+                            
                         }
                         
                     }
@@ -108,7 +133,17 @@ namespace LPR381_Project
 
             return B;
         }
+        public double[] GetRHS()
+        {
+            double[] result = new double[InitialTable.GetLength(0) - 1];
 
+            for (int i = 1; i < InitialTable.GetLength(0); i++)
+            {
+                result[i-1] = InitialTable[i, InitialTable.GetLength(1)-1];
+            }
+
+            return result;
+        }
 
         // MATRIX MATH EXAMPLES:
         public double[,] MatrixMultiplyExample(double[] b, double[,] B)
