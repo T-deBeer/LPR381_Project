@@ -59,16 +59,13 @@ namespace LPR381_Project
                     {
                         output = new List<BranchTable>(sub2);
                         BranchTable s = sub1.Last();
-                        //output[0].DataGrid.Top = s.DataGrid.Top + 10;
                     }
                     
                     int y = output.Select(x => x.Level.Length).Distinct().Count();
                     double x = Math.Pow(2, output.Last().Level.Length) / y;
 
                     int width = (int)x * output.Last().DataGrid.Width + 100;
-                    int height = y * output.Last().DataGrid.Height + 10;
-
-                    int tableWidth = output.Last().DataGrid.Width;
+                    int height = y * output.Last().DataGrid.Height + 10;                    
 
                     for (int i = 0; i < output.Count(); i++)
                     {
@@ -93,6 +90,15 @@ namespace LPR381_Project
                         pnlBranches.Controls.Add(output[i].DataGrid);
                         output[i].DataGrid.CurrentCell = null;
                     }
+
+                    Label label = new Label()
+                    {
+                        Top = output[0].DataGrid.Top - 40,
+                        Left = output[0].DataGrid.Left + output[0].DataGrid.Width / 2 - 10,
+                        AutoSize = true
+                    };
+                    label.Text = $"Sub problem {k + 1}: ";
+                    pnlBranches.Controls.Add(label);
                 }                
             }
         }
