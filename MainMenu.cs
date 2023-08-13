@@ -672,8 +672,11 @@ namespace LPR381_Project
         {
             LinearModel lm = new LinearModel(lp.ToArray());
             Simplex s = new Simplex(lm.DualityInitial, lm.DualProblemType);
+            Simplex sp = new Simplex(lm.SimplexInitial, lm.ProblemType);
 
             List<double[,]> tables = s.DualSimplexAlgorithm();
+            List<double[,]> dualTables = sp.DualSimplexAlgorithm();
+
             List<string> headers = new List<string>();
             List<string> rowHeaders = new List<string>();
             List<BranchTable> branches = new List<BranchTable>();
@@ -772,6 +775,15 @@ namespace LPR381_Project
                 caOutput += $"\t[\t{Math.Round(ca.z[i], 4)}\t]\n";
             }
             rtbOutput.AppendText(caOutput + "\n");
+
+            if (tables[tables.Count - 1][0, tables[tables.Count - 1].GetLength(1)-1] == dualTables[dualTables.Count - 1][0, dualTables[dualTables.Count - 1].GetLength(1) - 1])
+            {
+                rtbOutput.AppendText("The model has a strong duality\n");
+            }
+            else
+            {
+                rtbOutput.AppendText("The model has a weak duality\n");
+            }
         }
 
         public bool CheckFeasibility(List<double[,]> result)
