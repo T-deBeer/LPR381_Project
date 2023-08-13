@@ -172,5 +172,94 @@ namespace LPR381_Project
 
             return result;
         }
+
+        public string CalculateRanges(int colIndex, int rowIndex, string problemType)
+        {
+            string line = "";
+            double[] tempDelta = new double[z.Length];
+            for (int i = 0; i < tempDelta.Length; i++)
+            {
+                tempDelta[i] = 1;
+            }
+            bool basicAffected = false;
+            foreach (var coord in basicVariableCoords)
+            {
+                if (coord.ContainsValue(colIndex))
+                {
+                    basicAffected = true;
+                }
+            }
+            if (basicAffected)
+            {
+                MessageBox.Show("A basic variable column was selected. Basic variables have no need to be calculated since they are already optimal.\n\nTry ranges of non-basic variables or the rhs.", "Basic variable ranges", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return "";
+            }
+            if (colIndex == InitialTable.GetLength(1) - 1)
+            {
+                // Do rhs calculations.
+                Matrix<double> b = Matrix<double>.Build.DenseOfColumnArrays(z);
+
+                Matrix<double> Binvb = BInverse * b;
+
+                double[,] BInverseArr = BInverse.ToArray();
+                for (int i = 0; i < BInverseArr.GetLength(0); i++)
+                {
+                    for (int j = 0; j < BInverseArr.GetLength(1); j++)
+                    {
+                        if (j == rowIndex - 1)
+                        {
+                            tempDelta[i] = BInverseArr[i, j];
+                        }
+                    }
+                }
+
+                double[,] BinvbArr = Binvb.ToArray();
+                line = "";
+                for (int i = 0; i < tempDelta.Length; i++)
+                {
+                    string temp = "";
+                    if (tempDelta[i] >= 0)
+                    {
+                        temp = "+" + Math.Round(tempDelta[i], 3) + "Δ";
+                    } else
+                    {
+                        temp = Math.Round(tempDelta[i], 3) + "Δ";
+                    }
+                    line += BinvbArr[i, 0] + temp + " >= 0\n";
+                }
+            }
+            else if (rowIndex >= 1)
+            {
+                double tempDeltaNBV = 1 * CbvBinverse.ToArray()[0, rowIndex - 1];
+                double[] A = new double[InitialTable.GetLength(0) - 1];
+                double C = InitialTable[0, colIndex] * -1;
+
+                for (int i = 1; i < InitialTable.GetLength(0); i++)
+                {
+                    A[i - 1] = InitialTable[i, colIndex];
+                }
+
+                double answer = (CbvBinverse * Matrix<double>.Build.DenseOfColumnArrays(A)).ToArray()[0,0] - C;
+                string sign = problemType == "max" ? ">=" : "<=";
+                line += $"{Math.Round(answer,3)} + ({Math.Round(tempDeltaNBV, 3)}Δ) {sign} 0";
+            } 
+            else
+            {
+                double[] A = new double[InitialTable.GetLength(0) - 1];
+
+                for (int i = 1; i < InitialTable.GetLength(0); i++)
+                {
+                    A[i - 1] = InitialTable[i, colIndex];
+                }
+
+                Matrix<double> matrixA = Matrix<double>.Build.DenseOfColumnArrays(A);
+                double answer = CbvBinverse.Multiply(matrixA).ToArray()[0, 0];
+
+                string sign = problemType == "max" ? ">=" : "<=";
+                line += $"{Math.Round(answer, 3)} - ({InitialTable[rowIndex, colIndex] * -1}+Δ) {sign} 0\n" +
+                    $"{Math.Round(answer, 3) - (InitialTable[rowIndex, colIndex] * -1)}-Δ {sign} 0";
+            }
+            return line;
+        }
     }
 }
