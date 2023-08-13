@@ -141,7 +141,7 @@ namespace LPR381_Project
             List<BranchTable> sub1 = branchTables.Where(x => x.Level[0] == '1').ToList();
 
             List<BranchTable> sub2 = branchTables.Where(x => x.Level[0] == '2').ToList();
-            
+
 
             double x = Math.Pow(2, placementQueue.Last().Level.Length) / 2;
             int y = placementQueue.Select(x => x.Level.Length).Distinct().Count();
@@ -460,7 +460,7 @@ namespace LPR381_Project
                 List<List<double>> listTable = ArrayToList(finalTable);
                 List<double> listCon = new List<double>(newConstraintRow);
 
-                List<List<double>> newTable = AddConstraint(listCon, listTable, finalTable.GetLength(0), finalTable.GetLength(1));
+                List<List<double>> newTable = AddConstraint(listCon, listTable, finalTable.GetLength(1), finalTable.GetLength(0));
 
                 double[,] tab = ListToArray(newTable);
 
@@ -500,50 +500,77 @@ namespace LPR381_Project
             }
             return listTable;
         }
-        public List<List<double>> AddConstraint(List<double> constraint, List<List<double>> table, int columns, int rows)
+        private bool IsBasic(int columnIndex, List<List<double>> table, int rows)
         {
-            double sumWithoutConstraint = 0;
-            List<double> sum = new List<double>();
-            List<int> clashes = new List<int>();
-
-            for (int i = 0; i < columns; i++)
+            List<double> column = new List<double>();
+            //Grab values from column
+            for (int i = 0; i < rows; i++)
             {
-                if (i == table[0].Count - 2)
+                // If element is one or zero add to list (straight forward) 
+                // BUT if the element is anything else then it is a non-basic variable (IsBasic = false = non-basic and vice versa)
+                if (table[i][columnIndex] == 0 || table[i][columnIndex] == 1)
                 {
-                    table[i].Insert(columns - 2, constraint[constraint.Count() - 2]);
+                    column.Add(table[i][columnIndex]);
                 }
                 else
                 {
-                    table[i].Insert(columns - 2, 0);
+                    return false;
                 }
             }
-            columns++;
-            for (int i = 0; i < rows; i++)
+            // Sum of basic variable column = 1 (accounts for example: 0 1 1 which would pass the previous test)
+            return column.Sum() == 1;
+        }
+        public List<List<double>> AddConstraint(List<double> constraint, List<List<double>> table, int columns, int rows)
+        {
+            //List<double> sum = new List<double>();
+            for (int i = 0; i < constraint.Count(); i++)
             {
-                int row = 0;
-                for (int j = 0; j < columns; j++)
+                constraint[i] *= -1;
+            }
+            List<int> clashes = new List<int>();
+            for (int i = 0; i < columns; i++)
+            {
+                if (IsBasic(i, table, rows)) 
                 {
-                    sumWithoutConstraint += table[j][i];
-                    row = j;
-                }
-                if (sumWithoutConstraint == 1)
-                {
-                    if (sumWithoutConstraint + constraint[i + 1] != 1)
+                    double sum = 0;
+                    int rowClash = 0;
+                    for (int j = 0; j < rows; j++)
                     {
-                        clashes.Add(row);
+                        sum += table[j][i];
+                        if (table[j][i] == 1) 
+                        { 
+                            rowClash = j;
+                        }
                     }
-                }
-                sum.Add(sumWithoutConstraint);
+                    if (sum != sum + constraint[i])
+                    {
+                        clashes.Add(rowClash);
+                    }
+                }               
             }
 
-            if (clashes.Count > 0)
+            for (int i = 0; i < rows; i++)
             {
-                for (int i = 0; i < constraint.Count(); i++)
-                {
-                    constraint[i] = table[clashes[0]][i] - constraint[i];
-                }
+                //if (i == columns - 2)
+                //{
+                //    table[i].Insert(columns - 2, constraint[constraint.Count() - 2]);
+                //}
+                //else
+                //{
+                    table[i].Insert(columns - 2, 0);
+                //}
             }
-       
+            columns++;
+            for (int i = 0; i < clashes.Count(); i++)
+            {
+                List<double> newRow = new List<double>();
+                for (int j = 0; j < columns; j++)
+                {                    
+                    double newElement = table[clashes[i]][j] - constraint[j];
+                    newRow.Add(newElement);
+                }
+                table.Add(newRow);
+            }
             return table;
         }
 
@@ -552,7 +579,7 @@ namespace LPR381_Project
             txtCAChangeValue.Text = cboCAChangeRow.Items[cboCAChangeRow.SelectedIndex].ToString();
 
 
-            
+
         }
     }
 }
