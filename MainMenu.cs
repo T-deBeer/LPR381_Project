@@ -48,13 +48,12 @@ namespace LPR381_Project
 
                 List<BranchTable> sub2 = tables.Where(x => x.Level.Length > 0 && x.Level[0] == '2').ToList();
                 int top = 0;
-                for (int k = 1; k < 2; k++)
+                for (int k = 0; k < 2; k++)
                 {
                     List<BranchTable> output;
                     if (k == 0) 
                     {
                         output = new List<BranchTable>(sub1);
-                        output[0].DataGrid.Top = 10;
                     }
                     else
                     {
@@ -77,13 +76,19 @@ namespace LPR381_Project
 
                         output[i].DataGrid.Left = (int)(width / 2 - output[i].DataGrid.Width / 2) - output[i].DataGrid.Width;
 
-                        top = 0;
+                        top = k == 0 ? 0 : sub1.Last().DataGrid.Top + sub1.Last().DataGrid.Height + 10;
 
+                                    
                         for (int j = 0; j < output[i].Level.Length; j++)
                         {
                             top += (output.Last().DataGrid.Height + 5) / 2;//121
                             output[i].DataGrid.Top += top;
                             output[i].DataGrid.Left += (output[i].Level[j] == '1' && j != 0 ? -1 : 1) * (width / (int)Math.Pow(2, j));
+                        }
+                        
+                        if (i != 0 && output[i].Level == output[i - 1].Level)
+                        {
+                            output[i].DataGrid.Top = output[i - 1].DataGrid.Top + output.Last().DataGrid.Height + 10;
                         }
                         pnlBranches.Controls.Add(output[i].DataGrid);
                         output[i].DataGrid.CurrentCell = null;
