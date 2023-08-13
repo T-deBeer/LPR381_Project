@@ -1247,7 +1247,7 @@ namespace LPR381_Project
             double zOld = ca.CbvBinverse.Multiply(matrixZ).ToArray()[0, 0];
 
             rtbOutput.AppendText(caOutput + "\n");
-            rtbOutput.AppendText($"Zold = {zOld}\n\n");
+            rtbOutput.AppendText($"Zold = {Math.Round(zOld, 3)}\n\n");
 
 
             double[] newB = ca.z;
@@ -1272,10 +1272,10 @@ namespace LPR381_Project
             double zNew = ca.CbvBinverse.Multiply(newMatrixZ).ToArray()[0, 0];
 
             rtbOutput.AppendText(caOutput + "\n");
-            rtbOutput.AppendText($"Znew = {zNew}\n\n");
+            rtbOutput.AppendText($"Znew = {Math.Round(zNew, 3)}\n\n");
 
 
-            rtbOutput.AppendText($"Shadow Price = Znew - Zold = {zNew - zOld}\n\n");
+            rtbOutput.AppendText($"Shadow Price = Znew - Zold = {Math.Round(zNew - zOld, 3)}\n\n");
         }
 
         private void btnCARanges_Click(object sender, EventArgs e)
@@ -1333,108 +1333,15 @@ namespace LPR381_Project
                 if (!twoPhase)
                 {
                     CriticalAnalysis ca = new CriticalAnalysis(lm.SimplexInitial, table);
-
-                    var delta = SymbolicExpression.Variable("delta");
-                    bool basicAffected = false;
-                    foreach (var coord in ca.basicVariableCoords)
-                    {
-                        if (coord.ContainsValue(selectedCol))
-                        {
-                            basicAffected = true;
-                        }
-                    }
-
-                    if (!basicAffected)
-                    {
-                        if (selectedRow == 0)
-                        {
-                            double[] A = new double[table.GetLength(0) - 1];
-
-                            for (int i = 1; i < lm.SimplexInitial.GetLength(0); i++)
-                            {
-                                A[i - 1] = lm.SimplexInitial[i, selectedCol];
-                            }
-
-                            Matrix<double> matrixA = Matrix<double>.Build.DenseOfColumnArrays(A);
-                            double answer = ca.CbvBinverse.Multiply(matrixA).ToArray()[0, 0];
-
-                            rtbOutput.AppendText($"{answer} - ({lm.SimplexInitial[selectedRow, selectedCol] * -1}+delta)\n");
-                            rtbOutput.AppendText($"{answer - (lm.SimplexInitial[selectedRow, selectedCol] * -1)} - delta");
-                        }
-                        else if (selectedCol == table.GetLength(1)-1)
-                        {
-                            dynamic[] B = new dynamic[table.GetLength(0) - 1];
-                            dynamic[] cbv = new dynamic[table.GetLength(0) - 1];
-                            dynamic cCurrent = table[selectedRow, selectedCol];
-
-
-                            for (int i = 1; i < lm.SimplexInitial.GetLength(0); i++)
-                            {
-                                B[i - 1] = lm.SimplexInitial[i, selectedCol];
-                            }
-
-                            for (int i = 0; i < ca.CbvBinverse.ToArray().GetLength(1); i++)
-                            {
-                                cbv[i] = ca.CbvBinverse.ToArray()[0, i];
-                            }
-
-                            B[selectedRow] = new AlgebraicExpression("delta", 1, B[selectedRow]);
-
-                            List<dynamic> cNew = new List<dynamic>();
-
-
-                            for (int i = 0; i < cbv.Length; i++)
-                            {
-                                if (cbv[i] is double && B[i] is double)
-                                {
-                                    cNew.Add(cbv[i] * B[i]);
-                                }
-                                else if (cbv[i] is double && B[i] is AlgebraicExpression)
-                                {
-                                    B[i].multiplyConstant(cbv[i]);
-                                    cNew.Add(B[i]);
-                                }
-                                else if (cbv[i] is AlgebraicExpression && B[i] is double)
-                                {
-                                    cbv[i].multiplyConstant(B[i]);
-                                    cNew.Add(cbv[i]);
-                                }
-                            }
-                            cNew.Add(cCurrent);
-
-                            double sum = 0;
-                            AlgebraicExpression final = new AlgebraicExpression("Delta");
-                            for (int i = 0; i < cNew.Count; i++)
-                            {
-                                if (cNew[i] is AlgebraicExpression)
-                                {
-                                    final.addExpresion(cNew[i]);
-                                }
-                                else
-                                {
-                                    sum += cNew[i];
-                                }
-                            }
-                            sum += final.Constant;
-                            if (final.Coefficient != 0)
-                            {
-                                sum /= final.Coefficient;
-                            }
-                            sum *= -1;
-
-                            rtbOutput.AppendText($"\nThe range of {cboCARangeRow.SelectedItem} in column {cboCARangeCol.SelectedItem} is:\n");
-                            rtbOutput.AppendText($"\n{sum}+delta >= 0\n");
-                        }
-                        else
-                        {
-                            
-                        }
-                    }
+                    string result = ca.CalculateRanges(selectedCol, selectedRow, lm.ProblemType);
+                    rtbOutput.Text = result;
                 }
                 else
                 {
-                    CriticalAnalysis ca = new CriticalAnalysis(lm.TwoPhaseInitial, tables[tables.Count - 1]);
-                }
+                    CriticalAnalysis ca = new CriticalAnalysis(lm.TwoPhaseInitial, table);
+                    string result = ca.CalculateRanges(selectedCol, selectedRow, lm.ProblemType);
+                    rtbOutput.Text = result;
+                }   
             }
             else
             {
