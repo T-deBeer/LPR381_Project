@@ -496,6 +496,22 @@ namespace LPR381_Project
                     dualResult = sd.DualSimplexAlgorithm();
                     finalTable = dualResult[dualResult.Count - 1];
 
+                    bool branchable = false;
+
+                    for (int i = 1; i < finalTable.GetLength(0); i++)
+                    {
+                        if (finalTable[i,finalTable.GetLength(1)-1] - Math.Floor(finalTable[i, finalTable.GetLength(1) - 1]) > 0)
+                        {
+                            branchable = true;
+                        }
+                    }
+
+                    if (!branchable)
+                    {
+                        MessageBox.Show("This optimal soolution did not contain any fraction, thus no branch and bound could occur.");
+                        break;
+                    }
+
                     rowHeaders.Add($"Z");
 
                     count = 1;
