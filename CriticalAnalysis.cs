@@ -31,8 +31,8 @@ namespace LPR381_Project
             Matrix<double> matrixZ = Matrix<double>.Build.DenseOfColumnArrays(this.z);
             Matrix<double> matrixB = Matrix<double>.Build.DenseOfArray(this.B);
 
-            BInverse = matrixB.Inverse();
-            CbvBinverse = matrixCbv.Multiply(BInverse.Transpose());
+            BInverse = matrixB.Inverse().Transpose();
+            CbvBinverse = matrixCbv.Multiply(BInverse);
         }
 
         
@@ -98,7 +98,7 @@ namespace LPR381_Project
             }
             else
             {
-                MessageBox.Show("This solution is infeasible, thus not Cbv could be found.");
+                MessageBox.Show("Something went wrong! No Cbv could be found.");
             }
             
 

@@ -14,7 +14,6 @@ using MetroSet_UI.Forms;
 using static System.Windows.Forms.LinkLabel;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TreeView;
 using MathNet.Symbolics;
-using System.Linq.Expressions;
 
 namespace LPR381_Project
 {
@@ -295,7 +294,7 @@ namespace LPR381_Project
                             conCounter++;
                         }
                     }
-
+                    cboCARangeCol.Items.Add("rhs");
                     cboCARangeRow.Items.Add("Z");
                     for (int i = 0; i < lm.ConstraintsSimplex.Count; i++)
                     {
@@ -370,11 +369,20 @@ namespace LPR381_Project
                     {
                         foreach (var kvp in con.Where(x => x.Key.Contains('S') || x.Key.Contains("E")))
                         {
-                            cboCARangeCol.Items.Add(kvp.Key + conCounter.ToString());
+                            if (kvp.Key == "E")
+                            {
+                                cboCARangeCol.Items.Add(kvp.Key + conCounter.ToString());
+                                cboCARangeCol.Items.Add("A" + conCounter.ToString());
+                            }
+                            else
+                            {
+                                cboCARangeCol.Items.Add(kvp.Key + conCounter.ToString());
+                            }
+                            
                             conCounter++;
                         }
                     }
-
+                    cboCARangeCol.Items.Add("rhs");
                     cboCARangeRow.Items.Add("W");
                     cboCARangeRow.Items.Add("Z");
                     for (int i = 0; i < lm.ConstraintsSimplex.Count; i++)
@@ -445,7 +453,7 @@ namespace LPR381_Project
                             conCounter++;
                         }
                     }
-
+                    cboCARangeCol.Items.Add("rhs");
                     cboCARangeRow.Items.Add("Z");
                     for (int i = 0; i < lm.ConstraintsSimplex.Count; i++)
                     {
@@ -557,7 +565,7 @@ namespace LPR381_Project
                             conCounter++;
                         }
                     }
-
+                    cboCARangeCol.Items.Add("rhs");
                     cboCARangeRow.Items.Add("Z");
                     for (int i = 0; i < lm.ConstraintsSimplex.Count; i++)
                     {
@@ -1297,9 +1305,9 @@ namespace LPR381_Project
 
                             foreach (var iteration in cpResultList)
                             {
-                                foreach (var item in iteration)
+                                foreach (var iterTable in iteration)
                                 {
-                                    tables.Add(item);
+                                    tables.Add(iterTable);
                                 }
                             }
                         }
@@ -1318,7 +1326,7 @@ namespace LPR381_Project
                     bool basicAffected = false;
                     foreach (var coord in ca.basicVariableCoords)
                     {
-                        if (coord.ContainsKey(selectedRow))
+                        if (coord.ContainsValue(selectedCol))
                         {
                             basicAffected = true;
                         }
@@ -1328,24 +1336,92 @@ namespace LPR381_Project
                     {
                         if (selectedRow == 0)
                         {
-                            
                             double[] A = new double[table.GetLength(0) - 1];
 
-                            for (int i = 1; i < table.GetLength(0); i++)
+                            for (int i = 1; i < lm.SimplexInitial.GetLength(0); i++)
                             {
-                                A[i - 1] = table[i, selectedCol];
+                                A[i - 1] = lm.SimplexInitial[i, selectedCol];
                             }
-                            Matrix<double> matrixA = Matrix<double>.Build.DenseOfColumnArrays(A);
 
+                            Matrix<double> matrixA = Matrix<double>.Build.DenseOfColumnArrays(A);
+                            double answer = ca.CbvBinverse.Multiply(matrixA).ToArray()[0, 0];
+
+                            rtbOutput.AppendText($"{answer} - ({lm.SimplexInitial[selectedRow, selectedCol] * -1}+delta)\n");
+                            rtbOutput.AppendText($"{answer - (lm.SimplexInitial[selectedRow, selectedCol] * -1)} - delta");
+                        }
+                        else if (selectedCol == table.GetLength(1)-1)
+                        {
+                            dynamic[] B = new dynamic[table.GetLength(0) - 1];
+                            dynamic[] cbv = new dynamic[table.GetLength(0) - 1];
+                            dynamic cCurrent = table[selectedRow, selectedCol];
+
+
+                            for (int i = 1; i < lm.SimplexInitial.GetLength(0); i++)
+                            {
+                                B[i - 1] = lm.SimplexInitial[i, selectedCol];
+                            }
+
+                            for (int i = 0; i < ca.CbvBinverse.ToArray().GetLength(1); i++)
+                            {
+                                cbv[i] = ca.CbvBinverse.ToArray()[0, i];
+                            }
+
+                            B[selectedRow] = new AlgebraicExpression("delta", 1, B[selectedRow]);
+
+                            List<dynamic> cNew = new List<dynamic>();
+
+
+                            for (int i = 0; i < cbv.Length; i++)
+                            {
+                                if (cbv[i] is double && B[i] is double)
+                                {
+                                    cNew.Add(cbv[i] * B[i]);
+                                }
+                                else if (cbv[i] is double && B[i] is AlgebraicExpression)
+                                {
+                                    B[i].multiplyConstant(cbv[i]);
+                                    cNew.Add(B[i]);
+                                }
+                                else if (cbv[i] is AlgebraicExpression && B[i] is double)
+                                {
+                                    cbv[i].multiplyConstant(B[i]);
+                                    cNew.Add(cbv[i]);
+                                }
+                            }
+                            cNew.Add(cCurrent);
+
+                            double sum = 0;
+                            AlgebraicExpression final = new AlgebraicExpression("Delta");
+                            for (int i = 0; i < cNew.Count; i++)
+                            {
+                                if (cNew[i] is AlgebraicExpression)
+                                {
+                                    final.addExpresion(cNew[i]);
+                                }
+                                else
+                                {
+                                    sum += cNew[i];
+                                }
+                            }
+                            sum += final.Constant;
+                            if (final.Coefficient != 0)
+                            {
+                                sum /= final.Coefficient;
+                            }
+                            sum *= -1;
+
+                            rtbOutput.AppendText($"\nThe range of {cboCARangeRow.SelectedItem} in column {cboCARangeCol.SelectedItem} is:\n");
+                            rtbOutput.AppendText($"\n{sum}+delta >= 0\n");
+                        }
+                        else
+                        {
                             
                         }
                     }
-
-
                 }
                 else
                 {
-                    CriticalAnalysis ca = new CriticalAnalysis(lm.SimplexInitial, tables[tables.Count - 1]);
+                    CriticalAnalysis ca = new CriticalAnalysis(lm.TwoPhaseInitial, tables[tables.Count - 1]);
                 }
             }
             else
