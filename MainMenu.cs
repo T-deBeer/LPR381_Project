@@ -360,7 +360,7 @@ namespace LPR381_Project
 
                     List<List<double[,]>> cpResultList = cp.CuttingPlaneSolve();
                     List<double[,]> cpResult = new List<double[,]>();
-                    finalTable = cpResult[cpResult.Count - 1];
+                    //finalTable = cpResult[cpResult.Count - 1];
 
                     rowHeaders.Add($"Z");
 
@@ -403,7 +403,7 @@ namespace LPR381_Project
 
                     btnOutputClear_Click(sender, e);
                     PrintTables(branches);
-
+                    finalTable = cpResult[cpResult.Count -1];
                     EnableElements();
                     break;
                 default:
