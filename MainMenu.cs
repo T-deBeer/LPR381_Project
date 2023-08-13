@@ -351,7 +351,41 @@ namespace LPR381_Project
                     EnableElements();
                     break;
                 case 3:
-                    // Branch and Bound
+                    if (lm.SignRes.Contains("int") || lm.SignRes.Contains("bin"))
+                    {
+                        MessageBox.Show("Some of the values in this Linear Programming model are either Integer (int) or binary (bin). \n" +
+                            "The Dual Simplex alogrithm will not be able to satisfy these value restrictions but will still continue to solve it as unrestricted.\n" +
+                            "Try using the 'Branch and Bound' or 'Cutting Plane' algorithms for values that have int or bin.", "Sign Restrictions", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                    sd = new Simplex(lm.SimplexInitial, lm.ProblemType);
+
+                    dualResult = sd.DualSimplexAlgorithm();
+                    finalTable = dualResult[dualResult.Count - 1];
+
+                    rowHeaders.Add($"Z");
+
+                    count = 1;
+                    foreach (var kvp in lm.ObjectiveFunction.Where(x => x.Key.Contains('X')))
+                    {
+                        headers.Add(kvp.Key);
+                    }
+
+                    rowCount = 1;
+                    foreach (var con in lm.ConstraintsSimplex)
+                    {
+                        rowHeaders.Add($"{rowCount}");
+                        rowCount++;
+
+                        foreach (var kvp in con.Where(x => !x.Key.Contains('X') && x.Key != "rhs" && x.Key != "sign"))
+                        {
+                            headers.Add(kvp.Key);
+                        }
+                    }
+                    headers.Add("rhs");
+
+                    
+                    BranchnBound branchnBound = new BranchnBound(finalTable);
+                    PrintTables(branchnBound.Solve(lm.ProblemType, headers, rowHeaders));
                     break;
                 case 4:
                     CuttingPlane cp = new CuttingPlane(lm.SimplexInitial, lm.ProblemType, lm.SignRes.ToArray());
