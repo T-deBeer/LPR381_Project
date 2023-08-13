@@ -176,7 +176,21 @@ namespace LPR381_Project
             rows++;
             return table;
         }
-        public void Solve()
+        public double[,] ListToArray(List<List<double>> table)
+        {
+            // Populate Nested lists with values from the array
+            double[,] listTable = new double[table.Count, table[0].Count];
+
+            for (int i = 0; i < table.Count; i++)
+            {
+                for (int j = 0; j < table[i].Count; j++)
+                {
+                    listTable[i, j] = table[i][j];
+                }
+            }
+            return listTable;
+        }
+        public void Solve(string problemType)
         {
             Queue<List<List<double>>> tableQueue = new Queue<List<List<double>>>();
             List<List<List<double>>> branches = new List<List<List<double>>>();
@@ -190,6 +204,9 @@ namespace LPR381_Project
                 {
                     List<List<double>> newTable = AddConstraint(constraints[i], table);
                     //solvedTable = Solve table
+                    Simplex simplex = new Simplex(ListToArray(newTable), problemType);
+                    List<double[,]> pivots = simplex.DualSimplexAlgorithm();
+                    ///
                     double sum = 0;
                     for (int j = 0; j < newTable.Count(); j++)
                     {
