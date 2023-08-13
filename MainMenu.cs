@@ -23,13 +23,13 @@ namespace LPR381_Project
         {
             InitializeComponent();
         }
-        private void PrintTables(List<BranchTable>? tables = null, bool branchBound = false, List<string>? headers = null)
+        private void PrintTables(List<BranchTable> tables, bool branchBound = false, List<string>? headers = null)
         {
             //pnlBranches.Controls.Clear();
             if (branchBound == false)
             {
                 tables = tables.OrderBy(x => int.Parse(x.Level)).ToList();
-                int top = 20;
+                int top = 40;
                 foreach (BranchTable table in tables)
                 {
                     table.DataGrid.Top = top;
@@ -41,36 +41,50 @@ namespace LPR381_Project
             }
             else
             {
-                List<BranchTable> placementQueue = tables.OrderBy(x => x.Level.Length).ToList();
+                List<BranchTable> placementQueue = tables.OrderBy(x => x.Level.Length).ToList();               
+                placementQueue.ForEach(x => x.Level = x.Level.Substring(1));
+                List<BranchTable> sub1 = tables.Where(x => x.Level.Length > 0 && x.Level[0] == '1').ToList();
 
-                List<BranchTable> sub1 = tables.Where(x => x.Level[0] == '1').ToList();
-
-                List<BranchTable> sub2 = tables.Where(x => x.Level[0] == '2').ToList();
-
-
-                double x = Math.Pow(2, placementQueue.Last().Level.Length) / 2;
-                int y = placementQueue.Select(x => x.Level.Length).Distinct().Count();
-
-                int width = (int)x * placementQueue.Last().DataGrid.ClientSize.Width + 100;
-                int height = y * placementQueue.Last().DataGrid.ClientSize.Height + 100;
-
-                int tableWidth = placementQueue.Last().DataGrid.Width;
-
-                for (int i = 0; i < sub1.Count(); i++)
+                List<BranchTable> sub2 = tables.Where(x => x.Level.Length > 0 && x.Level[0] == '2').ToList();
+                int top = 0;
+                for (int k = 0; k < 2; k++)
                 {
-                    string level = sub1[i].Level;
-
-                    sub1[i].DataGrid.Left = width / 2 - sub1[i].DataGrid.Width / 2;
-                    sub1[i].DataGrid.Top += sub1.Last().DataGrid.Height + 50;
-
-                    for (int j = 1; j < sub1[i].Level.Length; j++)
+                    List<BranchTable> output;
+                    if (k == 0) 
                     {
-                        sub1[i].DataGrid.Top += sub1.Last().DataGrid.Height + 50;
-                        sub1[i].DataGrid.Left += (sub1[i].Level[j] == '1' ? -1 : 1) * (pnlBranches.Width / (int)Math.Pow(2, j)) / 2;
+                        output = new List<BranchTable>(sub1);
+                        output[0].DataGrid.Top = 40;
                     }
-                    pnlBranches.Controls.Add(sub1[i].DataGrid);
-                    sub1[i].DataGrid.CurrentCell = null;
-                }
+                    else
+                    {
+                        output = new List<BranchTable>(sub2);
+                        output[0].DataGrid.Top = sub1.Last().DataGrid.Height + top + 40;
+                    }
+                    double x = Math.Pow(2, output.Last().Level.Length) / 2;
+                    int y = placementQueue.Select(x => x.Level.Length).Distinct().Count();
+
+                    int width = (int)x * placementQueue.Last().DataGrid.ClientSize.Width + 100;
+                    int height = y * placementQueue.Last().DataGrid.ClientSize.Height + 100;
+
+                    int tableWidth = placementQueue.Last().DataGrid.Width;
+
+                    for (int i = 0; i < output.Count(); i++)
+                    {
+                        string level = output[i].Level;
+
+                        output[i].DataGrid.Left = width / 2 - output[i].DataGrid.Width / 2;
+                        output[i].DataGrid.Top += output.Last().DataGrid.Height + 50;
+
+                        for (int j = 0; j < output[i].Level.Length; j++)
+                        {
+                            top += output.Last().DataGrid.Height + 50;
+                            output[i].DataGrid.Top += top;
+                            output[i].DataGrid.Left += (output[i].Level[j] == '1' && j != 0 ? -1 : 1) * (pnlBranches.Width / (int)Math.Pow(2, j)) / 2;
+                        }
+                        pnlBranches.Controls.Add(output[i].DataGrid);
+                        output[i].DataGrid.CurrentCell = null;
+                    }
+                }                
             }
         }
         private void MainMenu_Load(object sender, EventArgs e)
@@ -404,7 +418,7 @@ namespace LPR381_Project
 
                     
                     BranchnBound branchnBound = new BranchnBound(finalTable);
-                    PrintTables(branchnBound.Solve(lm.ProblemType, headers, rowHeaders));
+                    PrintTables(branchnBound.Solve(lm.ProblemType, headers, rowHeaders), true);
                     break;
                 case 4:
                     CuttingPlane cp = new CuttingPlane(lm.SimplexInitial, lm.ProblemType, lm.SignRes.ToArray());

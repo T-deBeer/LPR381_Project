@@ -54,43 +54,67 @@ namespace LPR381_Project
             // Sum of basic variable column = 1 (accounts for example: 0 1 1 which would pass the previous test)
             return column.Sum() == 1;
         }
-        private List<double> GetRHS(List<List<double>> table)
+        private List<int> GetRHS(List<List<double>> table)
         {
-            List<double> rhs = new List<double>();
-            int rows = table.Count();
-            int columns = table[0].Count();
-            for (int i = 1; i < rows; i++)
+            List<int> rhs = new List<int>();
+            int xCols =  table[0].Count() - table.Count();
+
+            for (int i = 0; i < xCols; i++)
             {
-                rhs.Add(table[i][columns - 1]);
+                if (IsBasic(i, table))
+                {
+                    for (int j = 0; j < table.Count(); j++)
+                    {
+                        if (table[j][i] == 1)
+                        {
+                            rhs.Add(j);
+                            break;
+                        }
+                    }
+                }
             }
             return rhs;
         }
         private int DetermineCutRow(List<List<double>> table)
         {
-            List<double> rhs = GetRHS(table);
+            List<int> rhs = GetRHS(table);
+            int columns = table[0].Count();
             List<double> fractions = new List<double>();
+            List<int> indicesToRemove = new List<int>();
             for (int i = 0; i < rhs.Count(); i++)
             {
-                double fraction = Math.Floor(rhs[i]) - rhs[i];
-                fractions.Add(Math.Abs(Math.Abs(fraction) - 0.5));
+
+                double fraction = Math.Round(table[rhs[i]][columns - 1] - Math.Floor(table[rhs[i]][columns - 1]), 3);
+                if (fraction != 0)
+                {
+                    fractions.Add(Math.Abs(Math.Abs(fraction) - 0.5));
+                }
+                else
+                {
+                    indicesToRemove.Add(i);
+                }
+            }
+            for (int i = indicesToRemove.Count() - 1; i >= 0; i--)
+            {
+                rhs.RemoveAt(indicesToRemove[i]);
             }
             double lowestFraction = fractions.Min();
             bool hasMinDuplicates = fractions.FindAll(x => x == lowestFraction).Count > 1;
             if (hasMinDuplicates)
             {
-                int indexOfLargestRHS = 0;
+                int indexOfLargestRHS = 1;
                 for (int i = 0; i < fractions.Count(); i++)
                 {
-                    if (fractions[i] == lowestFraction && rhs[i] > rhs[indexOfLargestRHS])
+                    if (fractions[i] == lowestFraction && table[rhs[i]][columns - 1] > table[indexOfLargestRHS][columns - 1])
                     {
-                        indexOfLargestRHS = i;
+                        indexOfLargestRHS = rhs[i];
                     }
                 }
-                return indexOfLargestRHS + 1;
+                return indexOfLargestRHS;
             }
             else
             {
-                return fractions.IndexOf(lowestFraction) + 1;
+                return rhs[fractions.IndexOf(lowestFraction)];
             }
         }
         public List<List<double>> GenerateConstraints(int rowIndex, int columnIndex, List<List<double>> table)
@@ -156,7 +180,11 @@ namespace LPR381_Project
                 List<double> newRow = new List<double>();
                 for (int j = 0; j < columns; j++)
                 {
-                    double newElement = (table[clashes[i]][j] - constraint[j]) * (makeNegative ? -1 : 1);
+                    double newElement = (table[clashes[i]][j] - constraint[j]);
+                    if (makeNegative) 
+                    {
+                        newElement *= -1;
+                    }
                     newRow.Add(newElement);
                 }
                 table.Add(newRow);
@@ -185,6 +213,7 @@ namespace LPR381_Project
             List<BranchTable> branches = new List<BranchTable>();
 
             tableQueue.Enqueue(new BranchTable("0", ListToArray(initialTable), columnHeaders, rowHeaders));
+            branches.Add(new BranchTable("0", ListToArray(initialTable), columnHeaders, rowHeaders));
 
             while (tableQueue.Count != 0)
             {
@@ -197,43 +226,38 @@ namespace LPR381_Project
                 for (int i = 0; i < constraints.Count(); i++)
                 {
                     BranchTable branchTableIteration = new BranchTable(branchTable);
-                    branchTableIteration = AddConstraint(constraints[i], branchTableIteration, constraints[i].Last() > 0);
+                    branchTableIteration = AddConstraint(constraints[i], branchTableIteration, i % 2 == 0);
                     
                     Simplex simplex = new Simplex(branchTableIteration.Table, problemType);
                     List<double[,]> pivots = simplex.DualSimplexAlgorithm();
-                    
-                    double[,] optimalTable = pivots.Last();                  
-                    if (branchTableIteration.Table != optimalTable)
+                    List<string> newColumnHeaders = columnHeaders;
+                    newColumnHeaders.Insert(columnHeaders.Count() - 1, i % 2 == 0 ? "S" : "E");
+                    List<string> newRowHeaders = rowHeaders;
+                    newRowHeaders.Add((int.Parse(newRowHeaders.Last()) + 1).ToString());
+                    for (int j = 0; j < pivots.Count(); j++)
                     {
-                        List<string> newColumnHeaders = columnHeaders;
-                        newColumnHeaders.Insert(columnHeaders.Count() - 1, i % 2 == 0 ? "S" : "E");
-                        List<string> newRowHeaders = rowHeaders;
-                        newRowHeaders.Add((int.Parse(newRowHeaders.Last()) + 1).ToString());
+                        branches.Add(new BranchTable($"{branchTableIteration.Level}{i + 1}", pivots[j], newColumnHeaders, newRowHeaders));
+                    }
+                    double[,] optimalTable = pivots.Last();                                      
+                   
+                    BranchTable newAddition = new BranchTable($"{branchTableIteration.Level}{i + 1}", optimalTable, newColumnHeaders, newRowHeaders);
 
-                        BranchTable newAddition = new BranchTable($"{branchTableIteration.Level}{i + 1}", optimalTable, newColumnHeaders, newRowHeaders);
-                        bool hasFraction = false;
-                        for (int j = 0; j < optimalTable.GetLength(0); j++)
-                        {
-                            hasFraction = optimalTable[j, optimalTable.GetLength(1) - 1] - Math.Floor(optimalTable[j, optimalTable.GetLength(0) - 1]) > 0;
-                            if (hasFraction)
-                            {
-                                break;
-                            }
-                        }
+                    bool hasFraction = false;
+                    for (int j = 0; j < optimalTable.GetLength(0); j++)
+                    {
+                        double rhs = Math.Round(optimalTable[j, optimalTable.GetLength(1) - 1], 3);
+                        double floor = Math.Floor(rhs);
+                        double round = Math.Round(rhs - (floor < 0 ? 0 : floor), 3);
+                        hasFraction = round > 0.001;                        
                         if (hasFraction)
                         {
-                            tableQueue.Enqueue(newAddition);
+                            break;
                         }
-                        for (int j = 0; j < pivots.Count(); j++)
-                        {
-                            branches.Add(new BranchTable(newAddition.Level, optimalTable, columnHeaders, rowHeaders));
-                        }
-                        branches.Add(newAddition);
                     }
-                    else 
+                    if (hasFraction && branchTableIteration.Table != optimalTable)
                     {
-                        MessageBox.Show("");
-                    }
+                        tableQueue.Enqueue(newAddition);
+                    }                                                         
                 }
             }
             return branches;
